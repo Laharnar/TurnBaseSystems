@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class SelectionManager : MonoBehaviour{
 
     public static SelectionManager m;
@@ -12,6 +13,10 @@ public class SelectionManager : MonoBehaviour{
     private void Update() {
         if (Input.GetKey(KeyCode.Mouse0))
             selectedUnit = GetMouseAsUnit2D();
+    }
+
+    internal static GridItem GetMouseAsSlot2D() {
+        return GetAsSlot(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     public static Transform GetMouseSelection2D() {
@@ -42,7 +47,7 @@ public class SelectionManager : MonoBehaviour{
         RaycastHit2D[] hits = GetAllSelection2D(pos);
         if (hits != null) {
             foreach (var item in hits) {
-                Unit asUnit = item.transform.GetComponent<Unit>();
+                Unit asUnit = item.transform.parent.GetComponent<Unit>();
                 if (asUnit) { 
                     return asUnit;
                 }

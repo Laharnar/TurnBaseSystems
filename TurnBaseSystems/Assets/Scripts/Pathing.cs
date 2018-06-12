@@ -6,9 +6,11 @@ public class Pathing {
     public float speed = 10f;
 
     public void GoToCoroutine(Unit t, int x, int y, GridManager grids) {
-        Vector3 targetPos = (grids.gridSlots.GetItem(x, y) as SceneTransformData).transform.position;
+        Vector3 targetPos = grids.gridSlots.GetItem(x, y).transform.position;
         t.StartCoroutine(GoTo(t, targetPos, grids));
+        grids.gridSlots.GetItem(x, y).filledBy = t;
     }
+
     public void GoToCoroutine(Unit t, Vector3 targetPos, GridManager grids) {
         t.StartCoroutine(GoTo(t, targetPos, grids));
     }
@@ -20,6 +22,7 @@ public class Pathing {
             t.transform.Translate((targetPos - t.transform.position).normalized * speed * Time.deltaTime);
             yield return null;
         }
+        t.transform.position = targetPos;
         t.SetAnimBool(false);
         t.moving = false;
     }
