@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class Unit :MonoBehaviour, ISlotItem{
@@ -8,7 +9,10 @@ public class Unit :MonoBehaviour, ISlotItem{
     public Alliance flag;
 
     public Animator anim;
-    public bool NoActions { get { return actionsLeft == 0; } }
+    public bool NoActions { get { return actionsLeft <= 0; } }
+
+    public bool CanMove { get { return actionsLeft >=1; } }
+    public bool CanAttack { get { return actionsLeft >= 2; } }
 
     public int hp = 5;
 
@@ -18,15 +22,18 @@ public class Unit :MonoBehaviour, ISlotItem{
     bool dead = false;
 
     public UnitAbilities abilities;
+    public AiLogic ai;
+
+    public GridItem curSlot;
 
     private void Start() {
         ResetActions();
         GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
+        curSlot = slot;
         Move(slot);
         FlagManager.RegisterUnit(this);
     }
-
-    private void ResetActions(int val=-1) {
+    public void ResetActions(int val=-1) {
         if (val == -1)
             actionsLeft = maxActions;
         else actionsLeft = val;
@@ -45,9 +52,9 @@ public class Unit :MonoBehaviour, ISlotItem{
         pathing.GoToCoroutine(this, slot.gridX, slot.gridY, GridManager.m);
     }
 
-    internal void AttackAction(GridItem slot, Unit other, Attack atk) {
+    internal void AttackAction(GridItem attackedSlot, Unit other, Attack atk) {
         actionsLeft-=2;
-        atk.ApplyDamage(this, slot);
+        atk.ApplyDamage(this, attackedSlot);
     }
 
     public void GetDamaged(int v) {

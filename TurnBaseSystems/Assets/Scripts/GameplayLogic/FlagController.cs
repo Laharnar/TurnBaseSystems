@@ -12,4 +12,13 @@ public abstract class FlagController {
     public Transform ui;
 
     public abstract IEnumerator FlagUpdate();
+
+    public void NullifyUnits() {
+        for (int i = 0; i < units.Count; i++) {
+            if (units[i] == null) {
+                units.RemoveAt(i);
+                i--;
+            }
+        }
+    }
 }

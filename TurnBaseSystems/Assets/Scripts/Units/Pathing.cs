@@ -7,11 +7,14 @@ public class Pathing {
 
     public void GoToCoroutine(Unit t, int x, int y, GridManager grids) {
         Vector3 targetPos = grids.gridSlots.GetItem(x, y).transform.position;
-        t.StartCoroutine(GoTo(t, targetPos, grids));
+        t.curSlot.filledBy = null;
         grids.gridSlots.GetItem(x, y).filledBy = t;
+        t.curSlot = grids.gridSlots.GetItem(x, y);
+        t.StartCoroutine(GoTo(t, targetPos, grids));
     }
 
     public void GoToCoroutine(Unit t, Vector3 targetPos, GridManager grids) {
+        t.curSlot.filledBy = null;
         t.StartCoroutine(GoTo(t, targetPos, grids));
     }
 

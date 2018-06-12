@@ -1,11 +1,4 @@
-﻿using System;
-
-[System.Serializable]
-public abstract class Attack {
-    public abstract void ApplyDamage(Unit source, GridItem attackedSlot);
-}
-
-[System.Serializable]
+﻿[System.Serializable]
 public class AOEAttack : Attack {
 
     public int damage = 1;
