@@ -11,6 +11,7 @@ public class GridItem : MonoBehaviour {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
     }
 
+
     internal void InitGrid(int i, int j) {
         gridX = i;
         gridY = j;
@@ -25,7 +26,9 @@ public class GridItem : MonoBehaviour {
         transform.GetComponentInChildren<SpriteRenderer>().color = 
             code == 0 ? defaultColor : 
             code == 1 ? Color.green :
-            code == 2 ? Color.red : Color.blue;
+            code == 2 ? Color.red : 
+            code == 3 ? Color.blue:
+            new Color(1,0.2f,0,1);
     }
 
     public void Null() {

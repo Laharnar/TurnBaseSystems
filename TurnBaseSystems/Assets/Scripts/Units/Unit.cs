@@ -12,7 +12,7 @@ public class Unit :MonoBehaviour, ISlotItem{
     public bool NoActions { get { return actionsLeft <= 0; } }
 
     public bool CanMove { get { return actionsLeft >=1; } }
-    public bool CanAttack { get { return actionsLeft >= 2; } }
+    public bool CanAttack { get { return actionsLeft >= 1; } }
 
     public int hp = 5;
 
@@ -47,8 +47,8 @@ public class Unit :MonoBehaviour, ISlotItem{
 
     private void Move(GridItem slot) {
         if (moving) return;
-        this.gridX = slot.gridX;
-        this.gridY = slot.gridY;
+        gridX = slot.gridX;
+        gridY = slot.gridY;
         pathing.GoToCoroutine(this, slot.gridX, slot.gridY, GridManager.m);
     }
 

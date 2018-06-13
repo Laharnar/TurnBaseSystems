@@ -13,7 +13,6 @@ public class Grid<T> where T: GridItem{
     }
 
     public Grid(int width, int length, Transform rootLoader):this(width, length) {
-
         data = new T[width, length];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
@@ -25,7 +24,7 @@ public class Grid<T> where T: GridItem{
     }
 
     public void InitGrid(Vector2 posStart, Vector2 itemDimensions, Transform pref, Transform parent) {
-        InitGrid(width, length, posStart, itemDimensions, pref, parent);
+        FullInitGrid(width, length, posStart, itemDimensions, pref, parent);
     }
 
     internal T GetItem(int x, int y) {
@@ -33,6 +32,22 @@ public class Grid<T> where T: GridItem{
             return data[x, y];
         Debug.LogError("Grid/GetItem - Out of range exception: "+x +" "+ y+" " + width+" "+length);
         return null;
+    }
+
+    public void FullInitGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent) {
+        if (w == 0 && l == 0)
+            return;
+        T[,] newGrid = new T[w, l];
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                newGrid[i, j] = GameObject.Instantiate(itemPref).GetComponent<GridItem>() as T;
+                newGrid[i, j].transform.parent = parent;
+                newGrid[i, j].transform.position = posStart + new Vector2(itemSize.x * i, itemSize.y * j);
+                newGrid[i, j].gridX = i;
+                newGrid[i, j].gridY = j;
+            }
+        }
+        data = newGrid;
     }
 
     public void InitGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent) {
