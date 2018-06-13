@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour {
@@ -38,6 +39,10 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    public static void RecolorMask(GridItem u, int color, GridMask attackMask) {
+        RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
+    }
+
     public static GridItem[] GetSlotsInRange(int gridX, int gridY, int range) {
         List<GridItem> items = new List<GridItem>();
         for (int i = gridX-range; i < gridX+range+1; i++) {
@@ -65,7 +70,6 @@ public class GridManager : MonoBehaviour {
             Debug.LogError("Mask isn't defined");
             return false;
         }
-        Debug.Log("Checking");
         int i = (target.gridX - source.gridX)+mask.w/2;
         int j = (target.gridY - source.gridY)+mask.l/2;
         if (i > -1 && i < mask.w && j > -1 && j < mask.l) {

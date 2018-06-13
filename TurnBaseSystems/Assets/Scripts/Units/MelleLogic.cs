@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 public class MelleLogic : AiLogic {
+
     public override IEnumerator Execute(Unit unit) {
         // command 1.
         PlayerFlag pFlag = FlagManager.flags[0] as PlayerFlag;

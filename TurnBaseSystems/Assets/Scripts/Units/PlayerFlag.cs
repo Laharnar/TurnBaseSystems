@@ -12,7 +12,6 @@ public class PlayerFlag : FlagController {
             units[i].ResetActions();
         }
         while (true) {
-            
             if (units.Count == 0) {
                 Debug.Log("No units left for player.");
                 break;
@@ -30,15 +29,16 @@ public class PlayerFlag : FlagController {
             if (unit == null)
                 unit = SelectionManager.GetMouseAsUnit2D();
 
-            // -- Map recoloring  for selected unit --
+            // -- Map recoloring  for selected player unit --
             if (playerActiveUnit && !playerActiveUnit.NoActions) {
-                GridManager.RecolorRange(4, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
+                // show attack range
+                GridManager.RecolorMask(playerActiveUnit.curSlot, 4, playerActiveUnit.abilities.BasicAttack.attackMask);
                 playerActiveUnit.curSlot.RecolorSlot(3);
-                if (!unit)
+                if (!unit) // can move
                     slot.RecolorSlot(1);
-                else if (unit.flag.allianceId == 0) {
+                else if (unit.flag.allianceId == 0) { // player, can select
                     slot.RecolorSlot(3);
-                } else if (unit.flag.allianceId != 0) {
+                } else if (unit.flag.allianceId != 0) { // enemy, maybe can attack
                     slot.RecolorSlot(2);
                 }
             }
@@ -49,16 +49,19 @@ public class PlayerFlag : FlagController {
                 if (unit) {
                     // select
                     if (unit.flag.allianceId == 0) {
+                        GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
                         DeselectUnit(playerActiveUnit);
                         if (!unit.NoActions)
                             playerActiveUnit = unit;
                     }
                     // attack
-                    else if (playerActiveUnit && playerActiveUnit.CanAttack) { // unit = enemy unit
-                        if (GridManager.IsSlotInMask(playerActiveUnit.curSlot, unit.curSlot, playerActiveUnit.abilities.BasicAttack.attackMask))
-                            playerActiveUnit.AttackAction(slot, unit, playerActiveUnit.abilities.BasicAttack);
-                        GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
-                        yield return null;
+                    else {
+                        if (playerActiveUnit && playerActiveUnit.CanAttack) { // unit = enemy unit
+                            if (GridManager.IsSlotInMask(playerActiveUnit.curSlot, unit.curSlot, playerActiveUnit.abilities.BasicAttack.attackMask))
+                                playerActiveUnit.AttackAction(slot, unit, playerActiveUnit.abilities.BasicAttack);
+                            GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
+                            yield return null;
+                        }
                     }
                 }
             }
@@ -67,9 +70,10 @@ public class PlayerFlag : FlagController {
             if (Input.GetKeyDown(KeyCode.Mouse1)) {
                 // if unit is already selected, move to that slot
                 if (slot && playerActiveUnit && !slot.filledBy && playerActiveUnit.CanMove) {
-                    if (playerActiveUnit)
+                    if (playerActiveUnit) {
+                        GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
                         playerActiveUnit.curSlot.RecolorSlot(0);
-                    GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
+                    }
                     playerActiveUnit.MoveAction(slot);
                     yield return null;
                     
