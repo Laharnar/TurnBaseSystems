@@ -59,8 +59,9 @@ public static class AiHelper {
         Vector3 dir = (pos - targetSlot.transform.position).normalized;
         List<GridItem> nbrs = Neighbours(targetSlot);
         for (int i = 0; i < nbrs.Count; i++) {
-            if (nbrs[i].filledBy!= null) {
+            if (!nbrs[i].Walkable) {
                 nbrs.RemoveAt(i);
+                i--;
                 continue;
             }
         }
@@ -69,6 +70,23 @@ public static class AiHelper {
         }
         float[] dists = GetDistances<GridItem>(targetSlot.transform.position + dir, nbrs);
         return nbrs[dists.GetIndexOfMin()];
+    }
+
+    public static bool IsNeighbour(GridItem slot, GridItem other) {
+        List<GridItem> slots = new List<GridItem>();
+        if (slot.gridX > 0) {
+            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX - 1, slot.gridY));
+        }
+        if (slot.gridY > 0) {
+            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY - 1));
+        }
+        if (slot.gridX + 1 < GridManager.m.width) {
+            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX + 1, slot.gridY));
+        }
+        if (slot.gridY + 1 > GridManager.m.length) {
+            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY + 1));
+        }
+        return slots.Contains(other);
     }
 
     public static List<GridItem> Neighbours(GridItem slot) {

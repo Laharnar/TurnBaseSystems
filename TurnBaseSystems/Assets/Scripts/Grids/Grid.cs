@@ -16,7 +16,7 @@ public class Grid<T> where T: GridItem{
         data = new T[width, length];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
-                int id = j * width + i;
+                int id = i*length+j;
                 data[i, j] = rootLoader.GetChild(id).GetComponent<T>();
                 data[i, j].InitGrid(i, j);
             }
@@ -24,7 +24,7 @@ public class Grid<T> where T: GridItem{
     }
 
     public void InitGrid(Vector2 posStart, Vector2 itemDimensions, Transform pref, Transform parent) {
-        FullInitGrid(width, length, posStart, itemDimensions, pref, parent);
+        InitGrid(width, length, posStart, itemDimensions, pref, parent);
     }
 
     internal T GetItem(int x, int y) {
@@ -59,18 +59,21 @@ public class Grid<T> where T: GridItem{
         for (int i = w; i < wOld; i++) {
             for (int j = 0; j < lOld; j++) {
                 data[i, j].Null();
+                data[i, j] = null;
             }
         }
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < l; j++) {
-                if (i < wOld && j < lOld && data[i, j] != null) {
+                /*if (i < wOld && j < lOld && data[i, j] != null) {
                     newGrid[i, j] = data[i, j];
-                } else {
+                } else */{
                     newGrid[i, j] = GameObject.Instantiate(itemPref).GetComponent<GridItem>() as T;
                 }
                 newGrid[i, j].transform.parent = parent;
                 newGrid[i, j].transform.position = posStart + new Vector2(itemSize.x * i, itemSize.y * j);
+                newGrid[i, j].gridX = i;
+                newGrid[i, j].gridY = j;
             }
         }
         data = newGrid;

@@ -5,12 +5,18 @@ public class GridItem : MonoBehaviour {
     public int gridY;
 
     public Unit filledBy;
+    public Structure fillAsStructure;
+
+    public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
+
     Color defaultColor;
 
     private void Awake() {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
+        fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
     }
 
+   
 
     internal void InitGrid(int i, int j) {
         gridX = i;

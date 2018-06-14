@@ -19,6 +19,19 @@ public class SelectionManager : MonoBehaviour{
         return GetAsSlot(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
+    internal static Structure GetAsStructure2D(Vector3 position) {
+        RaycastHit2D[] hits = GetAllSelection2D(position);
+        if (hits != null) {
+            foreach (var item in hits) {
+                Structure asStructure = item.transform.GetComponent<Structure>();
+                if (asStructure) {
+                    return asStructure;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Transform GetMouseSelection2D() {
         return GetSelection2D(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
@@ -47,6 +60,8 @@ public class SelectionManager : MonoBehaviour{
         RaycastHit2D[] hits = GetAllSelection2D(pos);
         if (hits != null) {
             foreach (var item in hits) {
+                if (item.transform.parent == null)
+                    continue;
                 Unit asUnit = item.transform.parent.GetComponent<Unit>();
                 if (asUnit) { 
                     return asUnit;

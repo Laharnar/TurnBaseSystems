@@ -17,8 +17,8 @@ public class GridManager : MonoBehaviour {
     private void Awake() {
         m = this;
 
-        //gridSlots = new Grid<GridItem>(width, length, rootLoader);
-        UpdateGrid();
+        gridSlots = new Grid<GridItem>(width, length, rootLoader);
+        //UpdateGrid();
     }
 
     [ContextMenu("Update grid")]

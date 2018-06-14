@@ -1,0 +1,27 @@
+﻿13.6.2018
+Add walls. Like a building.
+
+Soo. I have a few ways to do this. Full slot walls. Thin walls.
+Full slot walls will make climbing easy too.
+
+How do I want to build level? Place stuff. Then apply items.
+
+Maybe grid detects which slot are taken ?
+-- all raycasting + components.
+
+ABILITY SYSTEM
+1) select unit - ability wheel
+2) select unit - menu - select ability
+3) number system
+4) Hunter x hunter weapon based. - sonny
+animations and area of damage.
+5) Envrounmental, like wind to makes dust, instead of tornado.
+Scenes:
+fantasy magic
+scifi move
+
+Healer that drains stuff around for different effect.
+Drainer.
+
+
+Dead people can be used as weapons.

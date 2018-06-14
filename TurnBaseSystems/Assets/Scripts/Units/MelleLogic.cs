@@ -10,8 +10,11 @@ public class MelleLogic : AiLogic {
 
         float[] dists = transform.position.GetDistances(pFlag.units);
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnitSlot = SelectionManager.GetAsSlot(pFlag.units[closestUnitIndex].transform.position);
-        GridItem nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnitSlot);
+        GridItem closestUnit = SelectionManager.GetAsSlot(pFlag.units[closestUnitIndex].transform.position);
+        GridItem nearbySlot;
+        if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
+            nearbySlot = unit.curSlot;
+        else nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnit);
         if (nearbySlot == null)
             yield break;
 
@@ -20,7 +23,7 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        unit.AttackAction(closestUnitSlot, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
+        unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
         // end unit turn
         yield return null;
     }

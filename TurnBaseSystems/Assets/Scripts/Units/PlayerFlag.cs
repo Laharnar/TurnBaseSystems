@@ -49,7 +49,8 @@ public class PlayerFlag : FlagController {
                 if (unit) {
                     // select
                     if (unit.flag.allianceId == 0) {
-                        GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
+                        if (playerActiveUnit)
+                            GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
                         DeselectUnit(playerActiveUnit);
                         if (!unit.NoActions)
                             playerActiveUnit = unit;
@@ -69,7 +70,7 @@ public class PlayerFlag : FlagController {
             // move
             if (Input.GetKeyDown(KeyCode.Mouse1)) {
                 // if unit is already selected, move to that slot
-                if (slot && playerActiveUnit && !slot.filledBy && playerActiveUnit.CanMove) {
+                if (slot && playerActiveUnit && slot.Walkable && playerActiveUnit.CanMove) {
                     if (playerActiveUnit) {
                         GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
                         playerActiveUnit.curSlot.RecolorSlot(0);
