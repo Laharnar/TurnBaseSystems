@@ -37,4 +37,5 @@ Ok I got abilities of slots. Or parameters.
 Now these things have to be loaded on grid - ok, so they can be accesed from ui controller - ok.
 The items have to be activated to show UI when player selects unit. -ok 1
 ui has to be constructed by hand, or just enabled piece by piece. -ok
-ui pieces have to moved so they don't cover each other. Do this LATER!
+ui pieces have to moved so they don't cover each other. Do this LATER! -ok ish
+works for now. should be redone to be more robust.

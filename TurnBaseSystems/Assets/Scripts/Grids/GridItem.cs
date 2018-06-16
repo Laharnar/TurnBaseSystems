@@ -8,6 +8,7 @@ public class GridItem : MonoBehaviour {
     public Structure fillAsStructure;
 
     /// <summary>
+    /// Abilities are loaded on level load from all objects that can be found on this slot.
     /// Note: this is on child object. Don't use it's position as reference.
     /// </summary>
     public InteractibleAsAbility avaliableAbilities;
@@ -25,6 +26,7 @@ public class GridItem : MonoBehaviour {
         go.transform.parent = transform;
         avaliableAbilities = go.AddComponent<InteractibleAsAbility>();
         avaliableAbilities.transform.position = transform.position;
+        // attach ineractions from all things on this slot.
         if (fillAsStructure) {
             avaliableAbilities.interactions.AddRange(fillAsStructure.GetComponent<InteractibleAsAbility>().Copies());
         }

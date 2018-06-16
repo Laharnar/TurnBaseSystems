@@ -5,28 +5,26 @@ using UnityEngine;
 public class UIInteractionController:MonoBehaviour {
 
     public static UIInteractionController m;
-    List<Transform> activeUI = new List<Transform>();
+
+    List<Transform> generatedUI = new List<Transform>();
 
     public Transform canvasParent;
 
     public Transform combustibleUIPref;
+
     private void Awake() {
         m = this;
     }
 
-    public void AddInteraction(Transform source) {
+    public void AddUIPiece(Transform source) {
         // add item
-        activeUI.Add(source);
+        generatedUI.Add(source);
     }
 
-    public void RemoveInteraction(Transform source) {
+    public void RemoveUIPiece(Transform source) {
         // add item
-        activeUI.Remove(source);
+        generatedUI.Remove(source);
         Destroy(source);
-    }
-
-    public static InteractibleAsAbility GetInteractions(GridItem slot) {
-        return slot.avaliableAbilities;
     }
 
     internal static void ShowInteractions(Unit playerActiveUnit) {
@@ -41,21 +39,22 @@ public class UIInteractionController:MonoBehaviour {
     }
 
     private static void ClearUI() {
-        for (int i = 0; i < m.activeUI.Count; i++) {
-            if (m.activeUI[i])
-            GameObject.Destroy(m.activeUI[i].gameObject);
+        for (int i = 0; i < m.generatedUI.Count; i++) {
+            if (m.generatedUI[i])
+            GameObject.Destroy(m.generatedUI[i].gameObject);
         }
-        m.activeUI.Clear();
+        m.generatedUI.Clear();
     }
 
     private static void OverlayUI(GridItem slot) {
-        InteractibleAsAbility interaction = GetInteractions(slot);
+        InteractibleAsAbility interaction = slot.avaliableAbilities;
         for (int i = 0; i < interaction.interactions.Count; i++) {
             if (interaction.interactions[i].GetType() == typeof(Combustible)) {
                 Transform t = Instantiate(m.combustibleUIPref, slot.transform.position+new Vector3(0,i), new Quaternion(), m.canvasParent);
-                t.gameObject.GetComponent<ButtonInteraction>().interaction = interaction.interactions[i];
-                t.gameObject.GetComponent<ButtonInteraction>().source = slot.fillAsStructure;
-                m.AddInteraction(t);
+                ButtonInteraction bi = t.gameObject.GetComponent<ButtonInteraction>();
+                bi.interaction = interaction.interactions[i];
+                bi.source = slot.fillAsStructure;
+                m.AddUIPiece(t);
             }
         }
     }
