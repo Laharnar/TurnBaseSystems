@@ -7,6 +7,11 @@ public class GridItem : MonoBehaviour {
     public Unit filledBy;
     public Structure fillAsStructure;
 
+    /// <summary>
+    /// Note: this is on child object. Don't use it's position as reference.
+    /// </summary>
+    public InteractibleAsAbility avaliableAbilities;
+
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
 
     Color defaultColor;
@@ -14,15 +19,21 @@ public class GridItem : MonoBehaviour {
     private void Awake() {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
         fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
-    }
 
-   
+
+        GameObject go = new GameObject("Temp");
+        go.transform.parent = transform;
+        avaliableAbilities = go.AddComponent<InteractibleAsAbility>();
+        avaliableAbilities.transform.position = transform.position;
+        if (fillAsStructure) {
+            avaliableAbilities.interactions.AddRange(fillAsStructure.GetComponent<InteractibleAsAbility>().Copies());
+        }
+    }
 
     internal void InitGrid(int i, int j) {
         gridX = i;
         gridY = j;
     }
-
 
     /// <summary>
     /// 

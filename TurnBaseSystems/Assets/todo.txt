@@ -20,8 +20,21 @@ Scenes:
 fantasy magic
 scifi move
 
-Healer that drains stuff around for different effect.
-Drainer.
-
+Chargers, charge internal magic into density based effects, like explosions, or lighting.
+Consumers, Drainers. Healer that drains external energy for different effect, like heal, drain.
+Atom controllers, aclhemists. Produce effects on atom level, changes or moves atomic structure. Can create atomic bomb, waves, earthquakes or change material, potions. Extremly unstable and difficult to control.
 
 Dead people can be used as weapons.
+
+Abilities are active depending on the slot, the area around it.
+- ui system that allows you to show new items. 
+One way is to just show the abilities, above items.
+Another is to show them in drop down menu.
+- load items based on parameters scanned from slot.
+- somehow mark objects in area, and make them avaliable to scan - per range per ability
+
+Ok I got abilities of slots. Or parameters.
+Now these things have to be loaded on grid - ok, so they can be accesed from ui controller - ok.
+The items have to be activated to show UI when player selects unit. -ok 1
+ui has to be constructed by hand, or just enabled piece by piece. -ok
+ui pieces have to moved so they don't cover each other. Do this LATER!

@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class EnemyFlag : FlagController {
+
     public override IEnumerator FlagUpdate() {
         NullifyUnits();
         for (int i = 0; i < units.Count; i++) {

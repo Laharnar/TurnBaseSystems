@@ -16,7 +16,7 @@ public class PlayerFlag : FlagController {
                 Debug.Log("No units left for player.");
                 break;
             }
-            
+
             if (NoActionsLeft()) {
                 break;
             }
@@ -29,8 +29,9 @@ public class PlayerFlag : FlagController {
             if (unit == null)
                 unit = SelectionManager.GetMouseAsUnit2D();
 
-            // -- Map recoloring  for selected player unit --
+            // -- Map changes for selected player unit --
             if (playerActiveUnit && !playerActiveUnit.NoActions) {
+                // -- recoloring
                 // show attack range
                 GridManager.RecolorMask(playerActiveUnit.curSlot, 4, playerActiveUnit.abilities.BasicAttack.attackMask);
                 playerActiveUnit.curSlot.RecolorSlot(3);
@@ -43,10 +44,13 @@ public class PlayerFlag : FlagController {
                 }
             }
 
+            // -- end map changes
+            bool selectionChanged = false;
             // -- Input --
             // For player units, just select it. For enemy, attack them if player unit is selected.
             if (Input.GetKeyDown(KeyCode.Mouse0)) {
                 if (unit) {
+                    selectionChanged = true;
                     // select
                     if (unit.flag.allianceId == 0) {
                         if (playerActiveUnit)
@@ -66,9 +70,9 @@ public class PlayerFlag : FlagController {
                     }
                 }
             }
-
             // move
             if (Input.GetKeyDown(KeyCode.Mouse1)) {
+                selectionChanged = true;
                 // if unit is already selected, move to that slot
                 if (slot && playerActiveUnit && slot.Walkable && playerActiveUnit.CanMove) {
                     if (playerActiveUnit) {
@@ -77,14 +81,25 @@ public class PlayerFlag : FlagController {
                     }
                     playerActiveUnit.MoveAction(slot);
                     yield return null;
-                    
+
+                }
+            }
+
+            if (selectionChanged) {
+                // -- ui
+                if (playerActiveUnit) {
+                    UIInteractionController.ShowInteractions(playerActiveUnit);
+                } else {
+                    UIInteractionController.HideInteractions();
                 }
             }
             UIManager.PlayerStandardUi(!playerActiveUnit);
             UIManager.PlayerSelectAllyUnitUi(playerActiveUnit);
 
+            // map decolor when unit run out of actions.
             if (playerActiveUnit && playerActiveUnit.NoActions) {
                 GridManager.RecolorRange(0, GridManager.GetSlotsInMask(playerActiveUnit.gridX, playerActiveUnit.gridY, playerActiveUnit.abilities.BasicAttack.attackMask));
+                UIInteractionController.HideInteractions();
             }
 
             yield return null;

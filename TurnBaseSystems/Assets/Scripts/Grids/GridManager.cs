@@ -33,6 +33,14 @@ public class GridManager : MonoBehaviour {
             <= range*Mathf.Max(m.itemDimensions.x, m.itemDimensions.y);
     }
 
+    internal static GridItem[] GetSlotsInInteractiveRange(Unit slot, GridMask mask) {
+        if (mask == null) // return all
+        {
+            return m.gridSlots.AsArray();
+        }
+        return GetSlotsInMask(slot.gridX, slot.gridY, mask);
+    }
+
     public static void RecolorRange(int color, params GridItem[] slots) {
         for (int i = 0; i < slots.Length; i++) {
             slots[i].RecolorSlot(color);

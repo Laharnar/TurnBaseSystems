@@ -50,6 +50,16 @@ public class Grid<T> where T: GridItem{
         data = newGrid;
     }
 
+    public GridItem[] AsArray() {
+        GridItem[] arr = new GridItem[width * length];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                arr[j + i * length] = data[i,j];
+            }
+        }
+        return arr;
+    }
+
     public void InitGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent) {
         if (w == 0 && l == 0)
             return;
