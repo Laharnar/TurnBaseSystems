@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+
 public class GridItem : MonoBehaviour {
     public int gridX;
     public int gridY;
@@ -8,19 +9,14 @@ public class GridItem : MonoBehaviour {
     public Structure fillAsStructure;
     public Weapon fillAsPickup;
 
-    internal void DetachPickupFromSlot() {
-        Debug.LogWarning("Warning:Sketchy code");
-        avaliableAbilities.interactions.Clear();
-        fillAsPickup = null;
-    }
 
     //public LocationMaterial material;
 
     /// <summary>
-    /// Abilities are loaded on level load from all objects that can be found on this slot.
+    /// Abilities are loaded on level load or later, from all objects that can be found on this slot.
     /// Note: this is on child object. Don't use it's position as reference.
     /// </summary>
-    public InteractibleAsAbility avaliableAbilities;
+    public InteractiveEnvirounment slotInteractions;
 
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
 
@@ -28,30 +24,20 @@ public class GridItem : MonoBehaviour {
 
     private void Awake() {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
-        fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
 
-        GameObject go = new GameObject("Temp");
+        // Add empty child holder for interactions
+        GameObject go = new GameObject("InteractionsTemp");
         go.transform.parent = transform;
-        avaliableAbilities = go.AddComponent<InteractibleAsAbility>();
-        avaliableAbilities.transform.position = transform.position;
-        // attach ineractions from all things on this slot.
+        slotInteractions = InteractiveEnvirounment.AttachScript(go);
+        slotInteractions.transform.position = transform.position;
+
+        // Attach interactions from structures on this slot.
+        fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
         if (fillAsStructure) {
-            avaliableAbilities.interactions.AddRange(fillAsStructure.GetComponent<InteractibleAsAbility>().Copies());
+            slotInteractions.interactions.AddRange(fillAsStructure.GetComponent<InteractiveEnvirounment>().Copies());
         }
     }
 
-
-    public static void InitAllExistingWeapons() {
-        for (int i = 0; i < Weapon.weapons.Count; i++) {
-            GridItem it = Weapon.BelongsTo(Weapon.weapons[i]);
-            if (it) {
-                it.fillAsPickup = Weapon.weapons[i];
-                if (it.fillAsPickup) {
-                    it.avaliableAbilities.interactions.AddRange(it.fillAsPickup.GetComponent<InteractibleAsAbility>().Copies());
-                }
-            }
-        }
-    }
 
     internal void InitGrid(int i, int j) {
         gridX = i;
@@ -73,5 +59,12 @@ public class GridItem : MonoBehaviour {
 
     public void Null() {
         GameObject.Destroy(gameObject);
+    }
+
+
+    internal void DetachPickupFromSlot() {
+        Debug.LogWarning("Warning:Sketchy code. Clears ALL interactions from temp object, not only pickup.");
+        slotInteractions.interactions.Clear();
+        fillAsPickup = null;
     }
 }

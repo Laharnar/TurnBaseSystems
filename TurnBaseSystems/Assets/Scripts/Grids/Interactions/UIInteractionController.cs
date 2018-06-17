@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Shows buttons on per slot basis. 1 button per interaction, multiple per slot.
+/// <seealso cref="GridItem"/>
+/// </summary>
 public class UIInteractionController:MonoBehaviour {
 
     public static UIInteractionController m;
@@ -32,7 +36,7 @@ public class UIInteractionController:MonoBehaviour {
         // reset all ui
         ClearUI();
         // scan area
-        GridItem[] items = GridManager.GetSlotsInInteractiveRange(playerActiveUnit, null);
+        GridItem[] items = InteractionScanner.Scan(playerActiveUnit);
         // activate all ui's of slots in area
         for (int i = 0; i < items.Length; i++) {
             OverlayUI(items[i]);
@@ -48,7 +52,7 @@ public class UIInteractionController:MonoBehaviour {
     }
 
     private static void OverlayUI(GridItem slot) {
-        InteractibleAsAbility interaction = slot.avaliableAbilities;
+        InteractiveEnvirounment interaction = slot.slotInteractions;
         for (int i = 0; i < interaction.interactions.Count; i++) {
             if (interaction.interactions[i].GetType() == typeof(Combustible)) {
                 Transform t = Instantiate(m.combustibleUIPref, slot.transform.position+new Vector3(0,i), new Quaternion(), m.canvasParent);

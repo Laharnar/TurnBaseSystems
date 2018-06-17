@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 /// <summary>
-/// Units can use this when
+/// Base for defining what kind of interactions some object has.
+/// Like combustion interaction. Or drain.
 /// </summary>
 public abstract class Interaction:ScriptableObject {
     public abstract void Interact(IInteractible other);
-}
-
-public interface IInteractible {
-    void OnUnitInteracts();
 }

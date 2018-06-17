@@ -22,7 +22,7 @@ public class GridManager : MonoBehaviour {
     }
 
     private void Start() {
-        GridItem.InitAllExistingWeapons();
+        Weapon.AssignAllDroppedWeaponsToSlots();
     }
 
     [ContextMenu("Update grid")]
@@ -60,6 +60,7 @@ public class GridManager : MonoBehaviour {
     internal static GridItem[] GetSlotsInInteractiveRange(Unit slot, GridMask mask) {
         if (mask == null) // return all
         {
+            Debug.Log("Mask is null, returning all slots.");
             return m.gridSlots.AsArray();
         }
         return GetSlotsInMask(slot.gridX, slot.gridY, mask);

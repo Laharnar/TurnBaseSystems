@@ -5,7 +5,12 @@ using UnityEngine;
 // Units can use this when scanning the area.
 // Should be on put on walls, grass or other stuff.
 // Automatically loaded on child of grid item at runtime, via raycasts.
-public class InteractibleAsAbility : MonoBehaviour {
+/// <summary>
+/// Contains a list of interactions assigned either on structures, weapons, walls, etc.
+/// Used in connection with <see cref="UIInteractionController"/> to show
+/// BUTTONS that activate interactions.
+/// </summary>
+public class InteractiveEnvirounment : MonoBehaviour {
 
     // stuff that this slot represents/ abilities that can be use on it.
     public List<Interaction> interactions = new List<Interaction>();
@@ -24,5 +29,9 @@ public class InteractibleAsAbility : MonoBehaviour {
             ites.Add(ScriptableObject.CreateInstance(interactions[i].GetType()) as Interaction);
         }
         return ites;
+    }
+
+    public static InteractiveEnvirounment AttachScript(GameObject go) {
+        return go.AddComponent<InteractiveEnvirounment>();
     }
 }

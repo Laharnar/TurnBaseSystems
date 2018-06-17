@@ -14,6 +14,10 @@ public class UserClass : UnitAbilities {
         unit = GetComponent<Unit>();
     }
 
+    public override EnvirounmentalAttack[] GetEnvAbilities() {
+        return new EnvirounmentalAttack[] { pickWeapon };
+    }
+
     public override Attack BasicAttack {
         get {
             return unit.equippedWeapon!= null ? melleWeaponAttack as Attack : shoot1 as Attack;

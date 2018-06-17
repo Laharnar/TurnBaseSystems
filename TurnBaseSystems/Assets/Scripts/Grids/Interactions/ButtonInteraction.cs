@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+
+/// <summary>
+/// Activator for buttons over the player interactible content.
+/// </summary>
 public class ButtonInteraction : MonoBehaviour {
 
     public Interaction interaction;

@@ -5,12 +5,19 @@ using UnityEngine;
 /// Grid items with structures can't be traversed.
 /// </summary>
 public class Structure : MonoBehaviour,IInteractible {
-    public void OnUnitInteracts() {
+
+    public int materialValue = 5;
+    /*public void OnUnitInteracts() {
         // combustible
         Destruct();
-    }
+    }*/
 
     internal void Destruct() {
+        Destroy(gameObject);
+    }
+
+    internal void Consume() {
+        Unit.activeUnit.materials += materialValue;
         Destroy(gameObject);
     }
 }

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Base weapon, contains stats, if it's dropped etc..
+/// </summary>
 public class Weapon:MonoBehaviour,IInteractible {
     public static List<Weapon> weapons = new List<Weapon>();
 
@@ -27,7 +30,21 @@ public class Weapon:MonoBehaviour,IInteractible {
         return GridManager.SnapToGrid(wep.transform.position);
     }
 
-    public void OnUnitInteracts() {
-        Unit.activeUnit.Equip(this);
+    public void UnitPicksIt() {
+        Unit.activeUnit.EquipAction(this);
+    }
+
+    public static void AssignAllDroppedWeaponsToSlots() {
+        for (int i = 0; i < Weapon.weapons.Count; i++) {
+            if (!Weapon.weapons[i].dropped)
+                continue;
+            GridItem it = Weapon.BelongsTo(Weapon.weapons[i]);
+            if (it) {
+                it.fillAsPickup = Weapon.weapons[i];
+                if (it.fillAsPickup) {
+                    it.slotInteractions.interactions.AddRange(it.fillAsPickup.GetComponent<InteractiveEnvirounment>().Copies());
+                }
+            }
+        }
     }
 }

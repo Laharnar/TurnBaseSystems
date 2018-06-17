@@ -9,12 +9,13 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public Alliance flag;
 
     public Animator anim;
-
-
+    
     public bool NoActions { get { return actionsLeft <= 0; } }
 
     public bool CanMove { get { return actionsLeft >=1; } }
     public bool CanAttack { get { return actionsLeft >= 1; } }
+
+    public bool HasActions { get { return !NoActions; } }
 
     public int hp = 5;
 
@@ -30,6 +31,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
     public Weapon equippedWeapon;
     public static Unit activeUnit;
+    internal int materials;
 
     private void Start() {
         ResetActions();
@@ -38,17 +40,25 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         Move(slot);
         FlagManager.RegisterUnit(this);
     }
+
     public void ResetActions(int val=-1) {
         if (val == -1)
             actionsLeft = maxActions;
         else actionsLeft = val;
     }
 
-    public void Equip(Weapon fillAsPickup) {
-        equippedWeapon = fillAsPickup;
+    public void EquipAction(Weapon wep) {
+        actionsLeft -= 1;
+        Equip(wep);
+    }
+
+    public void Equip(Weapon wep) {
+        equippedWeapon = wep;
         equippedWeapon.dropped = false;
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
+
+        GridManager.RecolorMask(curSlot, 4, abilities.BasicAttack.attackMask);
     }
 
     public void MoveAction(GridItem slot) {
