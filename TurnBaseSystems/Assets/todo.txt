@@ -9,22 +9,6 @@ How do I want to build level? Place stuff. Then apply items.
 Maybe grid detects which slot are taken ?
 -- all raycasting + components.
 
-ABILITY SYSTEM
-1) select unit - ability wheel
-2) select unit - menu - select ability
-3) number system
-4) Hunter x hunter weapon based. - sonny
-animations and area of damage.
-5) Envrounmental, like wind to makes dust, instead of tornado.
-Scenes:
-fantasy magic
-scifi move
-
-Chargers, charge internal magic into density based effects, like explosions, or lighting.
-Consumers, Drainers. Healer that drains external energy for different effect, like heal, drain.
-Atom controllers, aclhemists. Produce effects on atom level, changes or moves atomic structure. Can create atomic bomb, waves, earthquakes or change material, potions. Extremly unstable and difficult to control.
-
-Dead people can be used as weapons.
 
 Abilities are active depending on the slot, the area around it.
 - ui system that allows you to show new items. 
@@ -39,3 +23,25 @@ The items have to be activated to show UI when player selects unit. -ok 1
 ui has to be constructed by hand, or just enabled piece by piece. -ok
 ui pieces have to moved so they don't cover each other. Do this LATER! -ok ish
 works for now. should be redone to be more robust.
+
+-accuracy. throw range. guns. pick item. flip table. deco-remateliarize. pass item.
+AP restore. aoe shield. reinforce area or item. aoe blast cone.aoe drain. passive
+
+stats that can be upgraded.
+accuracy - added weapon class
+throw range - mask takes care of that, just add throw equipped ability. -ok
+AP - ok
+guns/items.
+flip table
+collect material
+pass item - inventory
+AP restore
+reinforce self
+reinforce slot
+aoe cone attack
+aoe life drain
+life per slot
+air per slot
+passives.
+
+skill tree

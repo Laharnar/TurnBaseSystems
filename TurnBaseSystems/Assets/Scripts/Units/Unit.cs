@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Unit :MonoBehaviour, ISlotItem{
+public partial class Unit :MonoBehaviour, ISlotItem{
     public int gridX, gridY;
     public bool moving = false;
     public Pathing pathing;
@@ -25,6 +25,8 @@ public class Unit :MonoBehaviour, ISlotItem{
     public AiLogic ai;
 
     public GridItem curSlot;
+
+    public Weapon equippedWeapon;
 
     private void Start() {
         ResetActions();

@@ -1,0 +1,88 @@
+﻿ABILITY SYSTEM
+1) select unit - ability wheel
+2) select unit - menu - select ability
+3) number system
+4) Hunter x hunter weapon based. - sonny
+animations and area of damage.
+5) Envrounmental, like wind to makes dust, instead of tornado.
+Scenes:
+fantasy magic
+scifi move
+
+Chargers, charge internal magic into density based effects, like explosions, or lighting.
+Consumers, Drainers. Healer that drains external energy for different effect, like heal, drain.
+Ying-jang, same thing
+Atom controllers, aclhemists. Produce matter on atom level, changes or moves atomic structure. Can create atomic bomb, waves, earthquakes or change material, potions. Extremly unstable and difficult to control.
+
+Users. Instead of making stuff, they use whatever is at their disposal. It's members are usually smart and creative, with many combat options.
+Detach controllers. Same as builders, but reverse. Same thing.
+
+Tech. uses electronic components.
+I don't like destroyers. It's kinda boring class. What do they do? Destroy. Better.
+Consumers do the same job, detach energy stuff.
+
+Energy users and matter users.
+Collectors, Consumers, Builders, Users.
+
+Energy system tells us what the character uses to create his abilities
+Matter system tells us how he utilizes that in combat. What's his preference.
+
+Or 2 separate system, to make 4 combinations and 4 specialists
+
+Dead people can be used as weapons.
+
+
+Enhancer: strengthens and reinforces natural abilities
+Emmiter: shoots out projectiles
+Manipulator: Controls objects or living things
+Transmutter: Changes the quality of aura
+Conjurer: Materializes objects out of aura
+Specialist: Unique, distincitve aura
+affinity
+
+Collector - User - Enhancer: strengthens and reinforces natural abilities
+
+Consumer - User - Manipulator: Controls objects or living things
+Any - User - Transmutter: Changes the quality of aura
+Any - Builder - Emmiter: shoots out projectiles
+Any - Builder - Conjurer: Materializes objects out of aura
+
+User	Env specialists
+Builder	Creates objects or projectiles from energy
+Collector	Empowers themselves through meditation and training
+Consumer	Channels energies around them through their body or others
+
+Skill tree
+
+User: Combat specialist.
+Pick item.
+Flip table. Turns it into cover.
+Throwing training. Throwing objects with high accuracy.
+Strength. Increase throwing range.
+Accuracy training. Improved accuracy on guns.
+
+Builder: Support supplier and location enforcer.
+Deconstruct. Dematerialize items in area into materials to be used later
+Rematerialize. Materialize items as something new. Requires Deconstruct to be activated.
+Materialization objects: 
+- knifes
+- earth or stone, or wood walls
+- bullets
+Give item. Pass item to allies.
+
+Collector: Energy manipulation frontliner.
+Hunker/calm. Increase defence for 1 turn. Restores some AP.
+Enforce. Release inner power for a shield. Can block attacks in small area around the collector.
+Enhance. Enhances (equipped) item or area. /Useful for reinforcing walls or doors against bullets.
+Blast. Fire energy blast to affect area in some direction. High AP usage.
+
+Consumer: Energy consuming backline.
+*High threat, but strategically costly. Requires both protection and planning.
+Drain life. Drains life out of area around them. Give full AP. Affects allies
+Drain flora. Drains plants and small life. Restores some AP.
+Passive. Air drain. Restore 1 AP. Because of continous strain recieve Fatigue every 5 turns.
+
+
+Tech tree.
+
+Elementalists. Invisibility. ELC expert(electronics). Survivour.
