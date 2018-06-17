@@ -21,11 +21,35 @@ public class GridManager : MonoBehaviour {
         //UpdateGrid();
     }
 
+    private void Start() {
+        GridItem.InitAllExistingWeapons();
+    }
+
     [ContextMenu("Update grid")]
     public void UpdateGrid () {
         if (gridSlots == null)
             gridSlots = new Grid<GridItem>(width, length);
         gridSlots.InitGrid(gridParent.transform.position, itemDimensions, pref, gridParent);
+    }
+
+    public static GridItem SnapToGrid(Vector3 point) {
+        Vector3 o = point;
+        point = point - m.gridParent.transform.position + (Vector3)m.itemDimensions / 2;
+        point.z = 0;
+        point.x = point.x - point.x % m.itemDimensions.x;
+        point.y = point.y - point.y % m.itemDimensions.y;
+        //point = new Vector2(point.y, point.x);
+        GridItem[,] slots = m.gridSlots.data;
+        for (int i = 0; i < m.width; i++) {
+            for (int j = 0; j < m.length; j++) {
+                if (new Vector3(i, j, 0) == point) {
+                    Debug.Log("found: "+i+" "+j + " "+ slots[i, j].transform.position);
+                    return slots[i, j];
+                }
+            }
+        }
+        Debug.Log(o+" "+point + " "+m.itemDimensions+"Doesn't match any slot.");
+        return null;
     }
 
     public static bool AreSlotsInRange(GridItem curSlot, GridItem attackedSlot, int range) {

@@ -6,6 +6,15 @@ public class GridItem : MonoBehaviour {
 
     public Unit filledBy;
     public Structure fillAsStructure;
+    public Weapon fillAsPickup;
+
+    internal void DetachPickupFromSlot() {
+        Debug.LogWarning("Warning:Sketchy code");
+        avaliableAbilities.interactions.Clear();
+        fillAsPickup = null;
+    }
+
+    //public LocationMaterial material;
 
     /// <summary>
     /// Abilities are loaded on level load from all objects that can be found on this slot.
@@ -21,7 +30,6 @@ public class GridItem : MonoBehaviour {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
         fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
 
-
         GameObject go = new GameObject("Temp");
         go.transform.parent = transform;
         avaliableAbilities = go.AddComponent<InteractibleAsAbility>();
@@ -29,6 +37,19 @@ public class GridItem : MonoBehaviour {
         // attach ineractions from all things on this slot.
         if (fillAsStructure) {
             avaliableAbilities.interactions.AddRange(fillAsStructure.GetComponent<InteractibleAsAbility>().Copies());
+        }
+    }
+
+
+    public static void InitAllExistingWeapons() {
+        for (int i = 0; i < Weapon.weapons.Count; i++) {
+            GridItem it = Weapon.BelongsTo(Weapon.weapons[i]);
+            if (it) {
+                it.fillAsPickup = Weapon.weapons[i];
+                if (it.fillAsPickup) {
+                    it.avaliableAbilities.interactions.AddRange(it.fillAsPickup.GetComponent<InteractibleAsAbility>().Copies());
+                }
+            }
         }
     }
 

@@ -2,7 +2,7 @@
 public class ThrowEquipped : Attack {
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (attackedSlot.filledBy) {
-            attackedSlot.filledBy.GetDamaged(source.equippedWeapon.massDamage);
+            attackedSlot.filledBy.GetDamaged(source.equippedWeapon.thrownDamage);
         }
         source.equippedWeapon = null;
     }

@@ -1,9 +1,12 @@
-﻿[System.Serializable]
+﻿using System;
+
+[System.Serializable]
 public class UserClass : UnitAbilities {
 
     public RangedAttack shoot1;
     public ThrowEquipped throwWeapon;
-    public AttackEquipped melleWeaponAttack;
+    public AttackWithEquipped melleWeaponAttack;
+    public PickItem pickWeapon;
 
     Unit unit;
 

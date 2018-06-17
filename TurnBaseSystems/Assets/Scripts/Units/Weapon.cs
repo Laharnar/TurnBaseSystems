@@ -1,13 +1,33 @@
-﻿public class Weapon: Attack {
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Weapon:MonoBehaviour,IInteractible {
+    public static List<Weapon> weapons = new List<Weapon>();
+
+    public GridMask attackMask;
     public float accuracy = 1;
     public int damage = 1;
-    internal int massDamage;
+    public int thrownDamage = 1;
+    public bool dropped = true;
 
-    public override void ApplyDamage(Unit source, GridItem attackedSlot) {
+    private void Awake() {
+        weapons.Add(this);
+    }
+
+    public void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (UnityEngine.Random.Range(0f, 1f) <= accuracy) {
             if (attackedSlot.filledBy) {
                 attackedSlot.filledBy.GetDamaged(damage);
             }
         }
+    }
+
+    public static GridItem BelongsTo(Weapon wep) {
+        return GridManager.SnapToGrid(wep.transform.position);
+    }
+
+    public void OnUnitInteracts() {
+        Unit.activeUnit.Equip(this);
     }
 }

@@ -9,6 +9,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public Alliance flag;
 
     public Animator anim;
+
+
     public bool NoActions { get { return actionsLeft <= 0; } }
 
     public bool CanMove { get { return actionsLeft >=1; } }
@@ -27,6 +29,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public GridItem curSlot;
 
     public Weapon equippedWeapon;
+    public static Unit activeUnit;
 
     private void Start() {
         ResetActions();
@@ -39,6 +42,13 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         if (val == -1)
             actionsLeft = maxActions;
         else actionsLeft = val;
+    }
+
+    public void Equip(Weapon fillAsPickup) {
+        equippedWeapon = fillAsPickup;
+        equippedWeapon.dropped = false;
+        equippedWeapon.transform.position = transform.position;
+        equippedWeapon.transform.parent = transform;
     }
 
     public void MoveAction(GridItem slot) {

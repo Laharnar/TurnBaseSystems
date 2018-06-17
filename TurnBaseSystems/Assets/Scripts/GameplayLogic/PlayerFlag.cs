@@ -30,7 +30,9 @@ public class PlayerFlag : FlagController {
                 unit = SelectionManager.GetMouseAsUnit2D();
 
             // -- Map changes for selected player unit --
+            Unit.activeUnit = null;
             if (playerActiveUnit && !playerActiveUnit.NoActions) {
+                Unit.activeUnit = playerActiveUnit;
                 // -- recoloring
                 // show attack range
                 GridManager.RecolorMask(playerActiveUnit.curSlot, 4, playerActiveUnit.abilities.BasicAttack.attackMask);

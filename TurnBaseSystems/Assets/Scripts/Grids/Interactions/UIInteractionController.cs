@@ -11,6 +11,7 @@ public class UIInteractionController:MonoBehaviour {
     public Transform canvasParent;
 
     public Transform combustibleUIPref;
+    public Transform pickableUIPref;
 
     private void Awake() {
         m = this;
@@ -54,6 +55,13 @@ public class UIInteractionController:MonoBehaviour {
                 ButtonInteraction bi = t.gameObject.GetComponent<ButtonInteraction>();
                 bi.interaction = interaction.interactions[i];
                 bi.source = slot.fillAsStructure;
+                m.AddUIPiece(t);
+            }
+            else if (interaction.interactions[i].GetType() == typeof(Pickable)) {
+                Transform t = Instantiate(m.pickableUIPref, slot.transform.position + new Vector3(0, i), new Quaternion(), m.canvasParent);
+                ButtonInteraction bi = t.gameObject.GetComponent<ButtonInteraction>();
+                bi.interaction = interaction.interactions[i];
+                bi.weaponSource = slot.fillAsPickup;
                 m.AddUIPiece(t);
             }
         }

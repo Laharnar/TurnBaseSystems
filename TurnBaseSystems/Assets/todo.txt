@@ -27,10 +27,13 @@ works for now. should be redone to be more robust.
 -accuracy. throw range. guns. pick item. flip table. deco-remateliarize. pass item.
 AP restore. aoe shield. reinforce area or item. aoe blast cone.aoe drain. passive
 
+pick item: ui when on slot to pick up.
+
 stats that can be upgraded.
 accuracy - added weapon class
 throw range - mask takes care of that, just add throw equipped ability. -ok
 AP - ok
+pickup.
 guns/items.
 flip table
 collect material
