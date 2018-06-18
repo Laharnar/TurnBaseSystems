@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridManager : MonoBehaviour {
+public partial class GridManager : MonoBehaviour {
     public static GridManager m { get; private set; }
 
     public Grid<GridItem> gridSlots;

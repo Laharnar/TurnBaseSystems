@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-
-public class MelleLogic : AiLogic {
+﻿using System.Collections;
+public class RangeLogic : AiLogic {
 
     public override IEnumerator Execute(Unit unit) {
         // command 1.
@@ -10,11 +7,12 @@ public class MelleLogic : AiLogic {
 
         float[] dists = transform.position.GetDistances(pFlag.units.ToArray());
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnit = SelectionManager.GetAsSlot(pFlag.units[closestUnitIndex].transform.position);
+        GridItem closestUnit = pFlag.units[closestUnitIndex].curSlot;
         GridItem nearbySlot;
-        if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
-            nearbySlot = unit.curSlot;
-        else nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnit);
+        //if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
+        //    nearbySlot = unit.curSlot;
+        //else 
+        nearbySlot = AiHelper.ClosestFreeSlotOnEdge(transform.position, closestUnit, unit.abilities.BasicAttack.attackMask);
         if (nearbySlot == null)
             yield break;
 
