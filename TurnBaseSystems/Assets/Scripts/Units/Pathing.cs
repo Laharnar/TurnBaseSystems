@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class Pathing {
     public float speed = 10f;
+    public GridMask moveMask;
 
     public void GoToCoroutine(Unit t, int x, int y, GridManager grids) {
         Vector3 targetPos = grids.gridSlots.GetItem(x, y).transform.position;

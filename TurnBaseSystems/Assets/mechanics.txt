@@ -86,3 +86,10 @@ Passive. Air drain. Restore 1 AP. Because of continous strain recieve Fatigue ev
 Tech tree.
 
 Elementalists. Invisibility. ELC expert(electronics). Survivour.
+
+
+SHOOTING
+first have gun equipped. Then press on enemy unit to shot at. then aim cone shows
+hitting the line shot at enemy will do damage.(you can also make it a cone instead of line,
+to hit for more damage).
+Cover will reduce avaliable hit area, making it harder to hit.

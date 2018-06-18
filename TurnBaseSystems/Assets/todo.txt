@@ -36,6 +36,7 @@ throw range - mask takes care of that, just add throw equipped ability. -ok
 AP - ok
 pickup. -ok
 guns/items. -ok
+wall cover
 flip table
 collect material
 pass item - inventory

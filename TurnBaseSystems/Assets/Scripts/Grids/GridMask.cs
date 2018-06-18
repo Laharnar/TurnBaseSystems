@@ -7,6 +7,8 @@ public class GridMask :UnityEngine.ScriptableObject {
     public int w, l;
     public BoolArr[] mask;
 
+    public float Range { get { return Mathf.Max(w, l); } }
+
     public bool Get(int i, int j) {
         return mask[i].col[j];
     }

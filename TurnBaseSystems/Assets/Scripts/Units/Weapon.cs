@@ -13,6 +13,7 @@ public class Weapon:MonoBehaviour,IInteractible {
     public int damage = 1;
     public int thrownDamage = 1;
     public bool dropped = true;
+    public Transform conePref;
 
     private void Awake() {
         weapons.Add(this);

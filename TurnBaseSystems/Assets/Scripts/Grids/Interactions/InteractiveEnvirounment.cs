@@ -6,9 +6,10 @@ using UnityEngine;
 // Should be on put on walls, grass or other stuff.
 // Automatically loaded on child of grid item at runtime, via raycasts.
 /// <summary>
-/// Contains a list of interactions assigned either on structures, weapons, walls, etc.
+/// Contains a list of interactions assigned on structures, weapons, walls, etc.
 /// Used in connection with <see cref="UIInteractionController"/> to show
-/// BUTTONS that activate interactions.
+/// BUTTONS that activate those interactions.
+/// Assign interactions by hand depending on type of env.
 /// </summary>
 public class InteractiveEnvirounment : MonoBehaviour {
 

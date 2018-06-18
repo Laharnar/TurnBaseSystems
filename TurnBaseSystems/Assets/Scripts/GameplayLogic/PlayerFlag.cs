@@ -54,8 +54,25 @@ public class PlayerFlag : FlagController {
                 // attack
                 else {
                     if (playerActiveUnit && playerActiveUnit.CanAttack) { // unit = enemy unit
-                        if (GridManager.IsSlotInMask(playerActiveUnit.curSlot, unit.curSlot, playerActiveUnit.abilities.BasicAttack.attackMask))
-                            playerActiveUnit.AttackAction(slot, unit, playerActiveUnit.abilities.BasicAttack);
+                        if (GridManager.IsSlotInMask(playerActiveUnit.curSlot, unit.curSlot, playerActiveUnit.abilities.BasicAttack.attackMask)) {
+                            bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
+                            if (playerActiveUnit.equippedWeapon && playerActiveUnit.equippedWeapon.conePref) {
+                                aimSuccesful = false;
+                                yield return playerActiveUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(playerActiveUnit, unit, playerActiveUnit.equippedWeapon.conePref, playerActiveUnit.equippedWeapon.attackMask.Range));
+                                Vector2 fireDir = WeaponFireMode.activeUnitAimDirection;
+                                RaycastHit2D[] hits = Physics2D.RaycastAll(playerActiveUnit.transform.position, fireDir, playerActiveUnit.equippedWeapon.attackMask.Range);
+                                //Debug.Log(fireDir + " "+hits.Length);
+                                for (int i = 0; i < hits.Length; i++) {
+                                    //Debug.Log(hits[i].transform.root + " "+ unit, hits[i].transform.root);
+                                    if (hits[i].transform.root == unit.transform) {
+                                        aimSuccesful = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (aimSuccesful)
+                                playerActiveUnit.AttackAction(slot, unit, playerActiveUnit.abilities.BasicAttack);
+                        }
                         yield return null;
                     }
                 }       
@@ -64,7 +81,8 @@ public class PlayerFlag : FlagController {
             if (Input.GetKeyDown(KeyCode.Mouse1)) {
                 selectionChanged = true;
                 // if unit is already selected, move to that slot
-                if (slot && slot.Walkable && playerActiveUnit && playerActiveUnit.CanMove) {
+                if (slot && slot.Walkable && playerActiveUnit && playerActiveUnit.CanMove
+                    && (!playerActiveUnit.pathing.moveMask || GridManager.IsSlotInMask(playerActiveUnit.curSlot, slot, playerActiveUnit.pathing.moveMask))) {
                     playerActiveUnit.MoveAction(slot);
                     yield return null;
                 }
