@@ -8,12 +8,14 @@ using UnityEngine;
 public class Weapon:MonoBehaviour,IInteractible {
     public static List<Weapon> weapons = new List<Weapon>();
 
-    public GridMask attackMask;
     public float accuracy = 1;
     public int damage = 1;
     public int thrownDamage = 1;
     public bool dropped = true;
     public Transform conePref;
+
+    public RangedAttack attackData;
+    public Attack StandardAttack { get { return attackData; } }
 
     private void Awake() {
         weapons.Add(this);

@@ -8,6 +8,12 @@ public class PlayerAbilities : UnitAbilities {
         }
     }
 
+    public override GridMask BasicMask {
+        get {
+            return shoot1.attackMask;
+        }
+    }
+
     public override EnvirounmentalAttack[] GetEnvAbilities() {
         return new EnvirounmentalAttack[] { };
     }

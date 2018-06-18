@@ -32,7 +32,7 @@ public class UIInteractionController:MonoBehaviour {
         Destroy(source);
     }
 
-    internal static void ShowInteractions(Unit playerActiveUnit) {
+    internal static void ShowEnvInteractions(Unit playerActiveUnit) {
         // reset all ui
         ClearUI();
         // scan area
@@ -71,7 +71,7 @@ public class UIInteractionController:MonoBehaviour {
         }
     }
 
-    internal static void HideInteractions() {
+    internal static void ClearEnvInteractions() {
         ClearUI();
     }
 }

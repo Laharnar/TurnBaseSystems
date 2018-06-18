@@ -57,6 +57,17 @@ public class GridManager : MonoBehaviour {
             <= range*Mathf.Max(m.itemDimensions.x, m.itemDimensions.y);
     }
 
+    /// <summary>
+    /// Target unit is either hovered over or null.
+    /// </summary>
+    /// <param name="unit"></param>
+    /// <param name="targetUnit"></param>
+    /// <param name="basicAttack"></param>
+    /// <returns></returns>
+    internal static bool IsUnitInAttackRange(Unit unit, Unit targetUnit, Attack basicAttack) {
+        return targetUnit && IsSlotInMask(unit.curSlot, targetUnit.curSlot, basicAttack.attackMask);
+    }
+
     internal static GridItem[] GetSlotsInInteractiveRange(Unit slot, GridMask mask) {
         if (mask == null) // return all
         {

@@ -20,7 +20,13 @@ public class UserClass : UnitAbilities {
 
     public override Attack BasicAttack {
         get {
-            return unit.equippedWeapon!= null ? melleWeaponAttack as Attack : shoot1 as Attack;
+            return unit.equippedWeapon!= null ? unit.equippedWeapon.StandardAttack as Attack : shoot1 as Attack;
+        }
+    }
+
+    public override GridMask BasicMask {
+        get {
+            return unit.equippedWeapon != null ? unit.equippedWeapon.StandardAttack.attackMask : shoot1.attackMask;
         }
     }
 }

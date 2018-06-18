@@ -97,4 +97,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         if (moving) return;
         pathing.GoToCoroutine(this, pos, GridManager.m);
     }
+
+    public bool CanMoveTo(GridItem slot) {
+        return CanMove && (pathing.moveMask == null || GridManager.IsSlotInMask(curSlot, slot, pathing.moveMask));
+    }
 }
