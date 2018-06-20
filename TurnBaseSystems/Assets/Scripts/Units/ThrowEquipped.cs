@@ -7,3 +7,5 @@ public class ThrowEquipped : Attack {
         source.equippedWeapon = null;
     }
 }
+
+

@@ -30,7 +30,12 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public GridItem curSlot;
 
     public Weapon equippedWeapon;
+
+    /// <summary>
+    /// Used by interactions.
+    /// </summary>
     public static Unit activeUnit;
+
     internal int materials;
 
     private void Start() {

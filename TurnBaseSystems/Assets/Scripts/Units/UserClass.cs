@@ -18,6 +18,10 @@ public class UserClass : UnitAbilities {
         return new EnvirounmentalAttack[] { pickWeapon };
     }
 
+    public override Attack[] GetNormalAbilities() {
+        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack };
+    }
+
     public override Attack BasicAttack {
         get {
             return unit.equippedWeapon!= null ? unit.equippedWeapon.StandardAttack as Attack : shoot1 as Attack;

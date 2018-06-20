@@ -9,8 +9,11 @@ public class ButtonInteraction : MonoBehaviour {
     public Structure source;
     public Weapon weaponSource;
 
+    public bool destroyAfter = true;
+
     public void Activate() {
         interaction.Interact(weaponSource != null ? weaponSource as IInteractible : source);
-        Destroy(gameObject);
+        if (destroyAfter)
+            Destroy(gameObject);
     }
 }

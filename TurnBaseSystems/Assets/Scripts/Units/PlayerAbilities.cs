@@ -17,4 +17,8 @@ public class PlayerAbilities : UnitAbilities {
     public override EnvirounmentalAttack[] GetEnvAbilities() {
         return new EnvirounmentalAttack[] { };
     }
+
+    public override Attack[] GetNormalAbilities() {
+        return new Attack[] { shoot1 };
+    }
 }

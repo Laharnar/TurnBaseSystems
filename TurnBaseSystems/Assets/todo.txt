@@ -25,10 +25,14 @@ ui pieces have to moved so they don't cover each other. Do this LATER! -ok ish
 works for now. should be redone to be more robust.
 ui shuold be visible only in interaction range.
 
+ability slots ui.
+
 -accuracy. throw range. guns. pick item. flip table. deco-remateliarize. pass item.
 AP restore. aoe shield. reinforce area or item. aoe blast cone.aoe drain. passive
 
 pick item: ui when on slot to pick up. -ok
+ui button list with attached abilities? ok 19.6.2018
+all player's abilities are assigned to ui - ok
 
 stats that can be upgraded.
 accuracy - added weapon class -ok
