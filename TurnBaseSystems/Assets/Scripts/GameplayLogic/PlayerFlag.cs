@@ -70,7 +70,8 @@ public class PlayerFlag : FlagController {
                     PlayerUIAbilityList.AssignAbilitiesToUI(curPlayerUnit.abilities);
                 }
             }
-            if (selectedPlayerUnit) {
+
+            if (selectedPlayerUnit && curPlayerUnit) {
                 curMask = curPlayerUnit.pathing.moveMask;
                 RemaskActive(3);
                 curMask = curPlayerUnit.abilities.BasicMask;
@@ -178,7 +179,7 @@ public class PlayerFlag : FlagController {
         curPlayerUnit.curSlot.RecolorSlot(color);
     }
     void RemaskActive(int color) {
-        GridManager.RecolorMask(curPlayerUnit.curSlot, color, curMask);
+        //GridManager.RecolorMask(curPlayerUnit.curSlot, color, curMask);
     }
 
     private void DeselectUnit() {

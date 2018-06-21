@@ -31,6 +31,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
     public Weapon equippedWeapon;
 
+    public HpUIController hpUI;
+
     /// <summary>
     /// Used by interactions.
     /// </summary>
@@ -44,6 +46,9 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         curSlot = slot;
         Move(slot);
         FlagManager.RegisterUnit(this);
+
+        if (hpUI)
+            hpUI.InitHp(hp, this);
     }
 
     public void ResetActions(int val=-1) {
@@ -87,6 +92,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public void GetDamaged(int v) {
         if (dead) return;
         hp -= v;
+        if (hpUI) hpUI.ShowHp(hp);
         if (hp <= 0) {
             StartCoroutine(Death());
         }
