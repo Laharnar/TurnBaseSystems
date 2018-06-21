@@ -54,7 +54,7 @@ public class GridItem : MonoBehaviour {
             code == 1 ? Color.green :
             code == 2 ? Color.red : 
             code == 3 ? Color.blue:
-            new Color(1,0.2f,0,1);
+            new Color(1,0.2f,0,1);//orange
     }
 
     public void Null() {

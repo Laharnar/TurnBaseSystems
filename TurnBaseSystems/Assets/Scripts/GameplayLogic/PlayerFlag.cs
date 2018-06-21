@@ -43,13 +43,14 @@ public class PlayerFlag : FlagController {
             if (curPlayerUnit && curPlayerUnit.HasActions) {
                 Unit.activeUnit = curPlayerUnit;
                 curMask = curPlayerUnit.abilities.BasicMask;
-                RemaskActive(4);
-                if (!unit) // can move
-                    RemaskUnit(1);
-                else if (unit.flag.allianceId == 0) // player, can select
-                    RemaskUnit(3);
-                else if (unit.flag.allianceId != 0) // enemy, maybe can attack
-                    RemaskUnit(2);
+                //RemaskActive(3);
+                if (!unit) { // can move
+                    // RemaskUnit(1);
+                } else if (unit.flag.allianceId == 0) { // player, can select
+                                                        //  RemaskUnit(3);
+                } else if (unit.flag.allianceId != 0) { // enemy, maybe can attack
+                                                        //RemaskUnit(2);
+                }
             }
             // -- end map changes
 
@@ -71,11 +72,12 @@ public class PlayerFlag : FlagController {
                 }
             }
 
-            if (selectedPlayerUnit && curPlayerUnit) {
+            if (curPlayerUnit) {
                 curMask = curPlayerUnit.pathing.moveMask;
                 RemaskActive(3);
                 curMask = curPlayerUnit.abilities.BasicMask;
-                RemaskActive(1);
+                RemaskActive(2);
+                RemaskUnit(1);
             }
             // move
             if (Input.GetKeyDown(KeyCode.Mouse1) && !RunningAbility) {
@@ -83,7 +85,13 @@ public class PlayerFlag : FlagController {
                 // if unit is already selected, move to that slot
                 if (slot && slot.Walkable && curPlayerUnit && curPlayerUnit.CanMoveTo(slot)) {
                     curMask = curPlayerUnit.abilities.BasicMask;
+
+                    curMask = curPlayerUnit.pathing.moveMask;
                     RemaskActive(0);
+                    curMask = curPlayerUnit.abilities.BasicMask;
+                    RemaskActive(0);
+                    RemaskUnit(0);
+
                     curPlayerUnit.MoveAction(slot);
                     yield return null;
                 }
@@ -99,7 +107,12 @@ public class PlayerFlag : FlagController {
                     if (aimSuccesful) {
                         curPlayerUnit.AttackAction(slot, unit, curPlayerUnit.abilities.BasicAttack);
                         curMask = curPlayerUnit.abilities.BasicMask;
+
+                        curMask = curPlayerUnit.pathing.moveMask;
                         RemaskActive(0);
+                        curMask = curPlayerUnit.abilities.BasicMask;
+                        RemaskActive(0);
+                        RemaskUnit(0);
                     }
                 }
                 yield return null;
@@ -173,13 +186,20 @@ public class PlayerFlag : FlagController {
         }
         return aimSuccesful;
     }
-    
 
+
+    /// <param name="color">0: normal, 1: selected, 2: attackable, 3: ally</param>
     void RemaskUnit(int color) {
         curPlayerUnit.curSlot.RecolorSlot(color);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="color">0: normal, 1: selected, 2: attackable, 3: ally</param>
     void RemaskActive(int color) {
-        //GridManager.RecolorMask(curPlayerUnit.curSlot, color, curMask);
+        if (curMask)
+            GridManager.RecolorMask(curPlayerUnit.curSlot, color, curMask);
+        else Debug.Log("Warning: mask is not assigned.");
     }
 
     private void DeselectUnit() {
