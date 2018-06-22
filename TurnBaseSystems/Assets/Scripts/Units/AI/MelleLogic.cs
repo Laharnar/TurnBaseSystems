@@ -14,7 +14,13 @@ public class MelleLogic : AiLogic {
         GridItem nearbySlot;
         if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
             nearbySlot = unit.curSlot;
-        else nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnit);
+        else {
+            if (!unit.pathing.moveMask)
+                nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnit);
+            else
+                nearbySlot = AiHelper.ClosestToTargetOverMask(unit.curSlot, closestUnit, unit.pathing.moveMask);
+                //nearbySlot = AiHelper.ClosestFreeSlotOnEdge(transform.position, closestUnit, unit.pathing.moveMask);
+        }
         if (nearbySlot == null)
             yield break;
 
@@ -23,7 +29,8 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
+        if (GridManager.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask))
+            unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
         // end unit turn
         yield return null;
     }

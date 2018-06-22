@@ -28,7 +28,11 @@ public class PlayerFlag : FlagController {
                 break;
             }
             if (NoActionsLeft()) break;
-            
+
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                break;
+            }
+
             slot = SelectionManager.GetMouseAsSlot2D();
             if (slot == null) {
                 yield return null;
