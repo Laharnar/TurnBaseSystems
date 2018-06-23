@@ -41,7 +41,7 @@ public static class AiHelper {
         if (list.Count == 2)
             list = new List<GridItem>() { optimalMovePos };
         float[] dists = GetDistances<GridItem>(target.transform.position, list.ToArray());
-        return list[GetIndexOfMin(dists)];
+        return list[GetIndexOfMin(dists)]; 
     }
 
     public static int GetIndexOfMax(this float[] list) {

@@ -20,6 +20,10 @@ public class GridItem : MonoBehaviour {
 
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
 
+    internal void CreateWall() {
+        throw new NotImplementedException();
+    }
+
     Color defaultColor;
 
     private void Awake() {

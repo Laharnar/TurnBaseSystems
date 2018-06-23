@@ -20,4 +20,8 @@ public class Structure : MonoBehaviour,IInteractible {
         Unit.activeUnit.materials += materialValue;
         Destroy(gameObject);
     }
+
+    internal void CreateWall() {
+        throw new NotImplementedException();
+    }
 }

@@ -41,7 +41,8 @@ AP - ok
 pickup. -ok
 guns/items. -ok
 wall cover
-flip table
+flip table - cut
+classes
 collect material
 pass item - inventory
 AP restore
@@ -54,3 +55,29 @@ air per slot
 passives.
 
 skill tree
+
+23.6.2018
+I don't have a concrete way to add abilities to units.
+- env abilitites
+button shows up over slot and you click it
+multiple choices
+scrap this, u need 1 choice, have multiple attacks
+- aoe env ability
+same as normal attack?
+spawn grid that follows mouse, snapped
+on attacks, spawn grid based on mask.
+
+- normal attacks
+avaliable grid slot colors, and you press the grid.
+- ui attacks
+u press ui then where to attack.
+
+2 grids - map in the background and transparent clickable grid.
+abilities and all that, instead spawns a new grid item overlay.
+spawning is better, because we have better control over what's visible.
+if it's grid... all we can do is recolor it.
+
+we click on grid items bellow them.
+grid items are replacable.
+
+oh this would allow me to have per slot type action. - cut
