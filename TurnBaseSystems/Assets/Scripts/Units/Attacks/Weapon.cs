@@ -32,10 +32,7 @@ public class Weapon:MonoBehaviour,IInteractible {
     public static GridItem BelongsTo(Weapon wep) {
         return GridManager.SnapToGrid(wep.transform.position);
     }
-
-    public void UnitPicksIt() {
-        Unit.activeUnit.EquipAction(this);
-    }
+    
 
     public static void AssignAllDroppedWeaponsToSlots() {
         for (int i = 0; i < Weapon.weapons.Count; i++) {

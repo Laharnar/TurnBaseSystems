@@ -81,3 +81,12 @@ we click on grid items bellow them.
 grid items are replacable.
 
 oh this would allow me to have per slot type action. - cut
+
+spawn Mask or multiple masks
+spawned mask can optionally be moved to mouse, inside range.
+cut: interaction
+
+so click player ability button -> button interaction(two step attack) 
+-> (spawn mask -> click in loop -> destroy mask)
+
+move: select unit in loop -> (spawn mask -> click in loop -> destroy mask)

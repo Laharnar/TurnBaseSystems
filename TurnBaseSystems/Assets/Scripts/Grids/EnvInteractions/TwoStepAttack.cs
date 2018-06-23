@@ -1,8 +1,8 @@
 ﻿public class TwoStepAttack:Interaction {
-    public UnitAbilities unitSource;
+    public Unit unitSource;
     public int atkId;
 
-    public TwoStepAttack Init(UnitAbilities unitSource, int atkId) {
+    public TwoStepAttack Init(Unit unitSource, int atkId) {
         this.unitSource = unitSource;
         this.atkId = atkId;
         return this;

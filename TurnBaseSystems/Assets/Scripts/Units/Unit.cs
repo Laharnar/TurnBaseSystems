@@ -36,6 +36,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     /// <summary>
     /// Used by interactions.
     /// </summary>
+    [System.Obsolete("Don't use interactions.")]
     public static Unit activeUnit;
 
     internal int materials;
@@ -68,7 +69,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
 
-        GridManager.RecolorMask(curSlot, 4, abilities.BasicAttack.attackMask);
+        PlayerFlag.m.curAttack = abilities.BasicAttack;
     }
 
     public void MoveAction(GridItem slot) {

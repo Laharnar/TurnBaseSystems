@@ -15,13 +15,4 @@ public class Structure : MonoBehaviour,IInteractible {
     internal void Destruct() {
         Destroy(gameObject);
     }
-
-    internal void Consume() {
-        Unit.activeUnit.materials += materialValue;
-        Destroy(gameObject);
-    }
-
-    internal void CreateWall() {
-        throw new NotImplementedException();
-    }
 }

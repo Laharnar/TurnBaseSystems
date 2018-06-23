@@ -47,12 +47,12 @@ public class PlayerUIAbilityList : MonoBehaviour {
         m.instances[i].GetComponent<ButtonInteraction>().interaction = interaction;
     }
 
-    internal static void AssignAbilitiesToUI(UnitAbilities abilities) {
-        Attack[] abilitis = abilities.GetNormalAbilities();
+    internal static void LoadAbilitiesOnUI(Unit unit) {
+        Attack[] abilitis = unit.abilities.GetNormalAbilities();
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
             m.instances[i].GetComponent<ButtonInteraction>().interaction 
-                = ScriptableObject.CreateInstance<TwoStepAttack>().Init(abilities, i);
+                = ScriptableObject.CreateInstance<TwoStepAttack>().Init(unit, i);
         }
     }
 }
