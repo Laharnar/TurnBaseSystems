@@ -84,7 +84,9 @@ public partial class GridManager : MonoBehaviour {
     }
 
     public static void RecolorMask(GridItem u, int color, GridMask attackMask) {
-        RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
+        if (attackMask)
+           RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
+        else Debug.Log("Warning: mask is not assigned.");
     }
 
     public static GridItem[] GetSlotsInRange(int gridX, int gridY, int range) {
@@ -121,12 +123,13 @@ public partial class GridManager : MonoBehaviour {
         }
         return false;
     }
-
+    
     public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask) {
         if (mask.w == 0 || mask.l == 0) {
             Debug.LogError("Mask isn't defined");
             return null;
         }
+        GridItem center = m.gridSlots.GetItem(gridX, gridY);
         List<GridItem> items = new List<GridItem>();
         for (int i =  0; i < mask.w; i++) {
             for (int j =  0; j < mask.l; j++) {

@@ -9,7 +9,6 @@ public class GridItem : MonoBehaviour {
     public Structure fillAsStructure;
     public Weapon fillAsPickup;
 
-
     //public LocationMaterial material;
 
     /// <summary>
@@ -19,11 +18,6 @@ public class GridItem : MonoBehaviour {
     public InteractiveEnvirounment slotInteractions;
 
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
-
-    internal void CreateWall() {
-        throw new NotImplementedException();
-    }
-
     Color defaultColor;
 
     private void Awake() {
@@ -42,10 +36,26 @@ public class GridItem : MonoBehaviour {
         }
     }
 
-
     internal void InitGrid(int i, int j) {
         gridX = i;
         gridY = j;
+    }
+
+    internal static bool TypeFilter(GridItem gridItem, string attackType) {
+        if (attackType == "Normal") {
+            return gridItem.slotInteractions.interactions.Count == 0 || gridItem.slotInteractions.interactions[0].GetType() == typeof(Pickable);
+        }
+        for (int i = 0; i < gridItem.slotInteractions.interactions.Count; i++) {
+            if (gridItem.slotInteractions.interactions[i].GetType()
+                .Name == attackType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal void CreateWall() {
+        throw new NotImplementedException();
     }
 
     /// <summary>

@@ -1,25 +1,4 @@
 ﻿using System;
-
-[System.Serializable]
-public class SlotConsumption : EnvirounmentalAttack {
-
-    public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-        if (attackedSlot.fillAsStructure) {
-            source.materials += attackedSlot.fillAsStructure.materialValue;
-            attackedSlot.fillAsStructure.Destruct();
-        }
-    }
-}
-[System.Serializable]
-public class SlotBuilding : EnvirounmentalAttack {
-
-    public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-        if (!attackedSlot.fillAsStructure) {
-            source.materials = 0;
-            attackedSlot.CreateWall();
-        }
-    }
-}
 [System.Serializable]
 public class BuilderClass : UnitAbilities {
 

@@ -113,4 +113,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public bool CanMoveTo(GridItem slot) {
         return CanMove && (pathing.moveMask == null || GridManager.IsSlotInMask(curSlot, slot, pathing.moveMask));
     }
+
+    internal bool CanAttackSlot(GridItem hoveredSlot, Attack attack) {
+        return CanAttack && hoveredSlot.filledBy && GridManager.IsUnitInAttackRange(this, hoveredSlot.filledBy, attack);
+    }
 }

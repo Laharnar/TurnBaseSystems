@@ -8,6 +8,7 @@
 [System.Serializable]
 public abstract class Attack {
     public GridMask attackMask;
+    public string attackType = "Normal";
 
     public abstract void ApplyDamage(Unit source, GridItem attackedSlot);
 }
