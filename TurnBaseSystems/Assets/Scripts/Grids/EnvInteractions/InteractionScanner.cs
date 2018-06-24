@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+[System.Obsolete]
 public class InteractionScanner {
     /// <summary>
     /// Finds all slots that unit can interact with.

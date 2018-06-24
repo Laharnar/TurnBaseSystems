@@ -16,18 +16,29 @@ public class InteractiveEnvirounment : MonoBehaviour {
     // stuff that this slot represents/ abilities that can be use on it.
     public List<Interaction> interactions = new List<Interaction>();
         
-    public bool HasInteraction<T>() where T: Interaction {
+    public bool HasInteraction(string type) {
         for (int i = 0; i < interactions.Count; i++) {
-            if (interactions[i].GetType() == typeof(T))
+            if (interactions[i].interactionType == type)
                 return true;
         }
         return false;
     }
 
+    public void RemoveByType(string type) {
+        for (int i = 0; i < interactions.Count; i++) {
+            if (interactions[i].interactionType == type) {
+                interactions.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
     internal IEnumerable<Interaction> Copies() {
         List<Interaction> ites = new List<Interaction>();
         for (int i = 0; i < interactions.Count; i++) {
-            ites.Add(ScriptableObject.CreateInstance(interactions[i].GetType()) as Interaction);
+            Interaction interaction = ScriptableObject.CreateInstance(interactions[i].GetType()) as Interaction;
+            interaction.interactionType = interactions[i].interactionType;
+            ites.Add(interaction);
         }
         return ites;
     }

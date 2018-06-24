@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridItem : MonoBehaviour {
@@ -8,6 +9,12 @@ public class GridItem : MonoBehaviour {
     public Unit filledBy;
     public Structure fillAsStructure;
     public Weapon fillAsPickup;
+
+    internal void RemoveInteractions(List<Interaction> interactions) {
+        for (int i = 0; i < interactions.Count; i++) {
+            slotInteractions.RemoveByType(interactions[i].interactionType);
+        }
+    }
 
     //public LocationMaterial material;
 
@@ -43,14 +50,15 @@ public class GridItem : MonoBehaviour {
 
     internal static bool TypeFilter(GridItem gridItem, string attackType) {
         if (attackType == "Normal") {
-            return gridItem.slotInteractions.interactions.Count == 0 || gridItem.slotInteractions.interactions[0].GetType() == typeof(Pickable);
+            return gridItem.slotInteractions.interactions.Count == 0 || gridItem.slotInteractions.interactions[0].InteractionMatch("Pickable");
         }
         for (int i = 0; i < gridItem.slotInteractions.interactions.Count; i++) {
-            if (gridItem.slotInteractions.interactions[i].GetType()
-                .Name == attackType) {
+            if (gridItem.slotInteractions.interactions[i].InteractionMatch(attackType)) {
+                Debug.Log("Found match with "+attackType);
                 return true;
             }
         }
+        Debug.Log("No match with "+attackType);
         return false;
     }
 

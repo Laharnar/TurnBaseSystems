@@ -54,14 +54,14 @@ public class UIInteractionController:MonoBehaviour {
     private static void OverlayUI(GridItem slot) {
         InteractiveEnvirounment interaction = slot.slotInteractions;
         for (int i = 0; i < interaction.interactions.Count; i++) {
-            if (interaction.interactions[i].GetType() == typeof(Combustible)) {
+            if (interaction.interactions[i].InteractionMatch("Combustible")) {
                 Transform t = Instantiate(m.combustibleUIPref, slot.transform.position+new Vector3(0,i), new Quaternion(), m.canvasParent);
                 ButtonInteraction bi = t.gameObject.GetComponent<ButtonInteraction>();
                 bi.interaction = interaction.interactions[i];
                 bi.source = slot.fillAsStructure;
                 m.AddUIPiece(t);
             }
-            else if (interaction.interactions[i].GetType() == typeof(Pickable)) {
+            else if (interaction.interactions[i].InteractionMatch("Pickable")) {
                 Transform t = Instantiate(m.pickableUIPref, slot.transform.position + new Vector3(0, i), new Quaternion(), m.canvasParent);
                 ButtonInteraction bi = t.gameObject.GetComponent<ButtonInteraction>();
                 bi.interaction = interaction.interactions[i];

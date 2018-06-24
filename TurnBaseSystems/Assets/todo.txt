@@ -109,3 +109,15 @@ units 20
 items 25
 
 UI 100
+24.6.2018 - checkup
+so far i redid the coloring system and attacking system. now it supports attacking for 
+enbirounment and interactions both via the grid.
+removed button based attack system.
+i have a few standard attacks, range and melle, and weapon pickup and throw.
+added hp bars.
+standardized sprite layers
+
+next goal: 
+1) come up with a scenario for levels - level design direction
+2) add more abilities
+3) add other classes <-

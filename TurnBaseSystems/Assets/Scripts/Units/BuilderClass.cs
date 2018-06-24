@@ -25,6 +25,6 @@ public class BuilderClass : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack };
+        return new Attack[] { melleAttack, deconstruct, construct };
     }
 }
