@@ -93,10 +93,19 @@ move: select unit in loop -> (spawn mask -> click in loop -> destroy mask) -ok
 
 soo, have an ability scanner that scans area for certain interactions.
 opt 1: always raycast, for every interaction choice. faster, costlier ~20 raycasts per hit.
-opt 2: have data stored on grid item. it changes annoying to deal with every
+opt 2: have data stored on grid item. it changes annoying to deal with every 
 change. slot get's consumed -> changes, interaction is replaced.
 opt 3: re raycast every time there is a change on map.
-attack + interaction type + mask = selectable area
-dont' check for taken.
+attack + interaction type + mask = selectable area - ok
 
-pickup ability on the attack list
+pickup ability on the attack list ok -24.6.2018
+
+SPRITE LAYERS.
+
+background 0
+walls bellow grid items 5
+grid items are on top of everything. below units. 10
+units 20
+items 25
+
+UI 100
