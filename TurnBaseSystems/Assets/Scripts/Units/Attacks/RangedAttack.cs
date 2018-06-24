@@ -8,6 +8,8 @@ public class RangedAttack : Attack {
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (attackedSlot.filledBy) {
             attackedSlot.filledBy.GetDamaged(damage);
+        } else {
+            Debug.Log("Not unit in slot. Change tag to Normal");
         }
     }
 

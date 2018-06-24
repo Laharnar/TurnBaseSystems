@@ -1,34 +1,4 @@
-﻿using System;
-[System.Serializable]
-public class BuilderClass : UnitAbilities {
-
-    public RangedAttack melleAttack;
-    //public TwoStepAttack deconstruct;
-    //public TwoStepAttack construct;
-    public SlotConsumption deconstruct;
-    public SlotBuilding construct;
-
-    public override Attack BasicAttack {
-        get {
-            return melleAttack;
-        }
-    }
-
-    public override GridMask BasicMask {
-        get {
-            return melleAttack.attackMask;
-        }
-    }
-
-    public override EnvirounmentalAttack[] GetEnvAbilities() {
-        throw new NotImplementedException();
-    }
-
-    public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack };
-    }
-}
-[System.Serializable]
+﻿[System.Serializable]
 public class UserClass : UnitAbilities {
 
     public RangedAttack shoot1;
@@ -47,7 +17,7 @@ public class UserClass : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack };
+        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon };
     }
 
     public override Attack BasicAttack {

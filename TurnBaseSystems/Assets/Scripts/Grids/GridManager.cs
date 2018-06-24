@@ -56,17 +56,7 @@ public partial class GridManager : MonoBehaviour {
         return Vector3.Distance(curSlot.transform.position, attackedSlot.transform.position)
             <= range*Mathf.Max(m.itemDimensions.x, m.itemDimensions.y);
     }
-
-    /// <summary>
-    /// Target unit is either hovered over or null.
-    /// </summary>
-    /// <param name="unit"></param>
-    /// <param name="targetUnit"></param>
-    /// <param name="basicAttack"></param>
-    /// <returns></returns>
-    internal static bool IsUnitInAttackRange(Unit unit, Unit targetUnit, Attack basicAttack) {
-        return targetUnit && IsSlotInMask(unit.curSlot, targetUnit.curSlot, basicAttack.attackMask);
-    }
+    
 
     internal static GridItem[] GetSlotsInInteractiveRange(Unit slot, GridMask mask) {
         if (mask == null) // return all
@@ -85,7 +75,7 @@ public partial class GridManager : MonoBehaviour {
 
     public static void RecolorMask(GridItem u, int color, GridMask attackMask) {
         if (attackMask)
-           RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
+            RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
         else Debug.Log("Warning: mask is not assigned.");
     }
 

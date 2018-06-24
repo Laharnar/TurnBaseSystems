@@ -98,3 +98,5 @@ change. slot get's consumed -> changes, interaction is replaced.
 opt 3: re raycast every time there is a change on map.
 attack + interaction type + mask = selectable area
 dont' check for taken.
+
+pickup ability on the attack list

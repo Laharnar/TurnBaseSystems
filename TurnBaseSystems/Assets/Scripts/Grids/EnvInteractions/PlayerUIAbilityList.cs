@@ -32,19 +32,20 @@ public class PlayerUIAbilityList : MonoBehaviour {
         instances.Clear();
 
         Vector2 screenLeft = new Vector2(-Camera.main.pixelWidth/2, 0);
-        Vector2 screenBot = screenLeft + new Vector2(height, -(length - 1) * offset / 2);
+        Vector2 screenBot = screenLeft + new Vector2(height, (length - 1) * offset / 2);
 
         for (int i = 0; i < length; i++) {
             Transform t = Instantiate(buttonPref, new Vector3(), new Quaternion());
             t.SetParent(canvas.transform, false);
             t.name += i;
-            (t as RectTransform).anchoredPosition = screenBot + new Vector2(0, i * offset);
+            (t as RectTransform).anchoredPosition = screenBot - new Vector2(0, i * offset);
             instances.Add(t);
         }
     }
 
     public static void AssignInteractionToUI(Interaction interaction, int i) {
         m.instances[i].GetComponent<ButtonInteraction>().interaction = interaction;
+        m.instances[i].GetChild(0).GetComponent<Text>().text += interaction.GetType();
     }
 
     internal static void LoadAbilitiesOnUI(Unit unit) {

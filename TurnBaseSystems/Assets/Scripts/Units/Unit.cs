@@ -115,6 +115,13 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     internal bool CanAttackSlot(GridItem hoveredSlot, Attack attack) {
-        return CanAttack && hoveredSlot.filledBy && GridManager.IsUnitInAttackRange(this, hoveredSlot.filledBy, attack);
+        return CanAttack && hoveredSlot && GridManager.IsSlotInMask(this.curSlot, hoveredSlot, attack.attackMask);
+    }
+
+    internal void EnvirounmentAction(GridItem hoveredSlot, Unit hoveredUnit, Attack curAttack) {
+        if (curAttack.GetType() == typeof(PickItem)) {
+            (curAttack as PickItem).ApplyDamage(this, hoveredSlot);
+        }
+        else curAttack.ApplyDamage(this, hoveredSlot);
     }
 }
