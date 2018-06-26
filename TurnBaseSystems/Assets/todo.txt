@@ -143,6 +143,7 @@ note: fill priority mask with ints instead of bools? this would let me have a sp
 **
 ** Collector class 26.6.2018 - 1d
 Collector: Energy manipulation frontliner.
+
 Hunker/calm. Increase defence for 1 turn. Restores some AP. -ok
 instant ability, consumes all actions, end turn
 grant defence or armor for 1 turn(inc hp?)
@@ -151,7 +152,21 @@ additional visual effects!
 Enforce. Release inner power for a shield. Can block attacks in small area around the collector.
 !
 
-Enhance. Enhances (equipped) item or area. /Useful for reinforcing walls or doors against bullets.
+Enhance. Enhances (equipped) item or area. /Useful for reinforcing walls or doors against bullets./Useful for improving weapons
+to item -> increase damage or range
+
+Enhance walls or area. << currently useless since walls don't get destroyed. Could be used to consume more? meh.
+
+Enhance item.
+activate special ability for 2 turns. ability is on item not unit, so item can be passed to other units. (special turn counter on item, apply damage activates it)
+--opt1: enhance type defines effect change--
+opt2: weapon type defines effect change <-- a lot of interesting options. go with this.
+Door: survivabilty against bullets
+gun: insanity bullet - collector's aura gets mixed in opponets aura, which makes them lose control - reduce will?, maxmoves for n turns
+stick: it becomes hard like steel which allows our soldiers to hit harder. increased damage.
+
+Another interesting options is to to pass an enhanced item to unit with more actions, or further in in combat.
+
 ! bullets destroy walls
 
 Blast. Fire energy blast to affect area in some direction. High AP usage.

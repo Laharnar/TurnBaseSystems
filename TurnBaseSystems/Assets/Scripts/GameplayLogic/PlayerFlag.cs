@@ -126,21 +126,21 @@ public class PlayerFlag : FlagController {
                         if (aimSuccesful) {
                             ResetColorForUnit(selectedPlayerUnit);
                             selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
+                            if (selectedPlayerUnit.equippedWeapon) {
+                                selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, curAttack);
+                            }
                         }
                     } else if (!curAttack.requiresUnit) { // env attack
                         ResetColorForUnit(selectedPlayerUnit);
                         selectedPlayerUnit.EnvirounmentAction(hoveredSlot, hoveredUnit, curAttack);
-                    } else { // not hostile, not env = ally
+                    } else if (curAttack.requiresUnit && !CurMouseIsHostile) { // not hostile, not env = ally
                         ResetColorForUnit(selectedPlayerUnit);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
                     }
                     yield return null;
                 }
             }
-
-
-
-
+            
             // Reload env interaction buttons when player is selected.
             /*
             if (selectionChanged) {

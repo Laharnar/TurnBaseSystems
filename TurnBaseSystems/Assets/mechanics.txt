@@ -71,7 +71,7 @@ Materialization objects:
 Give item. Pass item to allies.
 
 Collector: Energy manipulation frontliner.
-Hunker/calm. Increase defence for 1 turn. Restores some AP.
+Hunker/calm. Increase defence for 1 turn. Restores some AP and gives some armor for 1 turn.
 Enforce. Release inner power for a shield. Can block attacks in small area around the collector.
 Enhance. Enhances (equipped) item or area. /Useful for reinforcing walls or doors against bullets.
 Blast. Fire energy blast to affect area in some direction. High AP usage.
@@ -98,3 +98,18 @@ BUILDER building
 how about rotatable mask based build
 optionally based on gathered material?
 
+** COLLECTOR SKILLS **
+
+ENHANCE: Enhances equipped item for few turns.
+Weapon type defines effect change
+Door: survivabilty against bullets
+gun: insanity bullet - collector's aura gets mixed in opponets aura, which makes them lose control - reduce will?, maxmoves for n turns
+stick: it becomes hard like steel which allows our soldiers to hit harder. increased damage.
+
+Another interesting options is to to pass an enhanced item to unit with more actions, or deeper in area.
+Ability counter is reduced on end of every turn, when on 0, it reverts to default weapon.
+
+
+Additional: enemies cannot use enhanced weapons.
+
+** END COLLECTOR **

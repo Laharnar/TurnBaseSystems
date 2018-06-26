@@ -17,6 +17,10 @@ public class Weapon:MonoBehaviour,IInteractible {
     public RangedAttack attackData;
     public Attack StandardAttack { get { return attackData; } }
 
+
+    public int enhanceCounter = 0;
+    public WeaponEnhancedEffect enhanced;
+
     private void Awake() {
         weapons.Add(this);
     }
@@ -32,7 +36,13 @@ public class Weapon:MonoBehaviour,IInteractible {
     public static GridItem BelongsTo(Weapon wep) {
         return GridManager.SnapToGrid(wep.transform.position);
     }
-    
+
+    internal void Enhance(int numOfTurns) {
+        if (enhanced) {
+            enhanceCounter = numOfTurns;
+            enhanced.OnEquipEffect(this);
+        } else Debug.Log("No enhance ability on this weapon");
+    }
 
     public static void AssignAllDroppedWeaponsToSlots() {
         for (int i = 0; i < Weapon.weapons.Count; i++) {
@@ -47,4 +57,12 @@ public class Weapon:MonoBehaviour,IInteractible {
             }
         }
     }
+
+    internal void OnDamageEnhanceEffect(Unit selectedPlayerUnit, GridItem attackedSlot, Unit attackedUnit, Attack curAttack) {
+        if (enhanceCounter > 0) {
+            enhanceCounter--;
+            enhanced.OnDamageEnhanceEffect(selectedPlayerUnit, attackedSlot, attackedUnit, this);
+        }
+    }
+
 }

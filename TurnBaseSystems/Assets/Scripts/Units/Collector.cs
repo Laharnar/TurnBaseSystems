@@ -2,6 +2,8 @@
 public class Collector : UnitAbilities {
     public RangedAttack melleAttack;
     public Hunker defensive;
+    public Enhance enhanceItem;
+    public PickItem pickItem;
 
     public override Attack BasicAttack {
         get {
@@ -20,6 +22,6 @@ public class Collector : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack, defensive };
+        return new Attack[] { melleAttack, defensive, enhanceItem , pickItem };
     }
 }

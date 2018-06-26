@@ -63,6 +63,15 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     public void OnTurnEnd() {
+        if (equippedWeapon) {
+            if (equippedWeapon.enhanceCounter >0) {
+                equippedWeapon.enhanceCounter--;
+            }
+            if (equippedWeapon.enhanceCounter == 0) {
+                if (equippedWeapon.enhanced)
+                    equippedWeapon.enhanced.OnDeEquipEffect(equippedWeapon);
+            }
+        }
     }
 
     public void OnTurnStart() {
@@ -126,6 +135,9 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     internal void AttackAction(GridItem attackedSlot, Unit other, Attack atk) {
         actionsLeft-=atk.actionCost;
         atk.ApplyDamage(this, attackedSlot);
+
+        if (equippedWeapon)
+            equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);
     }
 
     public void GetDamaged(int realDmg) {
