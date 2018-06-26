@@ -6,6 +6,7 @@ public class HpUISettings :MonoBehaviour{
     public Transform hpBarItemPref;
 
     public static HpUISettings m;
+    public Transform greyhpBarItemPref;
 
     private void Awake() {
         m = this;

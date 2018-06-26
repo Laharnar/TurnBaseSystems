@@ -97,3 +97,4 @@ Cover will reduce avaliable hit area, making it harder to hit.
 BUILDER building
 how about rotatable mask based build
 optionally based on gathered material?
+

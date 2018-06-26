@@ -22,7 +22,15 @@ public class GameplayManager : MonoBehaviour {
         while (true) {
             for (int j = 0; j < FlagManager.flags.Count; j++) {
                 activeFlagTurn = j;
+
+                for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
+                    FlagManager.flags[j].units[i].OnTurnStart();
+                }
                 yield return StartCoroutine(FlagManager.flags[j].FlagUpdate());
+
+                for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
+                    FlagManager.flags[j].units[i].OnTurnEnd();
+                }
                 Debug.Log("Flag done - " + (j + 1));
                 FlagManager.flags[j].NullifyUnits();
                 if (FlagManager.flags[0].units.Count == 0) {

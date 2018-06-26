@@ -141,3 +141,20 @@ shapes: I, T, U, B
 note: fill priority mask with ints instead of bools? this would let me have a spread mask
 -> or better have a different mask for this.
 **
+** Collector class 26.6.2018 - 1d
+Collector: Energy manipulation frontliner.
+Hunker/calm. Increase defence for 1 turn. Restores some AP. -ok
+instant ability, consumes all actions, end turn
+grant defence or armor for 1 turn(inc hp?)
+additional visual effects!
+
+Enforce. Release inner power for a shield. Can block attacks in small area around the collector.
+!
+
+Enhance. Enhances (equipped) item or area. /Useful for reinforcing walls or doors against bullets.
+! bullets destroy walls
+
+Blast. Fire energy blast to affect area in some direction. High AP usage.
+aoe damage
+
+**

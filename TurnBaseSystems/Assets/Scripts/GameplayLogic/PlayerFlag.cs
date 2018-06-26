@@ -38,7 +38,6 @@ public class PlayerFlag : FlagController {
         m = this;
         turnDone = false;
         NullifyUnits();
-        ResetUnitActions();
 
         while (true) {
             if (units.Count == 0 || NoActionsLeft() || Input.GetKeyDown(KeyCode.Return)) break;
@@ -94,13 +93,13 @@ public class PlayerFlag : FlagController {
                 }
             }
 
+            // Find filter for active attack, Attack is changed by UI.
             if (curAttack != null && selectedPlayerUnit) {
                 curFilter = curAttack.attackMask;
                 if (curAttack.attackMask.rotateable)
                     curFilter = GridMask.RotateMask(curFilter, mouseDirection);
 
                 curFilter = LoadInteractionsInArea(selectedPlayerUnit.curSlot, curFilter, curAttack.attackType);
-                
             }
             // Note: attack and move commands override the coro call.
             // move
@@ -111,24 +110,32 @@ public class PlayerFlag : FlagController {
                 yield return null;
             }
             // attack
-            else if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackWith(curAttack) && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
-                if ((curAttack.requiresUnit && CurMouseIsHostile)) {
-                    // handle weapon aim
-                    bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
-                    if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
-                        yield return selectedPlayerUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(selectedPlayerUnit, hoveredUnit, selectedPlayerUnit.equippedWeapon.conePref, selectedPlayerUnit.equippedWeapon.StandardAttack.attackMask.Range));
-                        aimSuccesful = CheckIfEnemyHit(hoveredUnit);
-                    }
+            else {
+                if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackWith(curAttack) && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
+                    bool isHostileType = curAttack != null && curAttack.requiresUnit && CurMouseIsHostile;
+                    Debug.Log("Passable: " + true + " requiresAndFoundEnemy:" + isHostileType + " notReqAndFoundEnv" + !curAttack.requiresUnit + " foundAlly" + !(isHostileType || !curAttack.requiresUnit));
 
-                    if (aimSuccesful) {
+                    if (curAttack.requiresUnit && CurMouseIsHostile) {
+                        // handle weapon aim
+                        bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
+                        if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
+                            yield return selectedPlayerUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(selectedPlayerUnit, hoveredUnit, selectedPlayerUnit.equippedWeapon.conePref, selectedPlayerUnit.equippedWeapon.StandardAttack.attackMask.Range));
+                            aimSuccesful = CheckIfEnemyHit(hoveredUnit);
+                        }
+
+                        if (aimSuccesful) {
+                            ResetColorForUnit(selectedPlayerUnit);
+                            selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
+                        }
+                    } else if (!curAttack.requiresUnit) { // env attack
+                        ResetColorForUnit(selectedPlayerUnit);
+                        selectedPlayerUnit.EnvirounmentAction(hoveredSlot, hoveredUnit, curAttack);
+                    } else { // not hostile, not env = ally
                         ResetColorForUnit(selectedPlayerUnit);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
                     }
-                } else if (!curAttack.requiresUnit) { // env attack
-                    ResetColorForUnit(selectedPlayerUnit);
-                    selectedPlayerUnit.EnvirounmentAction(hoveredSlot, hoveredUnit, curAttack);
+                    yield return null;
                 }
-                yield return null;
             }
 
 
@@ -227,12 +234,6 @@ public class PlayerFlag : FlagController {
             Debug.Log("Attack is null");
         }
     }*/
-
-    private void ResetUnitActions() {
-        for (int i = 0; i < units.Count; i++) {
-            units[i].ResetActions();
-        }
-    }
 
     /// <summary>
     /// Activates slots in area that fit filtering parameters
