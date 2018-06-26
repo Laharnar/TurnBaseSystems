@@ -16,6 +16,14 @@ public class GridItem : MonoBehaviour {
         }
     }
 
+    internal void AddEnvInteraction(params string[] v) {
+        for (int i = 0; i < v.Length; i++) {
+            EnvInteraction eint = ScriptableObject.CreateInstance<EnvInteraction>();
+            eint.interactionType = v[i];
+            slotInteractions.interactions.Add(eint);
+        }
+    }
+
     //public LocationMaterial material;
 
     /// <summary>
@@ -62,9 +70,6 @@ public class GridItem : MonoBehaviour {
         return false;
     }
 
-    internal void CreateWall() {
-        throw new NotImplementedException();
-    }
 
     /// <summary>
     /// 

@@ -1,4 +1,14 @@
-﻿13.6.2018
+﻿SPRITE LAYERS.
+
+background 0
+walls bellow grid items 5
+grid items are on top of everything. below units. 10
+units 20
+items 25
+
+UI 100
+
+13.6.2018
 Add walls. Like a building.
 
 Soo. I have a few ways to do this. Full slot walls. Thin walls.
@@ -43,7 +53,7 @@ guns/items. -ok
 wall cover
 flip table - cut
 classes
-collect material
+collect material - ok
 pass item - inventory
 AP restore
 reinforce self
@@ -57,7 +67,9 @@ passives.
 skill tree
 
 23.6.2018
-I don't have a concrete way to add abilities to units.
+**
+o. I don't have a concrete way to add abilities to units.
+x. Fixed so all abilities use same system, grid slots.
 - env abilitites
 button shows up over slot and you click it
 multiple choices
@@ -70,21 +82,26 @@ on attacks, spawn grid based on mask.
 - normal attacks
 avaliable grid slot colors, and you press the grid.
 - ui attacks
-u press ui then where to attack.
+u press ui to select active normal attack
+**
+**
+o. how to represent grid over map
+x. semi transparent static grid where stuff can be done. background is behind it.
 
+*dynamic grid - no
 2 grids - map in the background and transparent clickable grid.
 abilities and all that, instead spawns a new grid item overlay.
 spawning is better, because we have better control over what's visible.
 if it's grid... all we can do is recolor it.
 
-we click on grid items bellow them.
-grid items are replacable.
-
-oh this would allow me to have per slot type action. - cut
-
 spawn Mask or multiple masks
 spawned mask can optionally be moved to mouse, inside range.
-cut: interaction
+*
+
+we click on grid items, props are ignored. -y
+grid items are replacable. -no
+
+oh this would allow me to have per slot type action. - cut
 
 so click player ability button -> button interaction(two step attack)  - ok
 -> (spawn mask -> click in loop -> destroy mask)
@@ -94,21 +111,13 @@ move: select unit in loop -> (spawn mask -> click in loop -> destroy mask) -ok
 soo, have an ability scanner that scans area for certain interactions.
 opt 1: always raycast, for every interaction choice. faster, costlier ~20 raycasts per hit.
 opt 2: have data stored on grid item. it changes annoying to deal with every 
-change. slot get's consumed -> changes, interaction is replaced.
+change. slot get's consumed -> changes, interaction is replaced. - ok
 opt 3: re raycast every time there is a change on map.
 attack + interaction type + mask = selectable area - ok
 
 pickup ability on the attack list ok -24.6.2018
 
-SPRITE LAYERS.
 
-background 0
-walls bellow grid items 5
-grid items are on top of everything. below units. 10
-units 20
-items 25
-
-UI 100
 24.6.2018 - checkup
 so far i redid the coloring system and attacking system. now it supports attacking for 
 enbirounment and interactions both via the grid.
@@ -118,6 +127,17 @@ added hp bars.
 standardized sprite layers
 
 next goal: 
-1) come up with a scenario for levels - level design direction
+ned: finishing
+1) come up with a scenario for levels - level design direction - pet/sob
 2) add more abilities
-3) add other classes <-
+3) add other classes <- finish builder - tor, then enhancer - sre and consumer - čet
+
+** Build ability
+comes with a mask that can be rotated
+by default mask should be turned left to right
+
+shapes: I, T, U, B
+
+note: fill priority mask with ints instead of bools? this would let me have a spread mask
+-> or better have a different mask for this.
+**

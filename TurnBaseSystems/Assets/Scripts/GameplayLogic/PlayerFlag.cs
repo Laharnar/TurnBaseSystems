@@ -19,6 +19,9 @@ public class PlayerFlag : FlagController {
     public Attack curAttack;
     private GridMask curFilter;
 
+    OffsetMask mouseToSelectOffset = new OffsetMask();
+    int mouseDirection = 1;
+
     bool MousePress { get { return Input.GetKeyDown(KeyCode.Mouse0); } }
     bool Mouse2Press { get { return Input.GetKeyDown(KeyCode.Mouse1); } }
     bool CurMouseIsPlayerUnit { get { return hoveredUnit && hoveredUnit.flag.allianceId == 0; } }
@@ -27,8 +30,10 @@ public class PlayerFlag : FlagController {
     bool CurMouseIsHostile { get { return hoveredUnit && selectedPlayerUnit && hoveredUnit.flag.allianceId != selectedPlayerUnit.flag.allianceId; } }
     bool CurMouseIsDifferentUnit { get { return hoveredUnit != selectedPlayerUnit; } }
     bool MoveCommandExecuted { get { return Mouse2Press && CurMouseIsWalkable; } }
-    bool AttackCommandExecuted { get { return MousePress ; } }
+    bool AttackCommandExecuted { get { return MousePress; } }
+    bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
 
+    
     public override IEnumerator FlagUpdate() {
         m = this;
         turnDone = false;
@@ -38,6 +43,16 @@ public class PlayerFlag : FlagController {
         while (true) {
             if (units.Count == 0 || NoActionsLeft() || Input.GetKeyDown(KeyCode.Return)) break;
 
+            // update offset. 
+            if (selectedPlayerUnit && hoveredSlot) {
+                mouseToSelectOffset.x = hoveredSlot.gridX - selectedPlayerUnit.gridX;
+                mouseToSelectOffset.y = hoveredSlot.gridY - selectedPlayerUnit.gridY;
+            }
+            if (MouseWheelRotate) {
+                float f = Input.GetAxis("Mouse ScrollWheel");
+                f = f < 0 ? -1 : f > 0 ? 1 : 0;
+                mouseDirection = (4+(mouseDirection+ (int)f)) % 4;
+            }
 
             UpdateVisibleArsenal();
             UpdateColorsDependinOnHoveringTarget();
@@ -53,20 +68,13 @@ public class PlayerFlag : FlagController {
 
             //UpdateInteractionFilter();
             
+
             // *t button ability press -> a) wait for press-> execute selected attack
             // b) wait for cancel
             if (RunningTwoStepAbility) {
-                if (MousePress) {
+                if (MousePress || Input.GetKeyDown(KeyCode.Escape) || MoveCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanMoveTo(hoveredSlot)
+                    || AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) {
                     //curAttack = coroUnitSource.abilities.GetNormalAbilities()[coroAtkId];
-                    coroUnitSource.StopCoroutine(twoStepCoro);
-                    twoStepCoro = null;
-                } else if (Input.GetKeyDown(KeyCode.Escape)) {
-                    coroUnitSource.StopCoroutine(twoStepCoro);
-                    twoStepCoro = null;
-                } else if(MoveCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanMoveTo(hoveredSlot)) {
-                    coroUnitSource.StopCoroutine(twoStepCoro);
-                    twoStepCoro = null;
-                } else if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curAttack)) {
                     coroUnitSource.StopCoroutine(twoStepCoro);
                     twoStepCoro = null;
                 }
@@ -86,7 +94,14 @@ public class PlayerFlag : FlagController {
                 }
             }
 
+            if (curAttack != null && selectedPlayerUnit) {
+                curFilter = curAttack.attackMask;
+                if (curAttack.attackMask.rotateable)
+                    curFilter = GridMask.RotateMask(curFilter, mouseDirection);
 
+                curFilter = LoadInteractionsInArea(selectedPlayerUnit.curSlot, curFilter, curAttack.attackType);
+                
+            }
             // Note: attack and move commands override the coro call.
             // move
             if (MoveCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanMoveTo(hoveredSlot)) {
@@ -96,8 +111,8 @@ public class PlayerFlag : FlagController {
                 yield return null;
             }
             // attack
-            else if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curAttack)) { // unit = enemy unit
-                if (CurMouseIsHostile) {
+            else if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackWith(curAttack) && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
+                if ((curAttack.requiresUnit && CurMouseIsHostile)) {
                     // handle weapon aim
                     bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
                     if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
@@ -109,7 +124,8 @@ public class PlayerFlag : FlagController {
                         ResetColorForUnit(selectedPlayerUnit);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
                     }
-                } else { // env attack
+                } else if (!curAttack.requiresUnit) { // env attack
+                    ResetColorForUnit(selectedPlayerUnit);
                     selectedPlayerUnit.EnvirounmentAction(hoveredSlot, hoveredUnit, curAttack);
                 }
                 yield return null;
@@ -186,10 +202,21 @@ public class PlayerFlag : FlagController {
         GridMask mask;
         mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, unit.pathing.moveMask, "Normal"); ;// unit.pathing.moveMask;
         RemaskActiveFilter(1, mask);
-        mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, attack.attackMask, attack.attackType);
+
+        mask = attack.attackMask;
+        if (attack.attackMask.rotateable)
+            mask = GridMask.RotateMask(mask, mouseDirection);
+
+        mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, mask, attack.attackType);
         RemaskActiveFilter(2, mask);
     }
 
+
+    private void ResetColorForUnit(Unit unit) {
+        RemaskActiveFilter(0, unit.pathing.moveMask);
+        RemaskActiveFilter(0, curFilter != null ? curFilter : unit.abilities.BasicMask);
+        unit.curSlot.RecolorSlot(0);
+    }
     /*private void UpdateInteractionFilter() {
         if (!selectedPlayerUnit)
             return;
@@ -216,7 +243,6 @@ public class PlayerFlag : FlagController {
         //return GridMask.FullMask(items);
         return AiHelper.FilterByInteractions(slot, items, attackType, mask);
     }
-    
 
     private Unit GetUnitUnderMouse() {
         Unit cur = hoveredSlot.filledBy;
@@ -230,12 +256,6 @@ public class PlayerFlag : FlagController {
 
         selectedPlayerUnit.MoveAction(item);
 
-    }
-
-    private void ResetColorForUnit(Unit unit) {
-        RemaskActiveFilter(0, unit.pathing.moveMask);
-        RemaskActiveFilter(0, curFilter!= null ? curFilter : unit.abilities.BasicMask);
-        unit.curSlot.RecolorSlot(0);
     }
 
     internal void StartTwoStepAttack(Unit unitSource, int atkId) {

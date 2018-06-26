@@ -113,8 +113,16 @@ public partial class GridManager : MonoBehaviour {
         }
         return false;
     }
-    
+
+    public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask, OffsetMask offset) {
+        if (offset != null) {
+            offset.ApplyOffset(ref gridX, ref gridY);
+        }
+        return GetSlotsInMask(gridX, gridY, mask);
+    }
+
     public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask) {
+        
         if (mask.w == 0 || mask.l == 0) {
             Debug.LogError("Mask isn't defined");
             return null;

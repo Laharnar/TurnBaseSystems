@@ -93,3 +93,7 @@ first have gun equipped. Then press on enemy unit to shot at. then aim cone show
 hitting the line shot at enemy will do damage.(you can also make it a cone instead of line,
 to hit for more damage).
 Cover will reduce avaliable hit area, making it harder to hit.
+
+BUILDER building
+how about rotatable mask based build
+optionally based on gathered material?

@@ -7,7 +7,7 @@ using UnityEngine;
 public class GridMask :UnityEngine.ScriptableObject {
     public int w, l;
     public BoolArr[] mask;
-
+    public bool rotateable = false;
     public int LowerLeftFromX (int x) {
         return x - w / 2;
     }
@@ -16,6 +16,61 @@ public class GridMask :UnityEngine.ScriptableObject {
         return y - l / 2;
     }
 
+    public GridMask MirroredAxis() {
+        GridMask m = ScriptableObject.CreateInstance<GridMask>();
+        m.w = w;
+        m.l = l;
+        m.mask = new BoolArr[w];
+        for (int i = 0; i < w; i++) {
+            m.mask[i] = new BoolArr();
+            m.mask[i].col = new bool[l];
+        }
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                m.mask[i].col[j] = mask[j].col[i];
+            }
+        }
+        return m;
+    }
+    /// <summary>
+    /// Square masks only.
+    /// </summary>
+    /// <returns></returns>
+    public GridMask MirroredHoriz() {
+        GridMask m = ScriptableObject.CreateInstance<GridMask>();
+        m.w = w;
+        m.l = l;
+        m.mask = new BoolArr[w];
+        for (int i = 0; i < w; i++) {
+            m.mask[i] = new BoolArr();
+            m.mask[i].col = new bool[l];
+        }
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                m.mask[i].col[j] = mask[w - i-1].col[j];
+            }
+        }
+        return m;
+    }/// <summary>
+     /// Square masks only.
+     /// </summary>
+     /// <returns></returns>
+    public GridMask MirroredVert() {
+        GridMask m = ScriptableObject.CreateInstance<GridMask>();
+        m.w = w;
+        m.l = l;
+        m.mask = new BoolArr[w];
+        for (int i = 0; i < w; i++) {
+            m.mask[i] = new BoolArr();
+            m.mask[i].col = new bool[l];
+        }
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                m.mask[i].col[j] = mask[i].col[l - j-1];
+            }
+        }
+        return m;
+    }
     internal GridMask Copy() {
         GridMask m = ScriptableObject.CreateInstance<GridMask>();
         m.w = w;
@@ -65,6 +120,24 @@ public class GridMask :UnityEngine.ScriptableObject {
 
     public bool Get(int i, int j) {
         return mask[i].col[j];
+    }
+
+    internal static GridMask RotateMask(GridMask attackMask, int mouseDirection) {
+        switch (mouseDirection) {
+            case 0: // r
+                return attackMask;
+            case 1: // up
+                return attackMask.MirroredAxis();
+            case 2: // l
+                return attackMask.MirroredHoriz();
+            case 3: // down
+                return attackMask.MirroredAxis().MirroredVert();
+            case -1:
+                return attackMask;
+            default:
+                Debug.Log("unhandled value "+mouseDirection);
+                return attackMask;
+        }
     }
 
     /*internal GridMask Init(List<GridItem> its) {

@@ -9,6 +9,8 @@
 public abstract class Attack {
     public GridMask attackMask;
     public string attackType = "Normal";
+    public int actionCost = 1;
+    public bool requiresUnit = true;
 
     public abstract void ApplyDamage(Unit source, GridItem attackedSlot);
 }

@@ -13,7 +13,6 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public bool NoActions { get { return actionsLeft <= 0; } }
 
     public bool CanMove { get { return actionsLeft >=1; } }
-    public bool CanAttack { get { return actionsLeft >= 1; } }
 
     public bool HasActions { get { return !NoActions; } }
 
@@ -114,14 +113,18 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         return CanMove && (pathing.moveMask == null || GridManager.IsSlotInMask(curSlot, slot, pathing.moveMask));
     }
 
-    internal bool CanAttackSlot(GridItem hoveredSlot, Attack attack) {
-        return CanAttack && hoveredSlot && GridManager.IsSlotInMask(this.curSlot, hoveredSlot, attack.attackMask);
+    internal bool CanAttackSlot(GridItem hoveredSlot, GridMask mask) {
+        return hoveredSlot && GridManager.IsSlotInMask(this.curSlot, hoveredSlot, mask);
     }
 
     internal void EnvirounmentAction(GridItem hoveredSlot, Unit hoveredUnit, Attack curAttack) {
-        if (curAttack.GetType() == typeof(PickItem)) {
+        /*if (curAttack.GetType() == typeof(PickItem)) {
             (curAttack as PickItem).ApplyDamage(this, hoveredSlot);
         }
-        else curAttack.ApplyDamage(this, hoveredSlot);
+        else */curAttack.ApplyDamage(this, hoveredSlot);
+    }
+
+    internal bool CanAttackWith(Attack curAttack) {
+        return curAttack.actionCost <= actionsLeft;
     }
 }
