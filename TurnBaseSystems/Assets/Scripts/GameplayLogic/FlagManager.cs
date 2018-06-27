@@ -7,7 +7,7 @@ public class FlagManager {
         flags[u.flag.allianceId].units.Add(u);
     }
 
-    internal static void DeRegisterUnit(Unit unit) {
-        throw new NotImplementedException();
+    internal static void DeRegisterUnit(Unit u) {
+        flags[u.flag.allianceId].units.Remove(u);
     }
 }

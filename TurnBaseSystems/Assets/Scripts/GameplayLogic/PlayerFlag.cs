@@ -20,7 +20,10 @@ public class PlayerFlag : FlagController {
     private GridMask curFilter;
 
     OffsetMask mouseToSelectOffset = new OffsetMask();
-    int mouseDirection = 1;
+    /// <summary>
+    /// Don't edit outside this script.
+    /// </summary>
+    public int mouseDirection = 1;
 
     bool MousePress { get { return Input.GetKeyDown(KeyCode.Mouse0); } }
     bool Mouse2Press { get { return Input.GetKeyDown(KeyCode.Mouse1); } }
@@ -95,11 +98,7 @@ public class PlayerFlag : FlagController {
 
             // Find filter for active attack, Attack is changed by UI.
             if (curAttack != null && selectedPlayerUnit) {
-                curFilter = curAttack.attackMask;
-                if (curAttack.attackMask.rotateable)
-                    curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-
-                curFilter = LoadInteractionsInArea(selectedPlayerUnit.curSlot, curFilter, curAttack.attackType);
+                curFilter = GridManager.LoadAttackLayer(selectedPlayerUnit, curAttack, mouseDirection);
             }
             // Note: attack and move commands override the coro call.
             // move
@@ -216,6 +215,15 @@ public class PlayerFlag : FlagController {
 
         mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, mask, attack.attackType);
         RemaskActiveFilter(2, mask);
+
+        if ((attack as AoeMaskAttack)!= null && hoveredSlot) {
+            mask = (attack as AoeMaskAttack).aoeMask;
+            if (mask.rotateable)
+                mask = GridMask.RotateMask(mask, mouseDirection);
+            mask = LoadInteractionsInArea(hoveredSlot, mask, attack.attackType);
+            RemaskActiveFilter(4, mask);
+
+        }
     }
 
 
@@ -239,6 +247,7 @@ public class PlayerFlag : FlagController {
     /// Activates slots in area that fit filtering parameters
     /// </summary>
     /// <param name="curAttack"></param>
+    [System.Obsolete("Replaced by GridManager.LoadAttackLayer")]
     private GridMask LoadInteractionsInArea(GridItem slot, GridMask mask, string attackType) {
         GridItem[] items = GridManager.GetSlotsInMask(slot.gridX, slot.gridY, mask);
         //return GridMask.FullMask(items);

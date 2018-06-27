@@ -4,6 +4,7 @@ public class Collector : UnitAbilities {
     public Hunker defensive;
     public Enhance enhanceItem;
     public PickItem pickItem;
+    public AoeMaskAttack blastAttack;
 
     public override Attack BasicAttack {
         get {
@@ -22,6 +23,6 @@ public class Collector : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack, defensive, enhanceItem , pickItem };
+        return new Attack[] { melleAttack, defensive, enhanceItem , pickItem, blastAttack };
     }
 }

@@ -133,6 +133,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     internal void AttackAction(GridItem attackedSlot, Unit other, Attack atk) {
+        Debug.Log("reducing by "+atk.actionCost);
         actionsLeft-=atk.actionCost;
         atk.ApplyDamage(this, attackedSlot);
 
@@ -171,7 +172,9 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         /*if (curAttack.GetType() == typeof(PickItem)) {
             (curAttack as PickItem).ApplyDamage(this, hoveredSlot);
         }
-        else */curAttack.ApplyDamage(this, hoveredSlot);
+        else */
+        //curAttack.ApplyDamage(this, hoveredSlot);
+        AttackAction(hoveredSlot, hoveredUnit, curAttack);
     }
 
     internal bool CanAttackWith(Attack curAttack) {

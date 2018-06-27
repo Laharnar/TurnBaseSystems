@@ -32,6 +32,14 @@ public partial class GridManager : MonoBehaviour {
         gridSlots.InitGrid(gridParent.transform.position, itemDimensions, pref, gridParent);
     }
 
+    internal static GridItem[] LoadAoeAttackLayer(Unit source, AoeAttack attack, int mouseDirection, GridItem attackedSlot) {
+        GridMask curFilter = attack.aoeMask;
+        if (curFilter.rotateable)
+            curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GridManager.GetSlotsInMask(source.gridX, source.gridY, curFilter);
+        return items;
+    }
+
     public static GridItem SnapToGrid(Vector3 point) {
         Vector3 o = point;
         point = point - m.gridParent.transform.position + (Vector3)m.itemDimensions / 2;
@@ -50,6 +58,15 @@ public partial class GridManager : MonoBehaviour {
         }
         Debug.Log(o+" "+point + " "+m.itemDimensions+"Doesn't match any slot.");
         return null;
+    }
+
+    public static GridMask LoadAttackLayer(Unit unit, Attack curAttack, int mouseDirection) {
+        GridMask curFilter = curAttack.attackMask;
+        if (curAttack.attackMask.rotateable)
+            curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GridManager.GetSlotsInMask(unit.curSlot.gridX, unit.curSlot.gridY, curFilter);
+        //return GridMask.FullMask(items);
+        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);
     }
 
     public static bool AreSlotsInRange(GridItem curSlot, GridItem attackedSlot, int range) {
