@@ -5,6 +5,7 @@ public class UserClass : UnitAbilities {
     public ThrowEquipped throwWeapon;
     public AttackWithEquipped melleWeaponAttack;
     public PickItem pickWeapon;
+    public PassEquipped passWeapon;
 
     Unit unit;
 
@@ -17,7 +18,7 @@ public class UserClass : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon };
+        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon };
     }
 
     public override Attack BasicAttack {

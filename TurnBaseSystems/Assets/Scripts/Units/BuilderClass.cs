@@ -7,6 +7,8 @@ public class BuilderClass : UnitAbilities {
     //public TwoStepAttack construct;
     public SlotConsumption deconstruct;
     public SlotBuilding construct;
+    public PickItem pickWeapon;
+    public PassEquipped passWeapon;
 
     public override Attack BasicAttack {
         get {
@@ -25,6 +27,6 @@ public class BuilderClass : UnitAbilities {
     }
 
     public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack, deconstruct, construct };
+        return new Attack[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon };
     }
 }

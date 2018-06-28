@@ -169,7 +169,7 @@ Another interesting options is to to pass an enhanced item to unit with more act
 
 ! bullets destroy walls
 
-Blast. Fire energy blast to affect area in some direction. High AP usage.
+Blast. Fire energy blast to affect area in some direction. High AP usage. -ok
 aoe damage
 
 **

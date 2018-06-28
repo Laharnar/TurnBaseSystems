@@ -106,10 +106,26 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     public void EquipAction(Weapon wep) {
-        actionsLeft -= 1;
         Equip(wep);
     }
 
+    public void PassWeapon(Weapon wep, Unit otherUnit) {
+        equippedWeapon = null;
+        wep.dropped = false;
+        wep.transform.position = otherUnit.transform.position;
+        wep.transform.parent = otherUnit.transform;
+        otherUnit.equippedWeapon = wep;
+
+        PlayerFlag.m.curAttack = abilities.BasicAttack;
+    }
+    public void DeEquip() {
+        if (equippedWeapon) {
+            equippedWeapon.transform.position = equippedWeapon.transform.position + new Vector3(0, -0.1f);
+            equippedWeapon.transform.parent = null;
+            equippedWeapon.dropped = true;
+            equippedWeapon = null;
+        }
+    }
     public void Equip(Weapon wep) {
         equippedWeapon = wep;
         equippedWeapon.dropped = false;
