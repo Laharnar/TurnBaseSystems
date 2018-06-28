@@ -165,7 +165,7 @@ Door: survivabilty against bullets
 gun: insanity bullet - collector's aura gets mixed in opponets aura, which makes them lose control - reduce will?, maxmoves for n turns
 stick: it becomes hard like steel which allows our soldiers to hit harder. increased damage.
 
-Another interesting options is to to pass an enhanced item to unit with more actions, or further in in combat.
+Another interesting options is to to pass an enhanced item to unit with more actions, or further in in combat. -ok
 
 ! bullets destroy walls
 
@@ -173,3 +173,12 @@ Blast. Fire energy blast to affect area in some direction. High AP usage. -ok
 aoe damage
 
 **
+
+Consumer
+Drain life. Permanently drains life out of area around them. Give full AP. Affects allies
+Drain flora. Drains plants and small life. Restores some AP.
+Passive. Air drain. Restore 1 AP. Because of continous strain recieve Fatigue every 5 turns.
+
+grid slots have plant life (taht slowly restores itself)
+units have life -> converted to AP. no units = no AP
+passive -> once per turn

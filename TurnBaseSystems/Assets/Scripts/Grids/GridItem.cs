@@ -9,6 +9,7 @@ public class GridItem : MonoBehaviour {
     public Unit filledBy;
     public Structure fillAsStructure;
     public Weapon fillAsPickup;
+    public int AP = 3;
 
     internal void RemoveInteractions(List<Interaction> interactions) {
         for (int i = 0; i < interactions.Count; i++) {
@@ -33,6 +34,19 @@ public class GridItem : MonoBehaviour {
     public InteractiveEnvirounment slotInteractions;
 
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
+
+    internal bool TryDrainGround() {
+        if (AP > 0) {
+            AP--;
+            return true;
+        }
+        return false;
+    }
+
+    public void RestoreFlora() {
+        AP++;
+    }
+
     Color defaultColor;
 
     private void Awake() {

@@ -1,0 +1,12 @@
+﻿This file contains a list of all things that could, or should be added.
+When you have no goals, pick something from here.
+
+Obsolete GetEnvAbilities function in UnitAbilities.
+
+Simpler approach to attacks on units. 
+Class with list of avaliable attacks instead of hardcoded.
+Or class with all possible attacks.
+
+Skills consume both AP and actions
+
+Actions are visible on UI.

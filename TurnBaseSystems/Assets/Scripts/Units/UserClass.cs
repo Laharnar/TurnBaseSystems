@@ -1,4 +1,5 @@
-﻿[System.Serializable]
+﻿using UnityEngine;
+
 public class UserClass : UnitAbilities {
 
     public RangedAttack shoot1;

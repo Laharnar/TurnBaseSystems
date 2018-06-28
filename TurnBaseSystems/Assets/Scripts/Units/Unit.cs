@@ -72,6 +72,12 @@ public partial class Unit :MonoBehaviour, ISlotItem{
                     equippedWeapon.enhanced.OnDeEquipEffect(equippedWeapon);
             }
         }
+        if ((abilities as IEndTurnAbilities) != null) {
+            Attack[] passives = (abilities as IEndTurnAbilities).GetPassive();
+            for (int i = 0; i < passives.Length; i++) {
+                passives[i].ApplyDamage(this, null);
+            }
+        }
     }
 
     public void OnTurnStart() {
