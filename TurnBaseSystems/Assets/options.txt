@@ -10,3 +10,17 @@ Or class with all possible attacks.
 Skills consume both AP and actions
 
 Actions are visible on UI.
+
+Talking abilities!
+
+Factions. story based, let's say 5. 
+each faction has it's area in the city, that can be visited at any time, if they are neutral
+or friendly
+
+you gain positive or negative influence points 
+by doing actions in map(by completing missions). hitting enemies with skill, 
+enaging, reaching objective.
+entering combat loses you points, talking your way in, increases in some cases, etc
+
+city map.
+

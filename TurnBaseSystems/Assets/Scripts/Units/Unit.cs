@@ -10,7 +10,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
    
 
-    public Animator anim;
+    public UnitAnimations anim;
 
 
     public bool NoActions { get { return actionsLeft <= 0; } }
@@ -47,7 +47,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
     // Collector class -- armor. It's effect is lost at beginning of next turn.
     public int temporaryArmor;
-    
+    public bool attacking = false;
+
     private void Start() {
         ap = maxAP;
         ResetActions();
@@ -153,11 +154,28 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         gridY = slot.gridY;
         pathing.GoToCoroutine(this, slot.gridX, slot.gridY, GridManager.m);
     }
+    void AttackCoroutine(Attack attack) {
+        if (attacking) return;
+        if (!attack.animData.useInfo || anim==null) return;
+        int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
+        anim.SetTrigger(attackTriggerCode);
+        StartCoroutine(WaitAttack(attack));
+    }
+
+    IEnumerator WaitAttack(Attack attack) {
+        attacking = true;
+        yield return new WaitForSeconds( attack.animData.animLength);
+        attacking = false;
+    }
 
     internal void AttackAction(GridItem attackedSlot, Unit other, Attack atk) {
-        Debug.Log("reducing by "+atk.actionCost);
-        actionsLeft-=atk.actionCost;
+        if (atk.requiresUnit && attackedSlot.filledBy == null) return;
+        if (attacking) return;
+
+        actionsLeft -= atk.actionCost;
         atk.ApplyDamage(this, attackedSlot);
+
+        AttackCoroutine(atk);
 
         if (equippedWeapon)
             equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);
@@ -189,15 +207,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     internal bool CanAttackSlot(GridItem hoveredSlot, GridMask mask) {
         return hoveredSlot && GridManager.IsSlotInMask(this.curSlot, hoveredSlot, mask);
     }
-
-    internal void EnvirounmentAction(GridItem hoveredSlot, Unit hoveredUnit, Attack curAttack) {
-        /*if (curAttack.GetType() == typeof(PickItem)) {
-            (curAttack as PickItem).ApplyDamage(this, hoveredSlot);
-        }
-        else */
-        //curAttack.ApplyDamage(this, hoveredSlot);
-        AttackAction(hoveredSlot, hoveredUnit, curAttack);
-    }
+    
 
     internal bool CanAttackWith(Attack curAttack) {
         return curAttack.actionCost <= actionsLeft;

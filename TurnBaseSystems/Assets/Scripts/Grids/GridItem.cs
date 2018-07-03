@@ -10,21 +10,6 @@ public class GridItem : MonoBehaviour {
     public Structure fillAsStructure;
     public Weapon fillAsPickup;
     public int AP = 3;
-
-    internal void RemoveInteractions(List<Interaction> interactions) {
-        for (int i = 0; i < interactions.Count; i++) {
-            slotInteractions.RemoveByType(interactions[i].interactionType);
-        }
-    }
-
-    internal void AddEnvInteraction(params string[] v) {
-        for (int i = 0; i < v.Length; i++) {
-            EnvInteraction eint = ScriptableObject.CreateInstance<EnvInteraction>();
-            eint.interactionType = v[i];
-            slotInteractions.interactions.Add(eint);
-        }
-    }
-
     //public LocationMaterial material;
 
     /// <summary>
@@ -68,6 +53,21 @@ public class GridItem : MonoBehaviour {
     internal void InitGrid(int i, int j) {
         gridX = i;
         gridY = j;
+    }
+
+
+    internal void RemoveInteractions(List<Interaction> interactions) {
+        for (int i = 0; i < interactions.Count; i++) {
+            slotInteractions.RemoveByType(interactions[i].interactionType);
+        }
+    }
+
+    internal void AddEnvInteraction(params string[] v) {
+        for (int i = 0; i < v.Length; i++) {
+            EnvInteraction eint = ScriptableObject.CreateInstance<EnvInteraction>();
+            eint.interactionType = v[i];
+            slotInteractions.interactions.Add(eint);
+        }
     }
 
     internal static bool TypeFilter(GridItem gridItem, string attackType) {

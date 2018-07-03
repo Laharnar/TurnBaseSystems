@@ -129,13 +129,13 @@ public class PlayerFlag : FlagController {
                                 selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, curAttack);
                             }
                         }
-                    } else if (!curAttack.requiresUnit) { // env attack
-                        ResetColorForUnit(selectedPlayerUnit);
-                        selectedPlayerUnit.EnvirounmentAction(hoveredSlot, hoveredUnit, curAttack);
-                    } else if (curAttack.requiresUnit && !CurMouseIsHostile) { // not hostile, not env = ally
+                    } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
                         ResetColorForUnit(selectedPlayerUnit);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
-                    }
+                    }/* else if (curAttack.requiresUnit && !CurMouseIsHostile) { // 
+                        ResetColorForUnit(selectedPlayerUnit);
+                        selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
+                    }*/
                     yield return null;
                 }
             }
@@ -169,6 +169,9 @@ public class PlayerFlag : FlagController {
             while (units[i].moving) {
                 yield return null;
             }
+            while (units[i].attacking) {
+                yield return null;
+            }
         }
         turnDone = true;
         yield return null;
@@ -177,7 +180,7 @@ public class PlayerFlag : FlagController {
     private void UpdateVisibleArsenal() {
         // show active clickable area for movement and attack
         Unit.activeUnit = null;
-        if (selectedPlayerUnit && selectedPlayerUnit.HasActions) {
+        if (selectedPlayerUnit && selectedPlayerUnit.HasActions && !selectedPlayerUnit.moving && !selectedPlayerUnit.attacking) {
             Unit.activeUnit = selectedPlayerUnit;
             ShowArsenal(selectedPlayerUnit, curAttack);
         }
@@ -284,9 +287,9 @@ public class PlayerFlag : FlagController {
         //ShowArsenal(coroUnitSource, coroUnitSource.abilities.GetNormalAbilities()[coroAtkId].attackMask);
         
         yield return null;
-        while (true) {
+        /*while (true) {
             yield return null;
-        }
+        }*/
     }
 
     private bool CheckIfEnemyHit(Unit enemy) {

@@ -126,11 +126,11 @@ i have a few standard attacks, range and melle, and weapon pickup and throw.
 added hp bars.
 standardized sprite layers
 
-next goal: 
-ned: finishing
-1) come up with a scenario for levels - level design direction - pet/sob
-2) add more abilities
-3) add other classes <- finish builder - tor, then enhancer - sre and consumer - čet
+ned: finishing done 24.6-30.6
+1) come up with a scenario for levels - level design direction - pet/sob - got some ideas
+2) add more abilities - complete through 3(aoe cone ability)
+3) add other classes <- finish builder - tor, then enhancer - sre and consumer - čet -ok
+Results: completed on time. could have more abilities, but it's satisfactory for now.
 
 ** Build ability
 comes with a mask that can be rotated
@@ -174,7 +174,7 @@ aoe damage
 
 **
 
-Consumer
+Consumer - ok
 Drain life. Permanently drains life out of area around them. Give full AP. Affects allies
 Drain flora. Drains plants and small life. Restores some AP.
 Passive. Air drain. Restore 1 AP. Because of continous strain recieve Fatigue every 5 turns.
@@ -182,3 +182,44 @@ Passive. Air drain. Restore 1 AP. Because of continous strain recieve Fatigue ev
 grid slots have plant life (taht slowly restores itself)
 units have life -> converted to AP. no units = no AP
 passive -> once per turn
+**
+next goal: 30.6.18-3.6.18(4 days)-
+Explore art direction
+colorful, sharp,
+dark, wild
+simplistic
+find some example pictures, draw some characters, some envirounment, imagine the game's feel.
+don't get stuck on art.
+Hey look at pictures from different countries. the contrast, the shading
+india has like this very bland blend, with high contrast.
+"I've always, from day 1... Have been ashamed she said yes when I asked her to marry me. I didn't think I deserved her." -- Francis Underwood.
+
+"I think she created a mess on day 1. And now she's pissed off when it's not working out.
+Guy doesn't think he can trust her when she's charming anymore.
+And because she says she doesn't date, she can't bother to apologize or try to fix anything. 
+She will just ignore the guy and cry to her friends who will probably tell her to dump the guy. And to the guy she will say some shit like she doesn't care or whatever.
+The guy can't talk to her either, he doesn't know how to talk about dating with she says
+she doesn't date.
+He doesn't owe an apology for not responding to demands from someone he isn't dating.
+And if they are dating, the girl owes him an apology and explanation first.
+Does she want to take that step?"
+
+find refs: hxh. fma. kim possible. kr. soul eater. code geass. little witch acad
+crystal saga. ep battle fantasy. 
+random rpgs
+one flat color? soft shaded? cell shaded? hard shaded? blue shaded? contrast shaded?
+mood board from refs. for characters only
+and one for whole game
+
+**
+Sprites: 256x256 per character, transparent. 256, 512, 768, 1024
+animation system for characters:
+import sprite - cut (256x256)
+create animations, 6 frames/sec or 12
+- idle
+- attack
+connect to animation controller
+transitions 
+temp:idle ->(Attack) attack
+temp:attack -> over
+add animations script(list of triggers for all attacks), and attach it to unit script.

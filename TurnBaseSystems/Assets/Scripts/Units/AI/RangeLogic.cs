@@ -23,6 +23,10 @@ public class RangeLogic : AiLogic {
         // command 2
         if (GridManager.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask))
             unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
+
+        while (unit.attacking) {
+            yield return null;
+        }
         // end unit turn
         yield return null;
     }

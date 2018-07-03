@@ -10,7 +10,9 @@ public class HpUIController: MonoBehaviour {
     public Transform background;
     public Transform[] hpList;
     public Transform[] greyhpList;
-
+    private void Awake() {
+        canvasRoot.gameObject.SetActive(true);
+    }
     public void ShowHp(int curHp) {
         for (int i = 0; i < hpList.Length; i++) {
             hpList[i].gameObject.SetActive(i < curHp);

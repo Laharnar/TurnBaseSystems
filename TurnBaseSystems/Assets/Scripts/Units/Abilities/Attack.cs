@@ -1,5 +1,4 @@
 ﻿using System;
-
 /// <summary>
 /// Attacks are manually coded into UnitAbilities-derived classes.
 /// These are what is avaliable to units to execute.
@@ -11,6 +10,7 @@ public abstract class Attack {
     public string attackType = "Normal";
     public int actionCost = 1;
     public bool requiresUnit = true;
+    public AttackAnimationInfo animData;
 
     public abstract void ApplyDamage(Unit source, GridItem attackedSlot);
 }
