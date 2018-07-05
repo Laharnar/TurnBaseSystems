@@ -240,3 +240,69 @@ loyal soldiers don't leave you over low faction influence.
 
 ** factions **
 They are sorted by recognition.
+
+
+**
+Start coming up with characters, with factions.
+merchants, pirates, spartans, royalists, empress, gladiators, pyromancers, witches, 
+elf, military, mafia, bandits, clerics
+character:
+2 core skills
+class or specialization
+
+Build a team - 4 people? 3? what would be the right balance?
+3 is a little low for missions. depending on difficulty.
+is the team core constant? 1 leading person?
+or a core as a faction?
+faction leader?
+how about solo mission start plus deployment points?
+
+core unit categories
+in-stealth combatant
+frontline
+backline
+optional a 1 specialist - the special fun
+
+the flavor
+enhancer
+healer
+distruptor
+drainer
+builder
+charmer
+multibullet
+knife combatant
+tactical strikes
+infiltrator
+
+core gameplay tactics
+melle combat
+mid range
+long range
+preparations - casting
+conversations
+stealth, infiltration
+
+teammates
+backline cleric empowerment, potions - nothing, just hands
+military general or soldier, 
+tactical factory robot or drone from factoy - guns and tactical laser orbital strike
+little user beggar of resistance - blade, daggers
+dark drain practicioner - aoe drain, deadly to allies
+an empowerment tank guild member
+forest warrior witch - wall detections
+former pirate - close-mid range user, agile
+high martial arts practicioner, like a monk - mobile, fast execution, counter
+special squad soldier - gun user
+
+specials
+miner - places mines, earth animals
+a slime pet infiltrator - small, enter small spaces
+alchemist researcher - potions and gun, aoe attacks
+
+
+anti tank. idk looks bs. but nice trap.
+https://www.youtube.com/watch?v=dKwOdxpp0yU
+
+the npcs
+the clown, politician, empress assistant, empress, city guard, kids, teachers, aliens

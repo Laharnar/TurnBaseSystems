@@ -202,7 +202,8 @@ The guy can't talk to her either, he doesn't know how to talk about dating with 
 she doesn't date.
 He doesn't owe an apology for not responding to demands from someone he isn't dating.
 And if they are dating, the girl owes him an apology and explanation first.
-Does she want to take that step?"
+Does she want to take that step? What step could he take?"
+This isn't her tho.
 
 find refs: hxh. fma. kim possible. kr. soul eater. code geass. little witch acad
 crystal saga. ep battle fantasy. 
@@ -222,4 +223,29 @@ connect to animation controller
 transitions 
 temp:idle ->(Attack) attack
 temp:attack -> over
-add animations script(list of triggers for all attacks), and attach it to unit script.
+add animations script(list of triggers for all attacks), and attach it to unit script
+**.
+
+create a character with a different faction for every gameplay tactic
+melle combat
+mid range
+long range
+preparations - casting
+conversations
+stealth, infiltration
+
+which is the lead? standard melle? conversionalist? eh just make the team. and how it will feel
+
+Prototype 1: 4.7.2018
+Player's team of 6 characters, you can choose the team members
+an extraction pickup goal
+some bystanders
+one conversation enemy combatant
+one inflitration option
+one front gate option
+1 guard character, 6-12 guards, front gate is conversionalist
+one civilian conversionalist that gives you the hint.
+the spread out enter combat mode
+the normal pre combat walking mode - testing if this improves the experience
+one target building, planned, 1 closed building, city(5 buildings area)
+

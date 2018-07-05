@@ -5,5 +5,5 @@ public class AttackAnimationInfo {
     /// <summary>
     /// Time, length of animation
     /// </summary>
-    public int animLength;
+    public float animLength;
 }
