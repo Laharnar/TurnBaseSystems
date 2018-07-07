@@ -22,9 +22,6 @@ public class BuilderClass : UnitAbilities {
         }
     }
 
-    public override EnvirounmentalAttack[] GetEnvAbilities() {
-        throw new NotImplementedException();
-    }
 
     public override Attack[] GetNormalAbilities() {
         return new Attack[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon };

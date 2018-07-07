@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Units can use this when scanning the area.
+// Units can use this when determining their area abilities
 // Should be on put on walls, grass or other stuff.
 // Automatically loaded on child of grid item at runtime, via raycasts.
 /// <summary>
+/// Represents what units can do on with this slot, beside attacking.
 /// Contains a list of interactions assigned on structures, weapons, walls, etc.
-/// Used in connection with <see cref="UIInteractionController"/> to show
-/// BUTTONS that activate those interactions.
 /// Assign interactions by hand depending on type of env.
 /// </summary>
+/// <see cref="GridItem.TypeFilter(GridItem, string)"/>
 public class InteractiveEnvirounment : MonoBehaviour {
 
     // stuff that this slot represents/ abilities that can be use on it.
@@ -42,8 +42,5 @@ public class InteractiveEnvirounment : MonoBehaviour {
         }
         return ites;
     }
-
-    public static InteractiveEnvirounment AttachScript(GameObject go) {
-        return go.AddComponent<InteractiveEnvirounment>();
-    }
+    
 }

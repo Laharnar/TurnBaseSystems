@@ -61,12 +61,28 @@ public partial class GridManager : MonoBehaviour {
     }
 
     public static GridMask LoadAttackLayer(Unit unit, Attack curAttack, int mouseDirection) {
-        GridMask curFilter = curAttack.attackMask;
-        if (curAttack.attackMask.rotateable)
-            curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        return LoadInteractionsInArea(unit.curSlot, curAttack.attackMask, mouseDirection, curAttack.attackType);
+        /*GridMask curFilter = curAttack.attackMask;
+        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
         GridItem[] items = GridManager.GetSlotsInMask(unit.curSlot.gridX, unit.curSlot.gridY, curFilter);
-        //return GridMask.FullMask(items);
-        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);
+        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);*/
+    }
+    public static GridMask LoadAttackLayer(GridItem slot, Attack curAttack, int mouseDirection) {
+        return LoadInteractionsInArea(slot, curAttack.attackMask, mouseDirection, curAttack.attackType);
+        /*GridMask curFilter = curAttack.attackMask;
+        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GridManager.GetSlotsInMask(unit.curSlot.gridX, unit.curSlot.gridY, curFilter);
+        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);*/
+    }
+    /// <summary>
+    /// Finds slots in area that fit filtering parameters
+    /// </summary>
+    /// <param name="curAttack"></param>
+    public static GridMask LoadInteractionsInArea(GridItem slot, GridMask mask, int mouseDirection, string attackType) {
+        GridMask curFilter = mask;
+        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GridManager.GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
+        return AiHelper.FilterByInteractions(slot, items, attackType, curFilter);
     }
 
     public static bool AreSlotsInRange(GridItem curSlot, GridItem attackedSlot, int range) {
@@ -74,15 +90,6 @@ public partial class GridManager : MonoBehaviour {
             <= range*Mathf.Max(m.itemDimensions.x, m.itemDimensions.y);
     }
     
-
-    internal static GridItem[] GetSlotsInInteractiveRange(Unit slot, GridMask mask) {
-        if (mask == null) // return all
-        {
-            Debug.Log("Mask is null, returning all slots.");
-            return m.gridSlots.AsArray();
-        }
-        return GetSlotsInMask(slot.gridX, slot.gridY, mask);
-    }
 
     public static void RecolorRange(int color, params GridItem[] slots) {
         for (int i = 0; i < slots.Length; i++) {
@@ -139,9 +146,13 @@ public partial class GridManager : MonoBehaviour {
     }
 
     public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask) {
-        
+        if (mask == null) // return all
+        {
+            Debug.Log("Mask is null, returning all slots.");
+            return m.gridSlots.AsArray();
+        }
         if (mask.w == 0 || mask.l == 0) {
-            Debug.LogError("Mask isn't defined");
+            Debug.LogError("Mask width OR length is 0, returning null");
             return null;
         }
         GridItem center = m.gridSlots.GetItem(gridX, gridY);
@@ -159,5 +170,9 @@ public partial class GridManager : MonoBehaviour {
             }
         }
         return items.ToArray();
+    }
+
+    internal static GridItem GetItem(int x, int y) {
+        return m.gridSlots.GetItem(x, y);
     }
 }

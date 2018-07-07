@@ -52,7 +52,7 @@ public class Weapon:MonoBehaviour,IInteractible {
             if (it) {
                 it.fillAsPickup = Weapon.weapons[i];
                 if (it.fillAsPickup) {
-                    it.slotInteractions.interactions.AddRange(it.fillAsPickup.GetComponent<InteractiveEnvirounment>().Copies());
+                    it.avaliableInteractions.interactions.AddRange(it.fillAsPickup.GetComponent<InteractiveEnvirounment>().Copies());
                 }
             }
         }

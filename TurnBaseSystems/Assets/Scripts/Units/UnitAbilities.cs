@@ -5,6 +5,4 @@ public abstract class UnitAbilities : MonoBehaviour {
     public abstract GridMask BasicMask { get; }
 
     public abstract Attack[] GetNormalAbilities();
-    [System.Obsolete("env system is obsolete")]
-    public abstract EnvirounmentalAttack[] GetEnvAbilities();
 }

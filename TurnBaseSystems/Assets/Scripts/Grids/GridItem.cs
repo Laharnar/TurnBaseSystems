@@ -16,7 +16,7 @@ public class GridItem : MonoBehaviour {
     /// Abilities are loaded on level load or later, from all objects that can be found on this slot.
     /// Note: this is on child object. Don't use it's position as reference.
     /// </summary>
-    public InteractiveEnvirounment slotInteractions;
+    public InteractiveEnvirounment avaliableInteractions;
 
     public bool Walkable { get { return fillAsStructure == null && filledBy == null; } }
 
@@ -37,17 +37,20 @@ public class GridItem : MonoBehaviour {
     private void Awake() {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;
 
-        // Add empty child holder for interactions
-        GameObject go = new GameObject("InteractionsTemp");
-        go.transform.parent = transform;
-        slotInteractions = InteractiveEnvirounment.AttachScript(go);
-        slotInteractions.transform.position = transform.position;
+        InitTempChildAsDataHolder();
 
         // Attach interactions from structures on this slot.
         fillAsStructure = SelectionManager.GetAsStructure2D(transform.position);
         if (fillAsStructure) {
-            slotInteractions.interactions.AddRange(fillAsStructure.GetComponent<InteractiveEnvirounment>().Copies());
+            avaliableInteractions.interactions.AddRange(fillAsStructure.GetComponent<InteractiveEnvirounment>().Copies());
         }
+    }
+
+    private void InitTempChildAsDataHolder() {
+        GameObject go = new GameObject("InteractionsTemp");
+        go.transform.parent = transform;
+        avaliableInteractions = go.AddComponent<InteractiveEnvirounment>();
+        avaliableInteractions.transform.position = transform.position;
     }
 
     internal void InitGrid(int i, int j) {
@@ -58,7 +61,7 @@ public class GridItem : MonoBehaviour {
 
     internal void RemoveInteractions(List<Interaction> interactions) {
         for (int i = 0; i < interactions.Count; i++) {
-            slotInteractions.RemoveByType(interactions[i].interactionType);
+            avaliableInteractions.RemoveByType(interactions[i].interactionType);
         }
     }
 
@@ -66,16 +69,16 @@ public class GridItem : MonoBehaviour {
         for (int i = 0; i < v.Length; i++) {
             EnvInteraction eint = ScriptableObject.CreateInstance<EnvInteraction>();
             eint.interactionType = v[i];
-            slotInteractions.interactions.Add(eint);
+            avaliableInteractions.interactions.Add(eint);
         }
     }
 
     internal static bool TypeFilter(GridItem gridItem, string attackType) {
         if (attackType == "Normal") {
-            return gridItem.slotInteractions.interactions.Count == 0 || gridItem.slotInteractions.interactions[0].InteractionMatch("Pickable");
+            return gridItem.avaliableInteractions.interactions.Count == 0 || gridItem.avaliableInteractions.interactions[0].InteractionMatch("Pickable");
         }
-        for (int i = 0; i < gridItem.slotInteractions.interactions.Count; i++) {
-            if (gridItem.slotInteractions.interactions[i].InteractionMatch(attackType)) {
+        for (int i = 0; i < gridItem.avaliableInteractions.interactions.Count; i++) {
+            if (gridItem.avaliableInteractions.interactions[i].InteractionMatch(attackType)) {
                 Debug.Log("Found match with "+attackType);
                 return true;
             }
@@ -105,7 +108,7 @@ public class GridItem : MonoBehaviour {
 
     internal void DetachPickupFromSlot() {
         Debug.LogWarning("Warning:Sketchy code. Clears ALL interactions from temp object, not only pickup.");
-        slotInteractions.interactions.Clear();
+        avaliableInteractions.interactions.Clear();
         fillAsPickup = null;
     }
 }

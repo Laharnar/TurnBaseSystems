@@ -139,16 +139,6 @@ public class PlayerFlag : FlagController {
                     yield return null;
                 }
             }
-            
-            // Reload env interaction buttons when player is selected.
-            /*
-            if (selectionChanged) {
-                if (selectedPlayerUnit) {
-                    UIInteractionController.ShowEnvInteractions(selectedPlayerUnit);
-                } else {
-                    UIInteractionController.ClearEnvInteractions();
-                }
-            }*/
 
             UIManager.PlayerStandardUi(!selectedPlayerUnit);
             UIManager.PlayerSelectAllyUnitUi(selectedPlayerUnit);
@@ -156,7 +146,6 @@ public class PlayerFlag : FlagController {
             // map decolor when unit run out of actions.
             if (selectedPlayerUnit && selectedPlayerUnit.NoActions) {
                 DeselectUnit();
-                UIInteractionController.ClearEnvInteractions();
             }
 
             yield return null;
@@ -209,23 +198,14 @@ public class PlayerFlag : FlagController {
         curAttack = attack;
         unit.curSlot.RecolorSlot(3);
         GridMask mask;
-        mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, unit.pathing.moveMask, "Normal"); ;// unit.pathing.moveMask;
+        mask = GridManager.LoadInteractionsInArea(selectedPlayerUnit.curSlot, unit.pathing.moveMask, 0, "Normal"); ;// unit.pathing.moveMask;
         RemaskActiveFilter(1, mask);
-
-        mask = attack.attackMask;
-        if (attack.attackMask.rotateable)
-            mask = GridMask.RotateMask(mask, mouseDirection);
-
-        mask = LoadInteractionsInArea(selectedPlayerUnit.curSlot, mask, attack.attackType);
+        mask = GridManager.LoadAttackLayer(selectedPlayerUnit, attack, mouseDirection);
         RemaskActiveFilter(2, mask);
 
         if ((attack as AoeMaskAttack)!= null && hoveredSlot) {
-            mask = (attack as AoeMaskAttack).aoeMask;
-            if (mask.rotateable)
-                mask = GridMask.RotateMask(mask, mouseDirection);
-            mask = LoadInteractionsInArea(hoveredSlot, mask, attack.attackType);
+            mask = GridManager.LoadAttackLayer(hoveredSlot, attack, mouseDirection);
             RemaskActiveFilter(4, mask);
-
         }
     }
 
@@ -246,16 +226,6 @@ public class PlayerFlag : FlagController {
         }
     }*/
 
-    /// <summary>
-    /// Activates slots in area that fit filtering parameters
-    /// </summary>
-    /// <param name="curAttack"></param>
-    [System.Obsolete("Replaced by GridManager.LoadAttackLayer")]
-    private GridMask LoadInteractionsInArea(GridItem slot, GridMask mask, string attackType) {
-        GridItem[] items = GridManager.GetSlotsInMask(slot.gridX, slot.gridY, mask);
-        //return GridMask.FullMask(items);
-        return AiHelper.FilterByInteractions(slot, items, attackType, mask);
-    }
 
     private Unit GetUnitUnderMouse() {
         Unit cur = hoveredSlot.filledBy;

@@ -19,10 +19,6 @@ public class Collector : UnitAbilities {
         }
     }
 
-    public override EnvirounmentalAttack[] GetEnvAbilities() {
-        throw new NotImplementedException();
-    }
-
     public override Attack[] GetNormalAbilities() {
         return new Attack[] { melleAttack, defensive, enhanceItem , pickItem, passWeapon, blastAttack };
     }

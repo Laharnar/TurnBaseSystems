@@ -29,10 +29,6 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
         }
     }
 
-    public override EnvirounmentalAttack[] GetEnvAbilities() {
-        throw new NotImplementedException();
-    }
-
     public override Attack[] GetNormalAbilities() {
         return new Attack[] { basicMelle, pickWeapon, passWeapon, deathCall, waste };
     }
