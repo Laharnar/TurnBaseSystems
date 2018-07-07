@@ -3,11 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class UnitAnimations : MonoBehaviour {
 
     public string[] triggers = new string[] { "Attack" };
 
-    public Animator anim;
+    Animator anim;
+
+    private void Start() {
+        anim = GetComponent<Animator>();
+    }
 
     public void SetTrigger(int code) {
         if (code < triggers.Length && anim)

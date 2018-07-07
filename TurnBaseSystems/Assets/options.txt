@@ -1,5 +1,6 @@
 ﻿This file contains a list of all things that could, or should be added.
 When you have no goals, pick something from here.
+----------------------------------------------------------
 
 Obsolete GetEnvAbilities function in UnitAbilities.
 
@@ -22,5 +23,6 @@ by doing actions in map(by completing missions). hitting enemies with skill,
 enaging, reaching objective.
 entering combat loses you points, talking your way in, increases in some cases, etc
 
-city map.
+city map with events
 
+scriptable object based attack setting.

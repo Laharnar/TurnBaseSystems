@@ -200,6 +200,7 @@ And because she says she doesn't date, she can't bother to apologize or try to f
 She will just ignore the guy and cry to her friends who will probably tell her to dump the guy. And to the guy she will say some shit like she doesn't care or whatever.
 The guy can't talk to her either, he doesn't know how to talk about dating with she says
 she doesn't date.
+He should probably just tell her to zip her i don't date BS.
 He doesn't owe an apology for not responding to demands from someone he isn't dating.
 And if they are dating, the girl owes him an apology and explanation first.
 Does she want to take that step? What step could he take?"
@@ -225,16 +226,18 @@ temp:idle ->(Attack) attack
 temp:attack -> over
 add animations script(list of triggers for all attacks), and attach it to unit script
 **.
+special shadow creature(magic). that extends it's shadow to attack enemies from inside
 
 create a character with a different faction for every gameplay tactic
-melle combat
-mid range
-long range
-preparations - casting
+melle combat - ok
+mid range - ok
+long range - ok
+preparations - ok 
+- end of round.
 conversations
 stealth, infiltration
 
-which is the lead? standard melle? conversionalist? eh just make the team. and how it will feel
+
 
 Prototype 1: 4.7.2018
 Player's team of 6 characters, you can choose the team members

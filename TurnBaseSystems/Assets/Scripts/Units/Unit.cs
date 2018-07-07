@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-
+[RequireComponent(typeof(UnitAbilities))]
 public partial class Unit :MonoBehaviour, ISlotItem{
     public int gridX, gridY;
     public bool moving = false;
@@ -28,7 +28,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
     public int maxAP = 0;
     int ap = 0;
-    public UnitAbilities abilities;
+    internal UnitAbilities abilities;
     public AiLogic ai;
 
     public GridItem curSlot;
@@ -56,6 +56,10 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         curSlot = slot;
         Move(slot);
         FlagManager.RegisterUnit(this);
+
+        if (!abilities) {
+            abilities = GetComponent<UnitAbilities>();
+        }
 
         if (hpUI) {
             hpUI.InitBarWithGrey(hp, 10, this);

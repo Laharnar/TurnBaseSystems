@@ -49,6 +49,12 @@ public class PlayerUIAbilityList : MonoBehaviour {
     }
 
     internal static void LoadAbilitiesOnUI(Unit unit) {
+        if (unit == null) {
+            Debug.Log("No unit");
+        }
+        if (unit.abilities == null) {
+            Debug.Log("No ability compoentn");
+        }
         Attack[] abilitis = unit.abilities.GetNormalAbilities();
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
