@@ -9,7 +9,7 @@ public class RangeLogic : AiLogic {
         int closestUnitIndex = dists.GetIndexOfMin();
         GridItem closestUnit = pFlag.units[closestUnitIndex].curSlot;
         GridItem nearbySlot = unit.curSlot;
-        if (!GridManager.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask)) {
+        if (!GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask)) {
             nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(unit.curSlot, closestUnit, unit.pathing.moveMask, unit.abilities.BasicAttack.attackMask);
 
             if (nearbySlot == null)
@@ -21,7 +21,7 @@ public class RangeLogic : AiLogic {
             }
         }
         // command 2
-        if (GridManager.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask))
+        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask))
             unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
 
         while (unit.attacking) {

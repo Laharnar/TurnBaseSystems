@@ -16,7 +16,7 @@ public class PlayerFlag : FlagController {
 
     Unit coroUnitSource;
     int coroAtkId;
-    public Attack curAttack;
+    public AttackData curAttack;
     private GridMask curFilter;
 
     OffsetMask mouseToSelectOffset = new OffsetMask();
@@ -66,10 +66,7 @@ public class PlayerFlag : FlagController {
                 continue;
             }
 
-            hoveredUnit = GetUnitUnderMouse();
-
-            //UpdateInteractionFilter();
-            
+            hoveredUnit = SelectionManager.GetUnitUnderMouse(hoveredSlot);
 
             // *t button ability press -> a) wait for press-> execute selected attack
             // b) wait for cancel
@@ -98,7 +95,7 @@ public class PlayerFlag : FlagController {
 
             // Find filter for active attack, Attack is changed by UI.
             if (curAttack != null && selectedPlayerUnit) {
-                curFilter = GridManager.LoadAttackLayer(selectedPlayerUnit, curAttack, mouseDirection);
+                curFilter = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, curAttack, mouseDirection);
             }
             // Note: attack and move commands override the coro call.
             // move
@@ -171,7 +168,7 @@ public class PlayerFlag : FlagController {
         Unit.activeUnit = null;
         if (selectedPlayerUnit && selectedPlayerUnit.HasActions && !selectedPlayerUnit.moving && !selectedPlayerUnit.attacking) {
             Unit.activeUnit = selectedPlayerUnit;
-            ShowArsenal(selectedPlayerUnit, curAttack);
+            ShowAttackAndMoveArea(selectedPlayerUnit, curAttack);
         }
     }
 
@@ -192,19 +189,19 @@ public class PlayerFlag : FlagController {
         }
     }
 
-    private void ShowArsenal(Unit unit, Attack attack) {
+    private void ShowAttackAndMoveArea(Unit unit, AttackData attack) {
         if (!unit)
             return;
         curAttack = attack;
         unit.curSlot.RecolorSlot(3);
         GridMask mask;
-        mask = GridManager.LoadInteractionsInArea(selectedPlayerUnit.curSlot, unit.pathing.moveMask, 0, "Normal"); ;// unit.pathing.moveMask;
+        mask = GridAccess.LoadMaskByInteractionType(selectedPlayerUnit.curSlot, unit.pathing.moveMask, 0, "Normal"); ;// unit.pathing.moveMask;
         RemaskActiveFilter(1, mask);
-        mask = GridManager.LoadAttackLayer(selectedPlayerUnit, attack, mouseDirection);
+        mask = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, attack, mouseDirection);
         RemaskActiveFilter(2, mask);
 
-        if ((attack as AoeMaskAttack)!= null && hoveredSlot) {
-            mask = GridManager.LoadAttackLayer(hoveredSlot, attack, mouseDirection);
+        if (/*(attack as AoeMaskAttack)!= null*/ attack != null && hoveredSlot) {
+            mask = GridAccess.LoadAttackLayer(hoveredSlot, attack, mouseDirection);
             RemaskActiveFilter(4, mask);
         }
     }
@@ -215,24 +212,7 @@ public class PlayerFlag : FlagController {
         RemaskActiveFilter(0, curFilter != null ? curFilter : unit.abilities.BasicMask);
         unit.curSlot.RecolorSlot(0);
     }
-    /*private void UpdateInteractionFilter() {
-        if (!selectedPlayerUnit)
-            return;
-        if (curAttack!= null ) {
-            Debug.Log("UNCOMMENT THIS");
-            //curFilter = LoadInteractionsInArea(selectedPlayerUnit.curSlot, curAttack.attackMask);
-        } else {
-            Debug.Log("Attack is null");
-        }
-    }*/
 
-
-    private Unit GetUnitUnderMouse() {
-        Unit cur = hoveredSlot.filledBy;
-        if (cur == null) // maybe hovering over unit's head, which is in other slot.
-            cur = SelectionManager.GetMouseAsUnit2D();
-        return cur;
-    }
 
     private void MoveCurTo(GridItem item) {
         ResetColorForUnit(selectedPlayerUnit);

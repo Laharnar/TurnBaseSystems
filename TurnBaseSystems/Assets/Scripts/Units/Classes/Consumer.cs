@@ -1,7 +1,7 @@
 ﻿using System;
 public class Consumer : UnitAbilities, IEndTurnAbilities {
 
-
+    /*
     public RangedAttack basicMelle;
     public PickItem pickWeapon;
     public PassEquipped passWeapon;
@@ -9,6 +9,15 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
     public FloraDrain waste;
 
     public RestoreAP restoration;
+    */
+
+    public AttackData basicMelle;
+    public AttackData pickWeapon;
+    public AttackData passWeapon;
+    public AttackData deathCall;
+    public AttackData waste;
+    public AttackData restoration;
+
 
     Unit unit;
 
@@ -16,7 +25,7 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
         unit = GetComponent<Unit>();
     }
 
-    public override Attack BasicAttack {
+    public override AttackData BasicAttack {
         get {
             return basicMelle;
         }
@@ -29,11 +38,11 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
         }
     }
 
-    public override Attack[] GetNormalAbilities() {
-        return new Attack[] { basicMelle, pickWeapon, passWeapon, deathCall, waste };
+    public override AttackData[] GetNormalAbilities() {
+        return new AttackData[] { basicMelle, pickWeapon, passWeapon, deathCall, waste };
     }
 
-    public Attack[] GetPassive() {
-        return new Attack[] { restoration };
+    public AttackData[] GetPassive() {
+        return new AttackData[] { restoration };
     }
 }

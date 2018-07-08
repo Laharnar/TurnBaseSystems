@@ -14,8 +14,8 @@ public class Weapon:MonoBehaviour,IInteractible {
     public bool dropped = true;
     public Transform conePref;
 
-    public RangedAttack attackData;
-    public Attack StandardAttack { get { return attackData; } }
+    public AttackData wepAtk;
+    public AttackData StandardAttack { get { return wepAtk; } }
 
 
     public int enhanceCounter = 0;
@@ -58,7 +58,7 @@ public class Weapon:MonoBehaviour,IInteractible {
         }
     }
 
-    internal void OnDamageEnhanceEffect(Unit selectedPlayerUnit, GridItem attackedSlot, Unit attackedUnit, Attack curAttack) {
+    internal void OnDamageEnhanceEffect(Unit selectedPlayerUnit, GridItem attackedSlot, Unit attackedUnit, AttackData curAttack) {
         if (enhanceCounter > 0) {
             enhanceCounter--;
             enhanced.OnDamageEnhanceEffect(selectedPlayerUnit, attackedSlot, attackedUnit, this);

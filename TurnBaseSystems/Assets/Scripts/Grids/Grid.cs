@@ -34,22 +34,6 @@ public class Grid<T> where T: GridItem{
         return null;
     }
 
-    public void FullInitGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent) {
-        if (w == 0 && l == 0)
-            return;
-        T[,] newGrid = new T[w, l];
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < l; j++) {
-                newGrid[i, j] = GameObject.Instantiate(itemPref).GetComponent<GridItem>() as T;
-                newGrid[i, j].transform.name = "("+i+":"+j+")"+ newGrid[i, j].name;
-                newGrid[i, j].transform.parent = parent;
-                newGrid[i, j].transform.position = posStart + new Vector2(itemSize.x * i, itemSize.y * j);
-                newGrid[i, j].gridX = i;
-                newGrid[i, j].gridY = j;
-            }
-        }
-        data = newGrid;
-    }
 
     public GridItem[] AsArray() {
         GridItem[] arr = new GridItem[width * length];

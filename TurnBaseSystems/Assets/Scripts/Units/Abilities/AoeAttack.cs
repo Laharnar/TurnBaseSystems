@@ -1,3 +1,3 @@
-﻿public abstract class AoeAttack : Attack {
+﻿public abstract class AoeAttack : AttackBaseType {
     public GridMask aoeMask;
 }

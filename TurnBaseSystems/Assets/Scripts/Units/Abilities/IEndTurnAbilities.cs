@@ -1,3 +1,3 @@
 ﻿interface IEndTurnAbilities {
-    Attack[] GetPassive();
+    AttackData[] GetPassive();
 }

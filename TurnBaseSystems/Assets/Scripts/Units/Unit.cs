@@ -78,7 +78,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
             }
         }
         if ((abilities as IEndTurnAbilities) != null) {
-            Attack[] passives = (abilities as IEndTurnAbilities).GetPassive();
+            AttackData[] passives = (abilities as IEndTurnAbilities).GetPassive();
             for (int i = 0; i < passives.Length; i++) {
                 passives[i].ApplyDamage(this, null);
             }
@@ -156,9 +156,9 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         if (moving) return;
         gridX = slot.gridX;
         gridY = slot.gridY;
-        pathing.GoToCoroutine(this, slot.gridX, slot.gridY, GridManager.m);
+        pathing.GoToCoroutine(this, slot.gridX, slot.gridY);
     }
-    void AttackCoroutine(Attack attack) {
+    void AttackCoroutine(AttackData attack) {
         if (attacking) return;
         if (!attack.animData.useInfo || anim==null) return;
         int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
@@ -166,13 +166,13 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         StartCoroutine(WaitAttack(attack));
     }
 
-    IEnumerator WaitAttack(Attack attack) {
+    IEnumerator WaitAttack(AttackData attack) {
         attacking = true;
         yield return new WaitForSeconds( attack.animData.animLength);
         attacking = false;
     }
 
-    internal void AttackAction(GridItem attackedSlot, Unit other, Attack atk) {
+    internal void AttackAction(GridItem attackedSlot, Unit other, AttackData atk) {
         if (atk.requiresUnit && attackedSlot.filledBy == null) return;
         if (attacking) return;
 
@@ -205,15 +205,15 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     public bool CanMoveTo(GridItem slot) {
-        return CanMove && (pathing.moveMask == null || GridManager.IsSlotInMask(curSlot, slot, pathing.moveMask));
+        return CanMove && (pathing.moveMask == null || GridLookup.IsSlotInMask(curSlot, slot, pathing.moveMask));
     }
 
     internal bool CanAttackSlot(GridItem hoveredSlot, GridMask mask) {
-        return hoveredSlot && GridManager.IsSlotInMask(this.curSlot, hoveredSlot, mask);
+        return hoveredSlot && GridLookup.IsSlotInMask(this.curSlot, hoveredSlot, mask);
     }
     
 
-    internal bool CanAttackWith(Attack curAttack) {
+    internal bool CanAttackWith(AttackData curAttack) {
         return curAttack.actionCost <= actionsLeft;
     }
 }

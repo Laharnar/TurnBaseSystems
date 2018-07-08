@@ -32,14 +32,6 @@ public partial class GridManager : MonoBehaviour {
         gridSlots.InitGrid(gridParent.transform.position, itemDimensions, pref, gridParent);
     }
 
-    internal static GridItem[] LoadAoeAttackLayer(Unit source, AoeAttack attack, int mouseDirection, GridItem attackedSlot) {
-        GridMask curFilter = attack.aoeMask;
-        if (curFilter.rotateable)
-            curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-        GridItem[] items = GridManager.GetSlotsInMask(source.gridX, source.gridY, curFilter);
-        return items;
-    }
-
     public static GridItem SnapToGrid(Vector3 point) {
         Vector3 o = point;
         point = point - m.gridParent.transform.position + (Vector3)m.itemDimensions / 2;
@@ -60,63 +52,17 @@ public partial class GridManager : MonoBehaviour {
         return null;
     }
 
-    public static GridMask LoadAttackLayer(Unit unit, Attack curAttack, int mouseDirection) {
-        return LoadInteractionsInArea(unit.curSlot, curAttack.attackMask, mouseDirection, curAttack.attackType);
-        /*GridMask curFilter = curAttack.attackMask;
-        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-        GridItem[] items = GridManager.GetSlotsInMask(unit.curSlot.gridX, unit.curSlot.gridY, curFilter);
-        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);*/
-    }
-    public static GridMask LoadAttackLayer(GridItem slot, Attack curAttack, int mouseDirection) {
-        return LoadInteractionsInArea(slot, curAttack.attackMask, mouseDirection, curAttack.attackType);
-        /*GridMask curFilter = curAttack.attackMask;
-        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-        GridItem[] items = GridManager.GetSlotsInMask(unit.curSlot.gridX, unit.curSlot.gridY, curFilter);
-        return AiHelper.FilterByInteractions(unit.curSlot, items, curAttack.attackType, curFilter);*/
-    }
-    /// <summary>
-    /// Finds slots in area that fit filtering parameters
-    /// </summary>
-    /// <param name="curAttack"></param>
-    public static GridMask LoadInteractionsInArea(GridItem slot, GridMask mask, int mouseDirection, string attackType) {
-        GridMask curFilter = mask;
-        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-        GridItem[] items = GridManager.GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
-        return AiHelper.FilterByInteractions(slot, items, attackType, curFilter);
-    }
-
-    public static bool AreSlotsInRange(GridItem curSlot, GridItem attackedSlot, int range) {
-        return Vector3.Distance(curSlot.transform.position, attackedSlot.transform.position)
-            <= range*Mathf.Max(m.itemDimensions.x, m.itemDimensions.y);
-    }
-    
-
-    public static void RecolorRange(int color, params GridItem[] slots) {
-        for (int i = 0; i < slots.Length; i++) {
-            slots[i].RecolorSlot(color);
-        }
-    }
-
     public static void RecolorMask(GridItem u, int color, GridMask attackMask) {
-        if (attackMask)
-            RecolorRange(color, GetSlotsInMask(u.gridX, u.gridY, attackMask));
-        else Debug.Log("Warning: mask is not assigned.");
-    }
-
-    public static GridItem[] GetSlotsInRange(int gridX, int gridY, int range) {
-        List<GridItem> items = new List<GridItem>();
-        for (int i = gridX-range; i < gridX+range+1; i++) {
-            for (int j = gridY-range; j < gridY+range+1; j++) {
-                if (i > -1 && i < m.width && j > -1 && j < m.length) {
-                    GridItem item = m.gridSlots.GetItem(i, j);
-                    if (AreSlotsInRange(m.gridSlots.GetItem(gridX, gridY), item, range)) {
-                        items.Add(item);
-                    }
-                }
+        if (attackMask) {
+            GridItem[] slots = GridAccess.GetSlotsInMask(u.gridX, u.gridY, attackMask);
+            for (int i = 0; i < slots.Length; i++) {
+                slots[i].RecolorSlot(color);
             }
-        }
-        return items.ToArray();
+        } else Debug.Log("Warning: mask is not assigned.");
     }
+}
+
+public static class GridLookup {
 
     /// <summary>
     /// Checks if target is in mask of source.
@@ -127,20 +73,59 @@ public partial class GridManager : MonoBehaviour {
     /// <returns></returns>
     public static bool IsSlotInMask(GridItem source, GridItem target, GridMask mask) {
         if (mask.w == 0 || mask.l == 0) {
-            Debug.LogError("Mask isn't defined");
+            Debug.LogError("Mask width or height is 0.");
             return false;
         }
-        int i = (target.gridX - source.gridX)+mask.w/2;
-        int j = (target.gridY - source.gridY)+mask.l/2;
+        int i = (target.gridX - source.gridX) + mask.w / 2;
+        int j = (target.gridY - source.gridY) + mask.l / 2;
         if (i > -1 && i < mask.w && j > -1 && j < mask.l) {
-            return mask.Get(i,j);
+            return mask.Get(i, j);
         }
         return false;
+    }
+
+
+    public static bool AreSlotsInRange(GridItem curSlot, GridItem attackedSlot, int range) {
+        return Vector3.Distance(curSlot.transform.position, attackedSlot.transform.position)
+            <= range * Mathf.Max(GridManager.m.itemDimensions.x, GridManager.m.itemDimensions.y);
+    }
+}
+
+public static class GridAccess {
+
+
+    public static GridItem GetItem(int x, int y) {
+        return GridManager.m.gridSlots.GetItem(x, y);
+    }
+
+    public static GridItem[] LoadLocalAoeAttackLayer(Unit source, AoeAttack attack, int mouseDirection, GridItem attackedSlot) {
+        GridMask curFilter = attack.aoeMask;
+        if (curFilter.rotateable)
+            curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GetSlotsInMask(source.gridX, source.gridY, curFilter);
+        return items;
+    }
+
+    public static GridMask LoadAttackLayer(GridItem slot, AttackData curAttack, int mouseDirection) {
+        return LoadMaskByInteractionType(slot, curAttack.attackMask, mouseDirection, curAttack.attackType);
+    }
+
+    /// <summary>
+    /// Finds slots in area that fit filtering parameters
+    /// </summary>
+    /// <param name="curAttack"></param>
+    public static GridMask LoadMaskByInteractionType(GridItem slot, GridMask mask, int mouseDirection, string attackType) {
+        GridMask curFilter = mask;
+        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
+        return AiHelper.FilterByInteractions(slot, items, attackType, curFilter);
     }
 
     public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask, OffsetMask offset) {
         if (offset != null) {
             offset.ApplyOffset(ref gridX, ref gridY);
+        } else {
+            Debug.Log("Warning: offset mask is null, normal GetSlotsInMask result.");
         }
         return GetSlotsInMask(gridX, gridY, mask);
     }
@@ -149,30 +134,26 @@ public partial class GridManager : MonoBehaviour {
         if (mask == null) // return all
         {
             Debug.Log("Mask is null, returning all slots.");
-            return m.gridSlots.AsArray();
+            return GridManager.m.gridSlots.AsArray();
         }
         if (mask.w == 0 || mask.l == 0) {
             Debug.LogError("Mask width OR length is 0, returning null");
             return null;
         }
-        GridItem center = m.gridSlots.GetItem(gridX, gridY);
+        GridItem center = GetItem(gridX, gridY);
         List<GridItem> items = new List<GridItem>();
-        for (int i =  0; i < mask.w; i++) {
-            for (int j =  0; j < mask.l; j++) {
+        for (int i = 0; i < mask.w; i++) {
+            for (int j = 0; j < mask.l; j++) {
                 int indI = i - mask.w / 2;
                 int indJ = j - mask.l / 2;
-                if (gridX + indI > -1 && gridX + indI < m.width && gridY + indJ > -1 && gridY + indJ < m.length) {
-                    GridItem item = m.gridSlots.GetItem(gridX + indI, gridY +indJ);
-                    if (mask.Get(i,j)) {
+                if (gridX + indI > -1 && gridX + indI < GridManager.m.width && gridY + indJ > -1 && gridY + indJ < GridManager.m.length) {
+                    GridItem item = GetItem(gridX + indI, gridY + indJ);
+                    if (mask.Get(i, j)) {
                         items.Add(item);
                     }
                 }
             }
         }
         return items.ToArray();
-    }
-
-    internal static GridItem GetItem(int x, int y) {
-        return m.gridSlots.GetItem(x, y);
     }
 }

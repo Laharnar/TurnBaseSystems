@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class RangedAttack : Attack {
+public class RangedAttack : AttackBaseType {
 
     public int damage = 1;
 

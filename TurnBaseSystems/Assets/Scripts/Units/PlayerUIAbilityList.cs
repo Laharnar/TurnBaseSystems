@@ -55,7 +55,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
         if (unit.abilities == null) {
             Debug.Log("No ability compoentn");
         }
-        Attack[] abilitis = unit.abilities.GetNormalAbilities();
+        AttackData[] abilitis = unit.abilities.GetNormalAbilities();
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
             m.instances[i].GetComponent<ButtonInteraction>().interaction 

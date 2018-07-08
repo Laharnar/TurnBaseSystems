@@ -84,4 +84,11 @@ public class SelectionManager : MonoBehaviour{
         }
         return null;
     }
+
+    public static Unit GetUnitUnderMouse(GridItem refSlot) {
+        Unit cur = refSlot.filledBy;
+        if (cur == null) // maybe hovering over unit's head, which is in other slot.
+            cur = SelectionManager.GetMouseAsUnit2D();
+        return cur;
+    }
 }

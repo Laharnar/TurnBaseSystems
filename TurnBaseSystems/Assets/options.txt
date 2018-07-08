@@ -2,15 +2,13 @@
 When you have no goals, pick something from here.
 ----------------------------------------------------------
 
-Obsolete GetEnvAbilities function in UnitAbilities.
-
 Simpler approach to attacks on units. 
 Class with list of avaliable attacks instead of hardcoded.
 Or class with all possible attacks.
 
 Skills consume both AP and actions
 
-Actions are visible on UI.
+Actions left are visible on UI.
 
 Talking abilities!
 
@@ -25,4 +23,7 @@ entering combat loses you points, talking your way in, increases in some cases, 
 
 city map with events
 
-scriptable object based attack setting.
+scriptable object based attack settings
+or editor based.
+
+remove attack type and requires slot, with enum. then add a can attack slot check

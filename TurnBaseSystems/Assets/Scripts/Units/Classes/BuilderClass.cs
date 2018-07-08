@@ -2,15 +2,23 @@
 [System.Serializable]
 public class BuilderClass : UnitAbilities {
 
-    public RangedAttack melleAttack;
+    /*public RangedAttack melleAttack;
     //public TwoStepAttack deconstruct;
     //public TwoStepAttack construct;
     public SlotConsumption deconstruct;
     public SlotBuilding construct;
     public PickItem pickWeapon;
     public PassEquipped passWeapon;
+    */
+    public AttackData melleAttack;
+    //public TwoStepAttack deconstruct;
+    //public TwoStepAttack construct;
+    public AttackData deconstruct;
+    public AttackData construct;
+    public AttackData pickWeapon;
+    public AttackData passWeapon;
 
-    public override Attack BasicAttack {
+    public override AttackData BasicAttack {
         get {
             return melleAttack;
         }
@@ -22,8 +30,7 @@ public class BuilderClass : UnitAbilities {
         }
     }
 
-
-    public override Attack[] GetNormalAbilities() {
-        return new Attack[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon };
+    public override AttackData[] GetNormalAbilities() {
+        return new AttackData[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon };
     }
 }

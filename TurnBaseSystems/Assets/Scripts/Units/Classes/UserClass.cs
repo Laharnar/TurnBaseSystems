@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
 
 public class UserClass : UnitAbilities {
-
+    /*
     public RangedAttack shoot1;
     public ThrowEquipped throwWeapon;
     public AttackWithEquipped melleWeaponAttack;
     public PickItem pickWeapon;
     public PassEquipped passWeapon;
+    */
+    public AttackData shoot1;
+    public AttackData throwWeapon;
+    public AttackData melleWeaponAttack;
+    public AttackData pickWeapon;
+    public AttackData passWeapon;
 
     Unit unit;
 
@@ -14,13 +20,13 @@ public class UserClass : UnitAbilities {
         unit = GetComponent<Unit>();
     }
 
-    public override Attack[] GetNormalAbilities() {
-        return new Attack[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon };
+    public override AttackData[] GetNormalAbilities() {
+        return new AttackData[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon };
     }
 
-    public override Attack BasicAttack {
+    public override AttackData BasicAttack {
         get {
-            return unit.equippedWeapon!= null ? unit.equippedWeapon.StandardAttack as Attack : shoot1 as Attack;
+            return unit.equippedWeapon!= null ? unit.equippedWeapon.StandardAttack as AttackData : shoot1 as AttackData;
         }
     }
 

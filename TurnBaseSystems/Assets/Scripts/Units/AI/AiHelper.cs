@@ -88,7 +88,7 @@ public static class AiHelper {
         // Dir from target to source, then take closest neighbour to it.
         Vector3 dir = (targetSlot.transform.position - maskSource.transform.position);
         dir.Normalize();
-        GridItem[] nbrs = GridManager.GetSlotsInMask(maskSource.gridX, maskSource.gridY, mask);
+        GridItem[] nbrs = GridAccess.GetSlotsInMask(maskSource.gridX, maskSource.gridY, mask);
         float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position + dir, nbrs);
         float[] distsToSource = GetDistances<GridItem>(maskSource.transform.position - dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -119,7 +119,7 @@ public static class AiHelper {
         // Dir from target to source, then take closest neighbour to it.
         Vector3 dir = (targetSlot.transform.position- pos);
         dir.Normalize();
-        GridItem[] nbrs = GridManager.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
+        GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
         float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position + dir, nbrs);
         float[] distsToSource = GetDistances<GridItem>(pos - dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -150,7 +150,7 @@ public static class AiHelper {
     public static GridItem ClosestFreeSlotOnOppositeEdge(Vector3 pos, GridItem targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
         Vector3 dir = (targetSlot.transform.position- pos).normalized;
-        GridItem[] nbrs = GridManager.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
+        GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
         float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position -dir, nbrs);
         float[] distsToSource = GetDistances<GridItem>(pos + dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -183,7 +183,7 @@ public static class AiHelper {
 
         // Dir from target to source, then take closest neighbour to it.
         Vector3 dir = (targetSlot.transform.position- pos).normalized;
-        GridItem[] nbrs = GridManager.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
+        GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
         float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position - dir, nbrs);
         float[] distsToSource = GetDistances<GridItem>(pos + dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -219,7 +219,6 @@ public static class AiHelper {
     /// <returns></returns>
     public static GridItem ClosestFreeSlotToSlot(Vector3 pos, GridItem targetSlot) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position- pos).normalized;
         List<GridItem> nbrs = Neighbours(targetSlot);
         for (int i = 0; i < nbrs.Count; i++) {
             if (!nbrs[i].Walkable) {
@@ -231,6 +230,7 @@ public static class AiHelper {
         if (nbrs.Count == 0) {
             return null;
         }
+        Vector3 dir = (targetSlot.transform.position- pos).normalized;
         float[] dists = GetDistances<GridItem>(targetSlot.transform.position - dir, nbrs.ToArray());
         return nbrs[dists.GetIndexOfMin()];
     }
@@ -251,7 +251,7 @@ public static class AiHelper {
 
     public static List<GridItem> FilterByMask(List<GridItem> items, GridItem source, GridMask mask) {
         for (int i = 0; i < items.Count; i++) {
-            if (!GridManager.IsSlotInMask(source, items[i], mask)) {
+            if (!GridLookup.IsSlotInMask(source, items[i], mask)) {
                 items.RemoveAt(i);
                 i--;
             }
@@ -262,16 +262,16 @@ public static class AiHelper {
     public static bool IsNeighbour(GridItem slot, GridItem other) {
         List<GridItem> slots = new List<GridItem>();
         if (slot.gridX > 0) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX - 1, slot.gridY));
+            slots.Add(GridAccess.GetItem(slot.gridX - 1, slot.gridY));
         }
         if (slot.gridY > 0) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY - 1));
+            slots.Add(GridAccess.GetItem(slot.gridX, slot.gridY - 1));
         }
         if (slot.gridX + 1 < GridManager.m.width) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX + 1, slot.gridY));
+            slots.Add(GridAccess.GetItem(slot.gridX + 1, slot.gridY));
         }
         if (slot.gridY + 1 > GridManager.m.length) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY + 1));
+            slots.Add(GridAccess.GetItem(slot.gridX, slot.gridY + 1));
         }
         return slots.Contains(other);
     }
@@ -279,16 +279,16 @@ public static class AiHelper {
     public static List<GridItem> Neighbours(GridItem slot) {
         List<GridItem> slots = new List<GridItem>();
         if (slot.gridX > 0) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX - 1, slot.gridY));
+            slots.Add(GridAccess.GetItem(slot.gridX - 1, slot.gridY));
         }
         if (slot.gridY > 0) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY - 1));
+            slots.Add(GridAccess.GetItem(slot.gridX, slot.gridY - 1));
         }
         if (slot.gridX+1 < GridManager.m.width) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX+1, slot.gridY));
+            slots.Add(GridAccess.GetItem(slot.gridX+1, slot.gridY));
         }
         if (slot.gridY+1 < GridManager.m.length) {
-            slots.Add(GridManager.m.gridSlots.GetItem(slot.gridX, slot.gridY+1));
+            slots.Add(GridAccess.GetItem(slot.gridX, slot.gridY+1));
         }
         return slots;
     }

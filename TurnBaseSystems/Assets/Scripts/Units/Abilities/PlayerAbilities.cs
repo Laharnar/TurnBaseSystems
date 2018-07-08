@@ -1,8 +1,9 @@
 ﻿using System;
 public class PlayerAbilities : UnitAbilities {
-    public RangedAttack shoot1;
+    //public RangedAttack shoot1;
+    public AttackData shoot1;
 
-    public override Attack BasicAttack {
+    public override AttackData BasicAttack {
         get {
             return shoot1;
         }
@@ -14,7 +15,7 @@ public class PlayerAbilities : UnitAbilities {
         }
     }
 
-    public override Attack[] GetNormalAbilities() {
-        return new Attack[] { shoot1 };
+    public override AttackData[] GetNormalAbilities() {
+        return new AttackData[] { shoot1 };
     }
 }

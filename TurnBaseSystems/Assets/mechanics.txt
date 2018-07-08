@@ -306,6 +306,8 @@ the npcs
 the clown, politician, empress assistant, empress, city guard, kids, teachers, aliens
 slingshot, crossbow, mage, sniper, rock throwing orc - earth mage - hafu, toph,
 tree, syche, flower
+shadow warrior, black hodies with shadow spike stuff.
+
 
 casting, lux laser, explosion, charged homing ball, dragoon, 
 aoe heal, shadow mist, shaman summon undead, call airstrike, call orbital cannon, machine gun
