@@ -12,22 +12,43 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
 
     public override void OnInspectorGUI() {
         UnitAbilities source = target as UnitAbilities;
+        if (Application.isPlaying) {
+            for (int i = 0; i < source.additionalAbilities.Count; i++) {
+                source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
+                EditorGUILayout.Space();
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
 
+            base.OnInspectorGUI();
+            return;
+        }
+
+        EditorGUI.BeginChangeCheck();
         data = ShowAttackData(data);
 
         if (GUILayout.Button("+")) {
-            source.additionalAbilities.Add(new AttackData() { o_attackName=data.o_attackName, actionCost=data.actionCost ,
-            animData= new AttackAnimationInfo() { animLength = data.animData.animLength,
-                animTrigger = data.animData.animTrigger, useInfo = data.animData.useInfo },
-                attackMask = data.attackMask, attackType = data.attackType,
-            attackType_EditorOnly = data.attackType_EditorOnly, requiresUnit = data.requiresUnit, attackFunction = attackFunction});
+            source.additionalAbilities.Add(new AttackData() {
+                o_attackName = data.o_attackName,
+                actionCost = data.actionCost,
+                animData = new AttackAnimationInfo() {
+                    animLength = data.animData.animLength,
+                    animTrigger = data.animData.animTrigger,
+                    useInfo = data.animData.useInfo
+                },
+                attackMask = data.attackMask,
+                attackType = data.attackType,
+                attackType_EditorOnly = data.attackType_EditorOnly,
+                requiresUnit = data.requiresUnit,
+                attackFunction = attackFunction
+            });
         }
         EditorGUILayout.Separator();
 
         EditorGUI.indentLevel++;
         for (int i = 0; i < source.additionalAbilities.Count; i++) {
             source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
-            if (GUILayout.Button("Remove "+(i+1) + " ("+source.additionalAbilities[i].o_attackName+")")) {
+            if (GUILayout.Button("Remove " + (i + 1) + " (" + source.additionalAbilities[i].o_attackName + ")")) {
                 source.additionalAbilities.RemoveAt(i);
                 i--;
                 continue;
@@ -37,8 +58,12 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         EditorGUI.indentLevel--;
         EditorGUILayout.Separator();
         EditorGUILayout.Separator();
-        
+
         base.OnInspectorGUI();
+
+        if (EditorGUI.EndChangeCheck()) {
+            Undo.RecordObject(target, "Changed character");
+        }
 
     }
 

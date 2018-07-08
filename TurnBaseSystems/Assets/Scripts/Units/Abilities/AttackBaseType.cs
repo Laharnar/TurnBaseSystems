@@ -15,8 +15,6 @@ public abstract class AttackBaseType {
                 return new AoeMaskAttack();
             case AttackType.Hunker:
                 return new Hunker();
-            case AttackType.SelfTarget:
-                break;
             case AttackType.Pickup:
                 return new PickItem();
             case AttackType.ThrowEquipped:

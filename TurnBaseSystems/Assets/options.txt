@@ -27,3 +27,7 @@ scriptable object based attack settings
 or editor based.
 
 remove attack type and requires slot, with enum. then add a can attack slot check
+
+two step channeling abilities - or substep combo abilities(lightly connected)
+
+conditional skills

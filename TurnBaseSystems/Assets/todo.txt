@@ -252,3 +252,9 @@ the spread out enter combat mode
 the normal pre combat walking mode - testing if this improves the experience
 one target building, planned, 1 closed building, city(5 buildings area)
 
+about the characters, have some place where abilities are planned/documented
+
+BUG TESTING ROUND 8.7.2018
+empty masks on characters
+bugs stop main game loop
+missing text on ui

@@ -21,7 +21,7 @@ public class UserClass : UnitAbilities {
     }
 
     public override AttackData[] GetNormalAbilities() {
-        return new AttackData[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon };
+        return AddAbilities(new AttackData[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon });
     }
 
     public override AttackData BasicAttack {

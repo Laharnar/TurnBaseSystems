@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 public class Consumer : UnitAbilities, IEndTurnAbilities {
 
     /*
@@ -39,9 +42,9 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
     }
 
     public override AttackData[] GetNormalAbilities() {
-        return new AttackData[] { basicMelle, pickWeapon, passWeapon, deathCall, waste };
+        return AddAbilities(new AttackData[]{ basicMelle, pickWeapon, passWeapon, deathCall, waste });
     }
-
+    
     public AttackData[] GetPassive() {
         return new AttackData[] { restoration };
     }

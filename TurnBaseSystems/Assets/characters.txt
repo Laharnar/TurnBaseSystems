@@ -1,0 +1,19 @@
+﻿standardized pack 
+- i actually think i should cut weapons... don't fit into the current model or change the model-
+pick weapon
+throw weapon
+
+Melle - collector
+melle attack
+defensive
+-enhance-
+
+Mid range - user
+range attack
+grenade?
+
+sniper - consumer
+range attack
+
+caster - consumer
+range cast > attack

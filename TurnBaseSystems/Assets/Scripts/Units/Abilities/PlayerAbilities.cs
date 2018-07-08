@@ -16,6 +16,6 @@ public class PlayerAbilities : UnitAbilities {
     }
 
     public override AttackData[] GetNormalAbilities() {
-        return new AttackData[] { shoot1 };
+        return AddAbilities(new AttackData[] { shoot1 });
     }
 }
