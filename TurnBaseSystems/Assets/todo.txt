@@ -183,7 +183,7 @@ grid slots have plant life (taht slowly restores itself)
 units have life -> converted to AP. no units = no AP
 passive -> once per turn
 **
-next goal: 30.6.18-3.6.18(4 days)-
+next goal: 30.6.18-3.6.18(4 days)-9.7.18(on hold),
 Explore art direction
 colorful, sharp,
 dark, wild
@@ -238,7 +238,7 @@ conversations
 stealth, infiltration
 
 
-
+*******************************
 Prototype 1: 4.7.2018
 Player's team of 6 characters, you can choose the team members
 an extraction pickup goal
@@ -252,9 +252,28 @@ the spread out enter combat mode
 the normal pre combat walking mode - testing if this improves the experience
 one target building, planned, 1 closed building, city(5 buildings area)
 
+a team
+5 poorly guarded checkpoints toward faction points
+final heavily guarded objective against attacked faction
+*******************************
+pick a mission screen
+a pick team screen
+spawn area
+some camera controls
+checkpoints
+factions(points to unlock missions) <break down
+missions : require certain num of points with that faction. 
+reward: end points+points for any faction from checkpoints
+objective area
+objective, goal screen
+capture fort for faction(mark checkpoints), get to storage
+*******************************
+
 about the characters, have some place where abilities are planned/documented
 
 BUG TESTING ROUND 8.7.2018
-empty masks on characters
-bugs stop main game loop
+empty masks on characters <<fixed by hand
+
+bugs stop main game loop <<rewritten loop
 missing text on ui
+

@@ -9,6 +9,6 @@
     }
 
     public override void Interact(IInteractible other) {
-        PlayerFlag.m.StartTwoStepAttack(unitSource, atkId);
+        PlayerFlag.m.SetActiveAbility(unitSource, atkId);
     }
 }

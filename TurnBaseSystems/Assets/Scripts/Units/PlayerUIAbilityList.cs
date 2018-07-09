@@ -55,6 +55,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
         if (unit.abilities == null) {
             Debug.Log("No ability compoentn");
         }
+        Debug.Log("Loading abilities");
         AttackData[] abilitis = unit.abilities.GetNormalAbilities();
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {

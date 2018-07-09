@@ -8,7 +8,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public Pathing pathing;
     public Alliance flag;
 
-   
+    public bool IsPlayer { get { return flag.allianceId == 0; } }
+    public bool IsEnemy { get { return flag.allianceId == 1; } }
 
     public UnitAnimations anim;
 
@@ -127,7 +128,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         wep.transform.parent = otherUnit.transform;
         otherUnit.equippedWeapon = wep;
 
-        PlayerFlag.m.curAttack = abilities.BasicAttack;
+        PlayerFlag.m.activeAbility = abilities.BasicAttack;
     }
     public void DeEquip() {
         if (equippedWeapon) {
@@ -143,7 +144,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
 
-        PlayerFlag.m.curAttack = abilities.BasicAttack;
+        PlayerFlag.m.activeAbility = abilities.BasicAttack;
     }
 
     public void MoveAction(GridItem slot) {

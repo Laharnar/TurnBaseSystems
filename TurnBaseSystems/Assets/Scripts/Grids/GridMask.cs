@@ -99,6 +99,10 @@ public class GridMask :UnityEngine.ScriptableObject {
     /// <param name="mouseDirection"></param>
     /// <returns></returns>
     internal static GridMask RotateMask(GridMask attackMask, int mouseDirection) {
+        if (attackMask == null) {
+            Debug.Log("Missin attack mask");
+            return null;
+        }
         if (!attackMask.rotateable)
             return attackMask;
         switch (mouseDirection) {

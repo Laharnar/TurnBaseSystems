@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 public class GameplayManager : MonoBehaviour {
 
+    public static GameplayManager m;
     int activeFlagTurn = 0;
 
 

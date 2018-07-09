@@ -10,9 +10,11 @@ public class UIManager :MonoBehaviour{
         m = this;
     }
 
-    public static void PlayerSelectAllyUnitUi(bool v) {
+    public static void PlayerSelectAllyUnitUi(bool v, Unit unit) {
         if (m.pSelectAlly)
         m.pSelectAlly.gameObject.SetActive(v);
+        if (unit)
+            PlayerUIAbilityList.LoadAbilitiesOnUI(unit);
     }
 
     internal static void PlayerStandardUi(bool v) {

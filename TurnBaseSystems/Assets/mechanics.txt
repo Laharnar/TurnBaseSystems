@@ -326,3 +326,62 @@ Game idea:
 Fix the spaceship that was attacked. Defend against the aliens and retake the station.
 The human relationship in a survirous of space crashes are interesting
 
+
+*************
+bad stuff
+loyalty skill can be used only on the factions area - tactical progression, <no it enforces faction 
+choice over free faction choice>, backstabbing(reinforces faction)
+loyalty is calculates as sum of work the unit did. hard to grasp. removes the simple logic
+
+Goal : a slightly story based game focused on characters and factions
+A set of 3 skills plus  a loyalty skill and a team specific skills
+loyalty it reinforce the team and the bond with specific faction.
+you need to work for it it get's easier if you work for it << a new way to combine with your mates
+you don't need to use it tho, it doesn't make game any easier
+
+or it opens a new possibilty in the level for that unit - their core ability
+hugely reinforces the characters
+
+how about forcing the loyalty if you want some missions. that way you work for it AND you get 
+rewarded, as part of progression
+
+some require more loyalty? or require additional missions
+reinforces faction types
+
+*characters and factions*
+
+goals to work towards factions - maybe cover the area?
+or raise points on buildings / checkpoints
+plus the global area to belong to certain faction when you win
+
+buildings - reinforce your character's faction
+objective - reinforces global goal as per quest - this is how you get teammates
+end level, what to do with objective?
+
+movement - a sense of progress through level - fight enemies
+
+bait the enemy
+zig zag over level - after defeating enemies in close area
+
+familiarity field on units - after being in area for a while recieve a slight bonus.
+reinforce factions
+reinforce knowledge of units
+so do enemies
+
+to have and achieve goals
+work for goals
+
+
+tactics - use each character for it's goal
+
+
+1 on 1 dangerous combat, supporting fast 1 shot strikes
+4 on 1, 4 on 2?
+1 on 3?
+
+straight in?
+easy survive?
+
+just normal combat
+surprise attacks? < long range channel attacks out of vision
+hidden
