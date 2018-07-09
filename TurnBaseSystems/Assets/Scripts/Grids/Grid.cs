@@ -17,8 +17,10 @@ public class Grid<T> where T: GridItem{
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
                 int id = i*length+j;
-                data[i, j] = rootLoader.GetChild(id).GetComponent<T>();
-                data[i, j].InitGrid(i, j);
+                if (id < rootLoader.childCount) {
+                    data[i, j] = rootLoader.GetChild(id).GetComponent<T>();
+                    data[i, j].InitGrid(i, j);
+                }
             }
         }
     }
@@ -50,11 +52,13 @@ public class Grid<T> where T: GridItem{
             return;
 
         T[,] newGrid = new T[w, l];
-        int wOld = data.GetLength(0), lOld = data.GetLength(1);
-        for (int i = w; i < wOld; i++) {
-            for (int j = 0; j < lOld; j++) {
-                data[i, j].Null();
-                data[i, j] = null;
+        if (data != null) {
+            int wOld = data.GetLength(0), lOld = data.GetLength(1);
+            for (int i = w; i < wOld; i++) {
+                for (int j = 0; j < lOld; j++) {
+                    data[i, j].Null();
+                    data[i, j] = null;
+                }
             }
         }
 

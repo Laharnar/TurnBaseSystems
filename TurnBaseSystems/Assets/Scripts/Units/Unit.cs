@@ -51,20 +51,25 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public bool attacking = false;
 
     private void Start() {
+        Init();
+    }
+    public void Init() {
         ap = maxAP;
         ResetActions();
         GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
-        curSlot = slot;
-        Move(slot);
-        FlagManager.RegisterUnit(this);
+        if (slot) {
+            curSlot = slot;
+            Move(slot);
+            FlagManager.RegisterUnit(this);
 
-        if (!abilities) {
-            abilities = GetComponent<UnitAbilities>();
-        }
+            if (!abilities) {
+                abilities = GetComponent<UnitAbilities>();
+            }
 
-        if (hpUI) {
-            hpUI.InitBarWithGrey(hp, 10, this);
-            hpUI.ShowHpWithGrey(hp, temporaryArmor);
+            if (hpUI) {
+                hpUI.InitBarWithGrey(hp, 10, this);
+                hpUI.ShowHpWithGrey(hp, temporaryArmor);
+            }
         }
     }
 
@@ -154,7 +159,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     private void Move(GridItem slot) {
-        if (moving) return;
+        if (moving ) return;
         gridX = slot.gridX;
         gridY = slot.gridY;
         pathing.GoToCoroutine(this, slot.gridX, slot.gridY);

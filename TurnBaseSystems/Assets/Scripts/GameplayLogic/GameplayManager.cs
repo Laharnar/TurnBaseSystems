@@ -6,17 +6,34 @@ public class GameplayManager : MonoBehaviour {
     public static GameplayManager m;
     int activeFlagTurn = 0;
 
-
-    Unit playerActiveUnit;
-
+    Transform[] playerTeam;
+    Coroutine gameplayUp;
     private void Awake() {
-        FlagManager.flags.Add(new PlayerFlag());
-        FlagManager.flags.Add(new EnemyFlag());
-
-        StartCoroutine(GameplayUpdate());
+        m = this;
+        Init();
     }
 
-
+    public void Init() {
+        Debug.Log("Initing gameplay manager");
+        FlagManager.flags = new System.Collections.Generic.List<FlagController>();
+        FlagManager.flags.Add(new PlayerFlag());
+        FlagManager.flags.Add(new EnemyFlag());
+        if (gameplayUp != null)
+            StopCoroutine(gameplayUp);
+        gameplayUp=StartCoroutine(GameplayUpdate());
+    }
+    /// <summary>
+    /// Before they are deparented from loader
+    /// </summary>
+    public void LoadTeam() {
+        GameObject team = GameObject.Find("*loader");
+        Transform spawnPoints = GameObject.Find("Starting point").transform;
+        playerTeam = new Transform[team.transform.childCount];
+        for (int i = 0; i < playerTeam.Length && i < spawnPoints.childCount; i++) {
+            playerTeam[i] = team.transform.GetChild(i);
+            playerTeam[i].transform.position = spawnPoints.GetChild(i).transform.position;
+        }
+    }
     IEnumerator GameplayUpdate() {
         yield return null;
         bool done = false;

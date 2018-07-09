@@ -4,15 +4,17 @@ public class SelectionManager : MonoBehaviour{
 
     public static SelectionManager m;
 
-    public Unit selectedUnit;
-
     private void Awake() {
         m = this;
     }
 
-    private void Update() {
-        if (Input.GetKey(KeyCode.Mouse0))
-            selectedUnit = GetMouseAsUnit2D();
+    internal static Transform GetMouseAsObject() {
+        Vector2 selection = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D[] hits = GetAllSelection2D(selection);
+        if (hits != null) {
+            return hits[0].transform;
+        }
+        return null;
     }
 
     internal static GridItem GetMouseAsSlot2D() {
