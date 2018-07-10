@@ -5,6 +5,9 @@ public static class AiHelper {
 
 
     public static GridMask FilterByInteractions(GridItem source, GridItem[] items, string attackType, GridMask template) {
+        if (attackType == "") {
+            Debug.Log("Error, unassigned, attackType");
+        }
         GridMask mask = template.EmptyCopy();
         for (int i = 0; i < items.Length; i++) {
             int x = items[i].gridX - source.gridX + mask.w / 2;// mask.LowerLeftFromX(source.gridX) + mask.LowerLeftFromX();

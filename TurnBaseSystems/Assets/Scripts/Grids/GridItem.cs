@@ -91,7 +91,7 @@ public class GridItem : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="code">0: normal, 1: selected, 2: attackable, 3: ally</param>
+    /// <param name="code">0: normal, 1: selected green, 2: attackable red, 3: ally blue</param>
     internal void RecolorSlot(int code) {
         transform.GetComponentInChildren<SpriteRenderer>().color = 
             code == 0 ? defaultColor : 

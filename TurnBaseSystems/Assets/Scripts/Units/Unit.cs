@@ -20,6 +20,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
 
     public bool HasActions { get { return !NoActions; } }
 
+    public int ActionsLeft { get { return actionsLeft; } }
+
     public int hp = 5;
 
     public int maxActions = 2;
@@ -65,8 +67,9 @@ public partial class Unit :MonoBehaviour, ISlotItem{
             if (!abilities) {
                 abilities = GetComponent<UnitAbilities>();
             }
-
             if (hpUI) {
+                hpUI.canvasRoot.gameObject.SetActive(true);
+                hpUI.background.gameObject.SetActive(true);
                 hpUI.InitBarWithGrey(hp, 10, this);
                 hpUI.ShowHpWithGrey(hp, temporaryArmor);
             }
@@ -166,6 +169,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
     void AttackCoroutine(AttackData attack) {
         if (attacking) return;
+        Debug.Log("Executing atatck animation "+ attack.animData.useInfo+" "+anim );
         if (!attack.animData.useInfo || anim==null) return;
         int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
         anim.SetTrigger(attackTriggerCode);
@@ -179,16 +183,28 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     internal void AttackAction(GridItem attackedSlot, Unit other, AttackData atk) {
-        if (atk.requiresUnit && attackedSlot.filledBy == null) return;
-        if (attacking) return;
+        if (atk == abilities.move) {
+            Debug.Log("Executing move action");
+            MoveAction(attackedSlot);
+        } else {
+            if ((atk.requiresUnit && attackedSlot.filledBy == null) || attacking) {
+                if (attacking) {
+                    Debug.Log("Already attacking. action aborted.");
+                }
+                if (atk.requiresUnit && attackedSlot.filledBy == null) {
+                    Debug.Log("This attack requires unit, no unit there. action aborted.");
+                }
+                return;
+            }
+            Debug.Log("Executing attack "+ atk.o_attackName);
+            actionsLeft -= atk.actionCost;
+            atk.ApplyDamage(this, attackedSlot);
 
-        actionsLeft -= atk.actionCost;
-        atk.ApplyDamage(this, attackedSlot);
+            AttackCoroutine(atk);
 
-        AttackCoroutine(atk);
-
-        if (equippedWeapon)
-            equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);
+            if (equippedWeapon)
+                equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);
+        }
     }
 
     public void GetDamaged(int realDmg) {

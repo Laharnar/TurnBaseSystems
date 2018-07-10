@@ -24,12 +24,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
     }*/
 
     public void InitList(int length) {
-        for (int i = 0; i < instances.Count; i++) {
-            if (instances[i] != null) {
-                GameObject.Destroy(instances[i].gameObject);
-            }
-        }
-        instances.Clear();
+        ClearInstanceList();
 
         Vector2 screenLeft = new Vector2(-Camera.main.pixelWidth/2, 0);
         Vector2 screenBot = screenLeft + new Vector2(height, (length - 1) * offset / 2);
@@ -41,6 +36,15 @@ public class PlayerUIAbilityList : MonoBehaviour {
             (t as RectTransform).anchoredPosition = screenBot - new Vector2(0, i * offset);
             instances.Add(t);
         }
+    }
+
+    public static void ClearInstanceList() {
+        for (int i = 0; i < m.instances.Count; i++) {
+            if (m.instances[i] != null) {
+                GameObject.Destroy(m.instances[i].gameObject);
+            }
+        }
+        m.instances.Clear();
     }
 
     public static void AssignInteractionToUI(Interaction interaction, int i) {
@@ -61,8 +65,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
         for (int i = 0; i < abilitis.Length; i++) {
             m.instances[i].GetComponent<ButtonInteraction>().interaction 
                 = ScriptableObject.CreateInstance<TwoStepAttack>().Init(unit, i);
-            m.instances[i].GetChild(0).GetComponent<Text>().text += " " + unit.abilities.GetNormalAbilities()[i].GetType().Name;
-
+            m.instances[i].GetChild(0).GetComponent<Text>().text += " " + unit.abilities.GetNormalAbilities()[i].o_attackName;
         }
     }
 }

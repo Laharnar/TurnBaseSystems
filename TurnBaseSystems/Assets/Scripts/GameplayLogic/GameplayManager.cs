@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour {
 
     Transform[] playerTeam;
     Coroutine gameplayUp;
+
     private void Awake() {
         m = this;
         Init();
@@ -37,6 +38,7 @@ public class GameplayManager : MonoBehaviour {
     IEnumerator GameplayUpdate() {
         yield return null;
         bool done = false;
+        Debug.Log("Started main loop");
         while (true) {
             for (int j = 0; j < FlagManager.flags.Count; j++) {
                 activeFlagTurn = j;
@@ -72,6 +74,7 @@ public class GameplayManager : MonoBehaviour {
             
             yield return null;
         }
+        Debug.Log("Exited main loop");
     }
 
     private IEnumerator WinGame() {

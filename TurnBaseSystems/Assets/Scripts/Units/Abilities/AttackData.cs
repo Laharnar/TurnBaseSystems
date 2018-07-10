@@ -24,6 +24,10 @@ public sealed class AttackData {
     public AttackBaseType attackFunction;
 
     public void ApplyDamage(Unit source, GridItem attackedSlot) {
+        if (attackFunction == null) {
+            attackFunction = AttackBaseType.GetAttackType(attackType_EditorOnly);
+            Debug.Log("Auto assigning attack "+o_attackName+"as "+attackType_EditorOnly.ToString());
+        }
         if (attackFunction != null)
             attackFunction.ApplyDamage(source, attackedSlot);
         else Debug.Log("No attack function defined");

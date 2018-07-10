@@ -19,7 +19,9 @@ public abstract class UnitAbilities : MonoBehaviour {
     public abstract AttackData[] GetNormalAbilities();
 
     protected AttackData[] AddAbilities(AttackData[] data) {
+        
         List<AttackData> d = new List<AttackData>();
+        
         d.Add(move);
         d.AddRange(additionalAbilities);
         d.AddRange(data);

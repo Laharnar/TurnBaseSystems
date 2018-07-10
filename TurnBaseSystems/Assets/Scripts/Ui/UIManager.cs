@@ -13,7 +13,9 @@ public class UIManager :MonoBehaviour{
     public static void PlayerSelectAllyUnitUi(bool v, Unit unit) {
         if (m.pSelectAlly)
         m.pSelectAlly.gameObject.SetActive(v);
-        if (unit)
+        if (v == false)
+            PlayerUIAbilityList.ClearInstanceList();
+        else if (unit)
             PlayerUIAbilityList.LoadAbilitiesOnUI(unit);
     }
 
