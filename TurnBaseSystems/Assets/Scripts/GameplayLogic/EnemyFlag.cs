@@ -11,6 +11,10 @@ public class EnemyFlag : FlagController {
             UnityEngine.Debug.Log("running once...");
             yield return units[i].StartCoroutine(RunAi(units[i]));
             Unit.activeUnit = null;
+
+            if (GameplayManager.levelCompleted) {
+                break;
+            }
         }
         yield return null;
         turnDone = true;

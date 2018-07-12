@@ -109,6 +109,7 @@ public class PlayerFlag : FlagController {
                         ResetColorForUnit(selectedPlayerUnit, curFilter);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
                         OnUnitExecutesAction(selectedPlayerUnit);
+                        
                     }
                     yield return null;
                 }
@@ -119,6 +120,10 @@ public class PlayerFlag : FlagController {
             if (selectedUnit && selectedUnit.NoActions) {
                 DeselectUnit();
                 ShowUI();
+            }
+
+            if (GameplayManager.levelCompleted) {
+                break;
             }
 
             /*if (units.Count == 0 || NoActionsLeft() || Input.GetKeyDown(KeyCode.Return)) break;

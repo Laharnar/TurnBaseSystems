@@ -8,6 +8,7 @@ public class LoadingManager : MonoBehaviour {
     internal Transform[] team;
 
     int activeLoadingScreen = 0;
+    public Transform childWinScreen;
 
     private void Awake() {
         if (m != null)
@@ -31,7 +32,7 @@ public class LoadingManager : MonoBehaviour {
         }
         SceneManager.LoadScene(activeMission.sceneName);
         StartCoroutine(WaitSceneLoad());
-        
+
     }
 
     private IEnumerator WaitSceneLoad() {
@@ -48,11 +49,20 @@ public class LoadingManager : MonoBehaviour {
     }
 
     public void LoadNextScreen() {
+        childWinScreen.gameObject.SetActive(false);
         if (activeLoadingScreen == 0) {
             OnLoadCharacterScreen();
         } else if (activeLoadingScreen == 1) {
             OnLoadMission();
+        } else if (activeLoadingScreen == 2) {
+            OnLoadLevelEndScreen();
         }
     }
+    
+    private void OnLoadLevelEndScreen() {
+        activeLoadingScreen = 3;
+        childWinScreen.gameObject.SetActive(true);
+        childWinScreen.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+        Debug.Log("Todo: save the faction points into file.");
+    }
 }
-

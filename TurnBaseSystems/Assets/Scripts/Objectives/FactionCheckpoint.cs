@@ -29,8 +29,8 @@ public class FactionCheckpoint : MonoBehaviour {
     public Reward reward;
 
     public bool isMissionGoal = false;
-    bool alreadyUsed = false;
-    GridItem slot;
+    [SerializeField] Unit alreadyUsed = null;
+    [SerializeField] GridItem slot;
 
 	// Use this for initialization
 	void Start () {
@@ -52,7 +52,7 @@ public class FactionCheckpoint : MonoBehaviour {
 
     // Update is called once per frame
     void ActivateCheckpoint (Unit unit) {
-        alreadyUsed = true;
+        alreadyUsed = unit;
         GetComponentInChildren<SpriteRenderer>().transform.localScale *= 3;
         GameplayManager.OnEnterCheckPoint(this, unit);
 	}

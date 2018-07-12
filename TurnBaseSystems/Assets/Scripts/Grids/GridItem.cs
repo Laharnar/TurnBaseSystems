@@ -11,6 +11,7 @@ public class GridItem : MonoBehaviour {
     public Weapon fillAsPickup;
     public int AP = 3;
     //public LocationMaterial material;
+    Color defaultColor;
 
     /// <summary>
     /// Abilities are loaded on level load or later, from all objects that can be found on this slot.
@@ -31,8 +32,6 @@ public class GridItem : MonoBehaviour {
     public void RestoreFlora() {
         AP++;
     }
-
-    Color defaultColor;
 
     private void Awake() {
         defaultColor = transform.GetComponentInChildren<SpriteRenderer>().color;

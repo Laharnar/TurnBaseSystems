@@ -9,4 +9,12 @@ public class LevelRewardManager:MonoBehaviour {
         m.collectedRewards.Add(reward);
         m.relatedFlag.Add(unit.flag.allianceId);
     }
+
+    public string AsText() {
+        string s = "";
+        for (int i = 0; i < collectedRewards.Count; i++) {
+            s += collectedRewards[i] +" "+ relatedFlag[i]+"\n";
+        }
+        return s;
+    }
 }

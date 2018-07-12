@@ -26,5 +26,6 @@ public abstract class FlagController {
         foreach (var items in FactionCheckpoint.checkpointsInLevel) {
             items.CheckpointCheck(unit);
         }
+        
     }
 }

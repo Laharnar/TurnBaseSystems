@@ -74,7 +74,7 @@ public class GameplayManager : MonoBehaviour {
 
                 }
                 // temp - win condition that enemy dies.
-                if (FlagManager.flags[1].units.Count == 0) {
+                if (FlagManager.flags[1].units.Count == 0 || levelCompleted) {
                     yield return StartCoroutine(WinGame());
                     done = true;
                     break;
@@ -93,6 +93,7 @@ public class GameplayManager : MonoBehaviour {
 
     private IEnumerator WinGame() {
         Debug.Log("WIN!");
+        LoadingManager.m.LoadNextScreen();
         yield return null;
     }
 

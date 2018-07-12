@@ -23,11 +23,14 @@ entering combat loses you points, talking your way in, increases in some cases, 
 
 city map with events
 
-scriptable object based attack settings
-or editor based.
-
 remove attack type and requires slot, with enum. then add a can attack slot check
 
 two step channeling abilities - or substep combo abilities(lightly connected)
 
 conditional skills
+
+save rewards into file
+
+have a mission xml template(description, scene name, mission reward)
+
+checkpoint rewards are set per house type and size
