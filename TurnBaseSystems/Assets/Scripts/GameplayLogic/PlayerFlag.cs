@@ -88,7 +88,6 @@ public class PlayerFlag : FlagController {
                 if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft  
                     && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
                     bool isCurMouseHostile = hoveredSlot.filledBy && hoveredSlot.filledBy.flag.allianceId != selectedPlayerUnit.flag.allianceId;
-                    Debug.Log(isCurMouseHostile + " ,"+activeAbility.requiresUnit);
                     if (activeAbility.requiresUnit && isCurMouseHostile) {
                         // handle weapon aim
                         bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
@@ -103,11 +102,13 @@ public class PlayerFlag : FlagController {
                             if (selectedPlayerUnit.equippedWeapon) {
                                 selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, activeAbility);
                             }
+                            OnUnitExecutesAction(selectedPlayerUnit);
                         }
                     } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
                         Debug.Log("Attacking (2)");
                         ResetColorForUnit(selectedPlayerUnit, curFilter);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
+                        OnUnitExecutesAction(selectedPlayerUnit);
                     }
                     yield return null;
                 }

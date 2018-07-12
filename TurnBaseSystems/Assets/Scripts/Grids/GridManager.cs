@@ -89,6 +89,7 @@ public static class GridLookup {
         return Vector3.Distance(curSlot.transform.position, attackedSlot.transform.position)
             <= range * Mathf.Max(GridManager.m.itemDimensions.x, GridManager.m.itemDimensions.y);
     }
+    
 }
 
 public static class GridAccess {

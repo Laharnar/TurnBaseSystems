@@ -9,6 +9,8 @@ public class GameplayManager : MonoBehaviour {
     Transform[] playerTeam;
     Coroutine gameplayUp;
 
+    public static bool levelCompleted { get; private set; }
+
     private void Awake() {
         m = this;
         Init();
@@ -35,6 +37,18 @@ public class GameplayManager : MonoBehaviour {
             playerTeam[i].transform.position = spawnPoints.GetChild(i).transform.position;
         }
     }
+
+    internal static void OnEnterCheckPoint(FactionCheckpoint checkpoint, Unit unit) {
+        OnCollectReward(checkpoint.reward, unit);
+        if (checkpoint.isMissionGoal) {
+            levelCompleted = true;
+        }
+    }
+
+    internal static void OnCollectReward(Reward collectedReward, Unit unit) {
+        LevelRewardManager.AddReward(collectedReward, unit);
+    }
+
     IEnumerator GameplayUpdate() {
         yield return null;
         bool done = false;

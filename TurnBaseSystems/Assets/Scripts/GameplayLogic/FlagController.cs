@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class FlagController {
     public List<Unit> units = new List<Unit>();
-    public bool turnDone  = false;
+    public bool turnDone = false;
 
     /// <summary>
     /// UI that should be active when player selects it. -- temp solution
@@ -19,6 +19,12 @@ public abstract class FlagController {
                 units.RemoveAt(i);
                 i--;
             }
+        }
+    }
+
+    public static void OnUnitExecutesAction(Unit unit) {
+        foreach (var items in FactionCheckpoint.checkpointsInLevel) {
+            items.CheckpointCheck(unit);
         }
     }
 }
