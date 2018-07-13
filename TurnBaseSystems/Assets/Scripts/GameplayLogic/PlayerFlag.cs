@@ -122,7 +122,7 @@ public class PlayerFlag : FlagController {
                 ShowUI();
             }
 
-            if (GameplayManager.levelCompleted) {
+            if (CombatManager.levelCompleted) {
                 break;
             }
 

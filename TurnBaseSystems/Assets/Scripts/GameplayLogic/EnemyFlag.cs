@@ -12,7 +12,7 @@ public class EnemyFlag : FlagController {
             yield return units[i].StartCoroutine(RunAi(units[i]));
             Unit.activeUnit = null;
 
-            if (GameplayManager.levelCompleted) {
+            if (CombatManager.levelCompleted) {
                 break;
             }
         }

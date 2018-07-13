@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-public class GameplayManager : MonoBehaviour {
+public class CombatManager : MonoBehaviour {
 
-    public static GameplayManager m;
+    public static CombatManager m;
     int activeFlagTurn = 0;
 
     Transform[] playerTeam;
@@ -36,17 +36,6 @@ public class GameplayManager : MonoBehaviour {
             playerTeam[i] = team.transform.GetChild(i);
             playerTeam[i].transform.position = spawnPoints.GetChild(i).transform.position;
         }
-    }
-
-    internal static void OnEnterCheckPoint(FactionCheckpoint checkpoint, Unit unit) {
-        OnCollectReward(checkpoint.reward, unit);
-        if (checkpoint.isMissionGoal) {
-            levelCompleted = true;
-        }
-    }
-
-    internal static void OnCollectReward(Reward collectedReward, Unit unit) {
-        LevelRewardManager.AddReward(collectedReward, unit);
     }
 
     IEnumerator GameplayUpdate() {
@@ -89,6 +78,17 @@ public class GameplayManager : MonoBehaviour {
             yield return null;
         }
         Debug.Log("Exited main loop");
+    }
+
+    internal static void OnEnterCheckpoint(FactionCheckpoint checkpoint, Unit unit) {
+        LevelRewardManager.AddReward(checkpoint.reward, unit);
+        if (checkpoint.isMissionGoal) {
+            CombatManager.OnReachMissionGoal();
+        }
+    }
+
+    internal static void OnReachMissionGoal() {
+        levelCompleted = true;
     }
 
     private IEnumerator WinGame() {

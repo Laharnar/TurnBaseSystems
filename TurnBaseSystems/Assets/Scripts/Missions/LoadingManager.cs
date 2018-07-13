@@ -7,8 +7,9 @@ public class LoadingManager : MonoBehaviour {
     internal MissionData activeMission;
     internal Transform[] team;
 
-    int activeLoadingScreen = 0;
-    public Transform childWinScreen;
+    int activeLoadingScreen = -1;
+
+    public Transform missionEndScreen_child;
 
     private void Awake() {
         if (m != null)
@@ -24,6 +25,8 @@ public class LoadingManager : MonoBehaviour {
         SceneManager.LoadScene("teamSelection");
     }
 
+
+
     private void OnLoadMission() {
         activeLoadingScreen = 2;
         for (int i = 0; i < team.Length; i++) {
@@ -37,8 +40,8 @@ public class LoadingManager : MonoBehaviour {
 
     private IEnumerator WaitSceneLoad() {
         yield return new WaitForSeconds(2);
-        GameplayManager.m.Init();
-        GameplayManager.m.LoadTeam();
+        CombatManager.m.Init();
+        CombatManager.m.LoadTeam();
         for (int i = 0; i < team.Length; i++) {
             team[i].gameObject.SetActive(true);
             team[i].SetParent(null, true);
@@ -49,8 +52,10 @@ public class LoadingManager : MonoBehaviour {
     }
 
     public void LoadNextScreen() {
-        childWinScreen.gameObject.SetActive(false);
-        if (activeLoadingScreen == 0) {
+        missionEndScreen_child.gameObject.SetActive(false);
+        if (activeLoadingScreen == -1) {
+            OnLoadMap();
+        } else if (activeLoadingScreen == 0) {
             OnLoadCharacterScreen();
         } else if (activeLoadingScreen == 1) {
             OnLoadMission();
@@ -58,11 +63,19 @@ public class LoadingManager : MonoBehaviour {
             OnLoadLevelEndScreen();
         }
     }
-    
+
+    private void OnLoadMap() {
+        activeLoadingScreen = 0;
+        // TODO: Move this to main menu later, don't forget to set activeGame there
+        SaveLoad.Load();
+        GameRun.Init(SaveLoad.activeGame, SaveLoad.savedGames);
+        GameRun.OpenMap();
+    }
+
     private void OnLoadLevelEndScreen() {
         activeLoadingScreen = 3;
-        childWinScreen.gameObject.SetActive(true);
-        childWinScreen.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+        missionEndScreen_child.gameObject.SetActive(true);
+        missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
         Debug.Log("Todo: save the faction points into file.");
     }
 }
