@@ -41,7 +41,6 @@ public class PlayerFlag : FlagController {
     
     public override IEnumerator FlagUpdate() {
         m = this;
-        turnDone = false;
         NullifyUnits();
 
         while (true) {
@@ -102,14 +101,13 @@ public class PlayerFlag : FlagController {
                             if (selectedPlayerUnit.equippedWeapon) {
                                 selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, activeAbility);
                             }
-                            OnUnitExecutesAction(selectedPlayerUnit);
+                            CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
                         }
                     } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
                         Debug.Log("Attacking (2)");
                         ResetColorForUnit(selectedPlayerUnit, curFilter);
                         selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
-                        OnUnitExecutesAction(selectedPlayerUnit);
-                        
+                        CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
                     }
                     yield return null;
                 }
@@ -122,7 +120,7 @@ public class PlayerFlag : FlagController {
                 ShowUI();
             }
 
-            if (CombatManager.levelCompleted) {
+            if (MissionManager.levelCompleted) {
                 break;
             }
 
@@ -242,7 +240,6 @@ public class PlayerFlag : FlagController {
                 yield return null;
             }
         }
-        turnDone = true;
         yield return null;
     }
 

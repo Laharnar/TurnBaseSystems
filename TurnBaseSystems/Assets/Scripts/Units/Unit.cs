@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine;
 [RequireComponent(typeof(UnitAbilities))]
 public partial class Unit :MonoBehaviour, ISlotItem{
+
+    public string codename;
     public int gridX, gridY;
     public bool moving = false;
     public Pathing pathing;
@@ -21,6 +23,8 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public bool HasActions { get { return !NoActions; } }
 
     public int ActionsLeft { get { return actionsLeft; } }
+
+    public Character AsCharacterData { get { return new Character(this);  } }
 
     public int hp = 5;
 
@@ -52,10 +56,17 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public int temporaryArmor;
     public bool attacking = false;
 
+    bool init = false;
+    public int factionId;
+    internal int loyalty;
+
     private void Start() {
         Init();
     }
     public void Init() {
+        if (init) return;
+        init = true;
+
         ap = maxAP;
         ResetActions();
         GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);

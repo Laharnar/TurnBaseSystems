@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 public class TeamManager:MonoBehaviour {
-    int lastChoice;
-    public int curTeamSize = 0;
-    Queue<Transform> team = new Queue<Transform>();
+    static Queue<Character> team = new Queue<Character>();
     const int teamSize = 3;
     private void Update() {
         Transform selected = null;
@@ -13,19 +11,16 @@ public class TeamManager:MonoBehaviour {
         if (selected != null) {
             if (selected.name == "Play") {
                 if (team.Count == teamSize) {
-                    LoadingManager.m.team = new Transform[teamSize];
+                    LoadingManager.m.playerPickedTeam = new Character[teamSize];
                     for (int i = 0; i < teamSize; i++) {
-                        LoadingManager.m.team[i] = team.Dequeue();
+                        LoadingManager.m.playerPickedTeam[i] = team.Dequeue();
                     }
                     LoadingManager.m.LoadNextScreen();
                 }
             } else {
-                selected = selected.root;
-                team.Enqueue(selected);
-                curTeamSize++;
+                team.Enqueue(selected.root.GetComponent<Unit>().AsCharacterData);
                 if (team.Count > teamSize) {
                     team.Dequeue();
-                    curTeamSize--;
                 }
             }
 

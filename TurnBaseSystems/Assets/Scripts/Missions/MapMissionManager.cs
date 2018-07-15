@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class MissionManager : MonoBehaviour {
-    public static MissionManager m;
+public class MapMissionManager : MonoBehaviour {
+    public static MapMissionManager m;
     public List<MissionData> missions = new List<MissionData>();
     public TextAccess missionText;
 

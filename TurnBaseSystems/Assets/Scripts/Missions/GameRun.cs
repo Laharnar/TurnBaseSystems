@@ -26,17 +26,20 @@ public class GameRun {
             return;
         }
         if (savedGames[activeGame] == null) { // start a new game
+            Debug.Log("New game created.");
             GameRun runInstance = new GameRun();
             runInstance.mapOrMissionSaves = new List<SaveData>();
             // ** startup setup **
             MapInfo startup = new MapInfo();
+            startup.factions = FactionLibrary.FreshGameInit();
             // **
             runInstance.mapOrMissionSaves.Add(startup);
-            savedGames[activeGame] = runInstance;
+            SaveLoad.savedGames[activeGame] = runInstance;
+            Debug.Log(SaveLoad.savedGames[activeGame]);
+            GameRun.current = runInstance;
         }
         SaveLoad.Save();
     }
-
 
     public static void OpenMap() {
         // loads correct ui for factions, their characters, missions, completed missions

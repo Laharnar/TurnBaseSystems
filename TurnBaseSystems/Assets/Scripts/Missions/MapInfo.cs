@@ -7,11 +7,11 @@
 /// </summary>
 [System.Serializable]
 public class MapInfo: SaveData {
-    Character[] activeTeam;
-    FactionData[] factions;
+    public Character[] activeTeam;
+    public FactionData[] factions;
     /// <summary>
     /// All possible player team characters in game.
     /// </summary>
-    Character[] allPlayerControllableCharacters;
+    public Character[] allPlayerControllableCharacters;
     // skill tree data, science tree, etc
 }

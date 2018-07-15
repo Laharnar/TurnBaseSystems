@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class LoadingManager : MonoBehaviour {
     public static LoadingManager m;
     internal MissionData activeMission;
-    internal Transform[] team;
+    internal Character[] playerPickedTeam;
 
     int activeLoadingScreen = -1;
 
@@ -18,6 +18,8 @@ public class LoadingManager : MonoBehaviour {
             m = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        OnLoadMap();
     }
 
     private void OnLoadCharacterScreen() {
@@ -26,32 +28,21 @@ public class LoadingManager : MonoBehaviour {
     }
 
 
-
     private void OnLoadMission() {
         activeLoadingScreen = 2;
-        for (int i = 0; i < team.Length; i++) {
-            team[i].parent = transform;
-            team[i].gameObject.SetActive(false);
-        }
         SceneManager.LoadScene(activeMission.sceneName);
-        StartCoroutine(WaitSceneLoad());
+        StartCoroutine(LateMissionStartup());
 
     }
 
-    private IEnumerator WaitSceneLoad() {
+    private IEnumerator LateMissionStartup() {
         yield return new WaitForSeconds(2);
-        CombatManager.m.Init();
-        CombatManager.m.LoadTeam();
-        for (int i = 0; i < team.Length; i++) {
-            team[i].gameObject.SetActive(true);
-            team[i].SetParent(null, true);
-            team[i].GetComponentInChildren<HpUIController>().OnLoadedMission();
-            team[i].GetComponent<Unit>().Init();
-        }
 
+        MissionManager.m.Init(playerPickedTeam);
     }
 
     public void LoadNextScreen() {
+        if (missionEndScreen_child)
         missionEndScreen_child.gameObject.SetActive(false);
         if (activeLoadingScreen == -1) {
             OnLoadMap();
@@ -74,8 +65,10 @@ public class LoadingManager : MonoBehaviour {
 
     private void OnLoadLevelEndScreen() {
         activeLoadingScreen = 3;
-        missionEndScreen_child.gameObject.SetActive(true);
-        missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+        if (missionEndScreen_child) {
+            missionEndScreen_child.gameObject.SetActive(true);
+            missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+        }
         Debug.Log("Todo: save the faction points into file.");
     }
 }

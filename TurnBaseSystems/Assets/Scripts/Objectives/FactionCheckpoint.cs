@@ -40,12 +40,12 @@ public class FactionCheckpoint : MonoBehaviour {
     }
 
     public void CheckpointCheck(Unit other) {
-        if (ConditionsMet(other)) {
+        if (AreConditionsMet(other)) {
             ActivateCheckpoint(other);
         }
     }
 
-    public bool ConditionsMet(Unit other) {
+    bool AreConditionsMet(Unit other) {
         return !alreadyUsed && GridLookup.IsSlotInMask(slot, other.curSlot, rangeCheck)
             && FactionsMatch(other, checkpointTrigger);
     }
@@ -56,8 +56,6 @@ public class FactionCheckpoint : MonoBehaviour {
         GetComponentInChildren<SpriteRenderer>().transform.localScale *= 3;
 
         CombatManager.OnEnterCheckpoint(this, unit);
-
-        
     }
 
     public static bool FactionsMatch(Unit other, MaskFilter checkpointTrigger) {

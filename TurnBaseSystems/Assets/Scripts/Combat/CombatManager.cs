@@ -6,36 +6,33 @@ public class CombatManager : MonoBehaviour {
     public static CombatManager m;
     int activeFlagTurn = 0;
 
-    Transform[] playerTeam;
     Coroutine gameplayUp;
 
-    public static bool levelCompleted { get; private set; }
+    bool init;
 
     private void Awake() {
         m = this;
         Init();
+        StartCombatLoop();
     }
 
     public void Init() {
+
+        if (init) return;
+        init = true;
+
         Debug.Log("Initing gameplay manager");
         FlagManager.flags = new System.Collections.Generic.List<FlagController>();
         FlagManager.flags.Add(new PlayerFlag());
         FlagManager.flags.Add(new EnemyFlag());
+
+    }
+
+    public void StartCombatLoop() {
         if (gameplayUp != null)
             StopCoroutine(gameplayUp);
-        gameplayUp=StartCoroutine(GameplayUpdate());
-    }
-    /// <summary>
-    /// Before they are deparented from loader
-    /// </summary>
-    public void LoadTeam() {
-        GameObject team = GameObject.Find("*loader");
-        Transform spawnPoints = GameObject.Find("Starting point").transform;
-        playerTeam = new Transform[team.transform.childCount];
-        for (int i = 0; i < playerTeam.Length && i < spawnPoints.childCount; i++) {
-            playerTeam[i] = team.transform.GetChild(i);
-            playerTeam[i].transform.position = spawnPoints.GetChild(i).transform.position;
-        }
+
+        gameplayUp = StartCoroutine(GameplayUpdate());
     }
 
     IEnumerator GameplayUpdate() {
@@ -63,7 +60,7 @@ public class CombatManager : MonoBehaviour {
 
                 }
                 // temp - win condition that enemy dies.
-                if (FlagManager.flags[1].units.Count == 0 || levelCompleted) {
+                if (FlagManager.flags[1].units.Count == 0 || MissionManager.levelCompleted) {
                     yield return StartCoroutine(WinGame());
                     done = true;
                     break;
@@ -80,15 +77,17 @@ public class CombatManager : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
-    internal static void OnEnterCheckpoint(FactionCheckpoint checkpoint, Unit unit) {
-        LevelRewardManager.AddReward(checkpoint.reward, unit);
-        if (checkpoint.isMissionGoal) {
-            CombatManager.OnReachMissionGoal();
+    public static void OnUnitExecutesAction(Unit unit) {
+        foreach (var items in FactionCheckpoint.checkpointsInLevel) {
+            items.CheckpointCheck(unit);
         }
     }
 
-    internal static void OnReachMissionGoal() {
-        levelCompleted = true;
+    internal static void OnEnterCheckpoint(FactionCheckpoint checkpoint, Unit unit) {
+        LevelRewardManager.AddReward(checkpoint.reward, unit);
+        if (checkpoint.isMissionGoal) {
+            MissionManager.OnReachMissionGoal();
+        }
     }
 
     private IEnumerator WinGame() {
@@ -100,5 +99,6 @@ public class CombatManager : MonoBehaviour {
     private IEnumerator LoseGame() {
         Debug.Log("Lose!");
         yield return null;
+
     }
 }
