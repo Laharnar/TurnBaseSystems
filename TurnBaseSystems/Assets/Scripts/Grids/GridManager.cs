@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public partial class GridManager : MonoBehaviour {
@@ -153,6 +154,30 @@ public static class GridAccess {
                         items.Add(item);
                     }
                 }
+            }
+        }
+        return items.ToArray();
+    }
+
+    internal static GridItem[] OnlyUnits(GridItem[] filter) {
+        List<GridItem> items = new List<GridItem>();
+        for (int i = 0; i < filter.Length; i++) {
+            if (filter[i].filledBy) {
+                items.Add(filter[i]);
+            }
+        }
+        return items.ToArray();
+    }
+
+    internal static GridItem[] GetSlotsInMask(GridItem curSlot, GridMask mask) {
+        return GetSlotsInMask(curSlot.gridX, curSlot.gridY, mask);
+    }
+
+    internal static GridItem[] OnlyEnemyUnits(GridItem[] filter, int skippedAllianceId) {
+        List<GridItem> items = new List<GridItem>();
+        for (int i = 0; i < filter.Length; i++) {
+            if (filter[i].filledBy && filter[i].filledBy.flag.allianceId != skippedAllianceId) {
+                items.Add(filter[i]);
             }
         }
         return items.ToArray();

@@ -385,3 +385,88 @@ easy survive?
 just normal combat
 surprise attacks? < long range channel attacks out of vision
 hidden
+
+we want to enforce factions
+and a bit of story
+characters
+
+list a bunch of missions or events
+.execute them 1 by 1
+.or make a choice what to do
+
+
+put out 5 main missions, over 30 days
+missions can be avaliable multiple days
+1 mission per day
+
+and then there are chargo stuff and stealing
+
+how do events trigger? hard coded story-like
+side quests? sidequests too. small stories, like pirate raids
+
+how to earn faction points?
+
+missions are not random, but as a story and substory.
+not pointless to do them in random way. you can skip the substory and just focus on main story.
+
+what does completing missions give you? access to different characters. loyalty for team.
+character personality -- some characters lose loyalty if you have them kill someone, like priest.
+guessing what the characters like
+
+politics with factions. do the mission, or sell out, to loyalty to the faction.
+
+problem is that how do you recruit people
+and how to earn faction points to recruit them
+loyalty points with those factions
+
+characters have loyalty to factions
+
+automatic reward from story
+
+5 factions
+
+1 mission
+
+5 missions
+
+each factions has it's own story line, which earns you loyalty.
+doing all their missions gives you loyalty.
+doing other's missions loses you loyalty if factions is an enemy in the story.
+
+hiring a team memeber from that faction, earns you right to plea 
+- or have 1 or 2 more chance at them, depending on faction.
+If you fuck that up, you lose your teammember and their missions permanently.
+
+do i need gold?
+it's just to have more work.
+to have stuff to buy.
+i don't need to buy anything.
+
+grenades or items?
+it's not really necessary. just a flavor.
+
+1 faction - 1 character. doesn't support diversity
+1 fction 2 characters. why so many characters? full faction team. mixed faction team
+3 would be nice. usually you want more tho.
+1-3-5-7 for story, depending on on the playstyle you want. this offers player a mix of
+playstyles. as in more isn't necessarily better.
+
+1 character can be found on mission supporting the said faction and 1 when you earn right to the
+faction.
+earning reputation as a certain character
+- gives you loyalty to characters and signifies your team mood
+
+ more for strategy
+ it can be more nyway
+
+ 7 maps
+ different layouts in the city, different goals, guard numbers
+ reusable city assets, night/day?
+
+ building -> wall, windows, roof
+ special faction cultural items AND from other places.
+
+ 14 characters
+ some civs
+ 30 chars max
+ that's 2 months of work... if 1 char per day

@@ -4,6 +4,10 @@ public class FlagManager {
     public static List<FlagController> flags = new List<FlagController>();
 
     public static void RegisterUnit(Unit u) {
+        if (flags.Count < u.flag.allianceId) {
+            CombatManager.m.Init();
+        }
+
         flags[u.flag.allianceId].units.Add(u);
     }
 

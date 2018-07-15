@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 [RequireComponent(typeof(UnitAbilities))]
 public partial class Unit :MonoBehaviour, ISlotItem{
@@ -9,6 +8,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     public bool moving = false;
     public Pathing pathing;
     public Alliance flag;
+    public Detection detection;
 
     public bool IsPlayer { get { return flag.allianceId == 0; } }
     public bool IsEnemy { get { return flag.allianceId == 1; } }
@@ -88,6 +88,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
     }
 
     public void OnTurnEnd() {
+        Debug.Log("Applying passives.");
         if (equippedWeapon) {
             if (equippedWeapon.enhanceCounter >0) {
                 equippedWeapon.enhanceCounter--;

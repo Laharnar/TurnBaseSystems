@@ -90,14 +90,15 @@ public class GridItem : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="code">0: normal, 1: selected green, 2: attackable red, 3: ally blue</param>
+    /// <param name="code">0: normal, 1: selected green, 2: attackable red, 3: ally blue, 4: orange, 5: yellow</param>
     internal void RecolorSlot(int code) {
         transform.GetComponentInChildren<SpriteRenderer>().color = 
             code == 0 ? defaultColor : 
             code == 1 ? Color.green :
             code == 2 ? Color.red : 
-            code == 3 ? Color.blue:
-            new Color(1,0.2f,0,1);//orange
+            code == 3 ? Color.blue :
+            code == 4 ? new Color(1,0.2f,0,1)://orange
+                Color.yellow;
     }
 
     public void Null() {

@@ -7,6 +7,9 @@ public class MelleLogic : AiLogic {
     public override IEnumerator Execute(Unit unit) {
         // command 1.
         PlayerFlag pFlag = FlagManager.flags[0] as PlayerFlag;
+        
+        if (!unit.detection.detectedSomeone)
+            yield break;
 
         float[] dists = transform.position.GetDistances(pFlag.units.ToArray());
         int closestUnitIndex = dists.GetIndexOfMin();
@@ -29,8 +32,11 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask))
+        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask)) {
+            yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
+
             unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
+        }
         while (unit.attacking) {
             yield return null;
         }
