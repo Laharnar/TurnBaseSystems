@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-public class MoveAction : AttackBaseType {
-    public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-        if (source.CanMoveTo(attackedSlot))
-            source.MoveAction(attackedSlot);
-    }
-}
-public abstract class UnitAbilities : MonoBehaviour {
+public class UnitAbilities : MonoBehaviour {
     public AttackData move;
-    public abstract AttackData BasicAttack { get; }
-    public abstract GridMask BasicMask { get; }
+    public GridMask BasicMask { get; }
     public AttackData MoveAction { get { return move; } }
 
     public List<AttackData> additionalAbilities = new List<AttackData>();
 
-    public abstract AttackData[] GetNormalAbilities();
+
+    public virtual AttackData[] GetNormalAbilities() {
+        List<AttackData> data = new AttackData[] { move }.ToList();
+        data.AddRange(additionalAbilities);
+        return data.ToArray();
+    }
 
     protected AttackData[] AddAbilities(AttackData[] data) {
         
@@ -26,6 +24,26 @@ public abstract class UnitAbilities : MonoBehaviour {
         d.AddRange(additionalAbilities);
         d.AddRange(data);
         return d.ToArray();
+    }
+
+    public void SaveNewAbilities(AttackData[] ndata) {
+
+        AttackData[] odata = GetNormalAbilities();
+
+        for (int i = 0; i < odata.Length; i++) {
+            odata[i].actionCost = ndata[i].actionCost;
+            odata[i].animData.animLength = ndata[i].animData.animLength;
+            odata[i].animData.animTrigger = ndata[i].animData.animTrigger;
+            odata[i].animData.useInfo = ndata[i].animData.useInfo;
+
+            odata[i].attackFunction = ndata[i].attackFunction;
+
+            odata[i].attackMask = ndata[i].attackMask;
+            odata[i].attackType = ndata[i].attackType;
+            odata[i].attackType_EditorOnly = ndata[i].attackType_EditorOnly;
+            odata[i].requiresUnit = ndata[i].requiresUnit;
+            odata[i].o_attackName = ndata[i].o_attackName;
+        }
     }
 }
 

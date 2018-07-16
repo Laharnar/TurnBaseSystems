@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
-[RequireComponent(typeof(UnitAbilities))]
-public partial class Unit :MonoBehaviour, ISlotItem{
+public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
     public int gridX, gridY;
@@ -148,7 +148,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         wep.transform.parent = otherUnit.transform;
         otherUnit.equippedWeapon = wep;
 
-        PlayerFlag.m.activeAbility = abilities.BasicAttack;
+        PlayerFlag.m.activeAbility = abilities.move;
     }
     public void DeEquip() {
         if (equippedWeapon) {
@@ -164,7 +164,7 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
 
-        PlayerFlag.m.activeAbility = abilities.BasicAttack;
+        PlayerFlag.m.activeAbility = abilities.move;
     }
 
     public void MoveAction(GridItem slot) {
@@ -186,6 +186,10 @@ public partial class Unit :MonoBehaviour, ISlotItem{
         int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
         anim.SetTrigger(attackTriggerCode);
         StartCoroutine(WaitAttack(attack));
+    }
+
+    internal void RestoreAP(object p) {
+        throw new NotImplementedException();
     }
 
     IEnumerator WaitAttack(AttackData attack) {

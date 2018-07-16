@@ -28,19 +28,6 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
         unit = GetComponent<Unit>();
     }
 
-    public override AttackData BasicAttack {
-        get {
-            return basicMelle;
-        }
-    }
-
-    
-    public override GridMask BasicMask {
-        get {
-            return basicMelle.attackMask;
-        }
-    }
-
     public override AttackData[] GetNormalAbilities() {
         return AddAbilities(new AttackData[]{ basicMelle, pickWeapon, passWeapon, deathCall, waste });
     }

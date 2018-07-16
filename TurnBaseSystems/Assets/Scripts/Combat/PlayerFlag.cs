@@ -328,19 +328,6 @@ public class PlayerFlag : FlagController {
         unit.curSlot.RecolorSlot(0);
     }
 
-    private void ResetColorForUnit(Unit unit) {
-        RemaskActiveFilter(0, unit.pathing.moveMask);
-        RemaskActiveFilter(0, curFilter != null ? curFilter : unit.abilities.BasicMask);
-        unit.curSlot.RecolorSlot(0);
-    }
-
-
-    private void MoveCurTo(GridItem item) {
-        ResetColorForUnit(selectedPlayerUnit);
-
-        selectedPlayerUnit.MoveAction(item);
-
-    }
 
     internal void SetActiveAbility(Unit unitSource, int atkId) {
         activeAbilityId = atkId;
@@ -377,6 +364,7 @@ public class PlayerFlag : FlagController {
             ResetColorForUnit(selectedUnit, curFilter);
             selectedUnit = null;
             selectedPlayerUnit = null;
+            activeAbility = null;
         }
     }
 

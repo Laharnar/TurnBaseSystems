@@ -10,6 +10,6 @@ public class Detection {
     }
 
     public GridItem[] GetGroup(Unit source) {
-        return groupSizeMask == null ? new GridItem[0] : GridAccess.OnlyEnemyUnits(GridAccess.GetSlotsInMask(source.curSlot, groupSizeMask), source.flag.allianceId);
+        return groupSizeMask == null ? new GridItem[0] : GridAccess.OnlyAlliedUnits(GridAccess.GetSlotsInMask(source.curSlot, groupSizeMask), source.flag.allianceId);
     }
 }

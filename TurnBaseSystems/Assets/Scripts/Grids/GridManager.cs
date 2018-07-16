@@ -100,8 +100,8 @@ public static class GridAccess {
         return GridManager.m.gridSlots.GetItem(x, y);
     }
 
-    public static GridItem[] LoadLocalAoeAttackLayer(Unit source, AoeAttack attack, int mouseDirection, GridItem attackedSlot) {
-        GridMask curFilter = attack.aoeMask;
+    public static GridItem[] LoadLocalAoeAttackLayer(Unit source, GridMask aoeMask, int mouseDirection, GridItem attackedSlot) {
+        GridMask curFilter = aoeMask;
         if (curFilter.rotateable)
             curFilter = GridMask.RotateMask(curFilter, mouseDirection);
         GridItem[] items = GetSlotsInMask(source.gridX, source.gridY, curFilter);
@@ -173,7 +173,17 @@ public static class GridAccess {
         return GetSlotsInMask(curSlot.gridX, curSlot.gridY, mask);
     }
 
-    internal static GridItem[] OnlyEnemyUnits(GridItem[] filter, int skippedAllianceId) {
+    internal static GridItem[] OnlyAlliedUnits(GridItem[] filter, int skippedAllianceId) {
+        List<GridItem> items = new List<GridItem>();
+        for (int i = 0; i < filter.Length; i++) {
+            if (filter[i].filledBy && filter[i].filledBy.flag.allianceId == skippedAllianceId) {
+                items.Add(filter[i]);
+            }
+        }
+        return items.ToArray();
+    }
+
+    internal static GridItem[] OnlyHostileUnits(GridItem[] filter, int skippedAllianceId) {
         List<GridItem> items = new List<GridItem>();
         for (int i = 0; i < filter.Length; i++) {
             if (filter[i].filledBy && filter[i].filledBy.flag.allianceId != skippedAllianceId) {

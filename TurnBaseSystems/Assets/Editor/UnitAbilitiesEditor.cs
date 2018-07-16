@@ -46,6 +46,12 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         EditorGUILayout.Separator();
 
         EditorGUI.indentLevel++;
+        AttackData[] attacks = source.GetNormalAbilities();
+        for (int i = 0; i < attacks.Length; i++) {
+            attacks[i] = ShowAttackData(attacks[i]);
+            EditorGUILayout.Space();
+        }
+        source.SaveNewAbilities(attacks);
         for (int i = 0; i < source.additionalAbilities.Count; i++) {
             source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
             if (GUILayout.Button("Remove " + (i + 1) + " (" + source.additionalAbilities[i].o_attackName + ")")) {
@@ -64,6 +70,8 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         if (EditorGUI.EndChangeCheck()) {
             Undo.RecordObject(target, "Changed character");
         }
+        EditorFix.SetObjectDirty(target);
+
 
     }
 
@@ -103,13 +111,13 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         for (int i = 0; i < variables.Length; i++) {
             object v = variables[i].GetValue(data.attackFunction);
             if (variables[i].FieldType == typeof(float)) {
-                EditorGUILayout.FloatField(variables[i].Name, (float)v);
+                v= EditorGUILayout.FloatField(variables[i].Name, (float)v);
             }
             else if (variables[i].FieldType == typeof(string)) {
-                EditorGUILayout.TextField(variables[i].Name, (string)v);
+                v = EditorGUILayout.TextField(variables[i].Name, (string)v);
             }
             else if (variables[i].FieldType == typeof(int)) {
-                EditorGUILayout.IntField(variables[i].Name, (int)v);
+                v = EditorGUILayout.IntField(variables[i].Name, (int)v);
             }
             variables[i].SetValue(data.attackFunction, v);
         }

@@ -32,10 +32,10 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.BasicMask)) {
+        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities[0].attackMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
 
-            unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.BasicAttack);
+            unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities[0]);
         }
         while (unit.attacking) {
             yield return null;

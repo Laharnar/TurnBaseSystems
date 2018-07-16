@@ -275,5 +275,7 @@ BUG TESTING ROUND 8.7.2018
 empty masks on characters <<fixed by hand
 
 bugs stop main game loop <<rewritten loop
-missing text on ui
+missing text on ui fixed
 
+16.7.2018
+ablity data as scriptable float objects.

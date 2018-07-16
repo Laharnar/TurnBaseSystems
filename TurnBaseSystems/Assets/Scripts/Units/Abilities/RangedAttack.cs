@@ -2,9 +2,7 @@
 
 [System.Serializable]
 public class RangedAttack : AttackBaseType {
-
-    public int damage = 1;
-
+    public int damage=1;
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (!attackedSlot) {
             Debug.Log("Missing SLOT reference. Error in getting slots.");

@@ -4,7 +4,7 @@ public class LifeDrain : AoeMaskAttack {
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
 
         GridItem[] attackArea;
-        attackArea = GridAccess.LoadLocalAoeAttackLayer(source, this, PlayerFlag.m.mouseDirection, attackedSlot);
+        attackArea = GridAccess.LoadLocalAoeAttackLayer(source, aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
 
         int unitsHit = 0;
         for (int i = 0; i < attackArea.Length; i++) {

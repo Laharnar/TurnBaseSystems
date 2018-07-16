@@ -18,18 +18,6 @@ public class BuilderClass : UnitAbilities {
     public AttackData pickWeapon;
     public AttackData passWeapon;
 
-    public override AttackData BasicAttack {
-        get {
-            return melleAttack;
-        }
-    }
-
-    public override GridMask BasicMask {
-        get {
-            return melleAttack.attackMask;
-        }
-    }
-
     public override AttackData[] GetNormalAbilities() {
         return AddAbilities(new AttackData[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon });
     }

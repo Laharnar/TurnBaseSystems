@@ -21,18 +21,8 @@ public class UserClass : UnitAbilities {
     }
 
     public override AttackData[] GetNormalAbilities() {
-        return AddAbilities(new AttackData[] { BasicAttack, throwWeapon, melleWeaponAttack, pickWeapon, passWeapon });
+        return AddAbilities(new AttackData[] { throwWeapon, melleWeaponAttack, pickWeapon, passWeapon });
     }
 
-    public override AttackData BasicAttack {
-        get {
-            return unit.equippedWeapon!= null ? unit.equippedWeapon.StandardAttack as AttackData : shoot1 as AttackData;
-        }
-    }
-
-    public override GridMask BasicMask {
-        get {
-            return unit.equippedWeapon != null ? unit.equippedWeapon.StandardAttack.attackMask : shoot1.attackMask;
-        }
-    }
+    
 }

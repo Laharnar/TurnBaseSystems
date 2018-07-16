@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEngine;
 
 [CustomEditor(typeof(GridMask), true)]
 public class GridMaskEditor : UnityEditor.Editor {
@@ -25,7 +24,7 @@ public class GridMaskEditor : UnityEditor.Editor {
             EditorGUILayout.BeginHorizontal();
             for (int j = 0; j < source.l; j++) {
                 bool r = EditorGUILayout.Toggle(source.mask[i].col[j]);
-                if (source.mask[i].col[j] != r)
+                if (source.mask[i].col[j] !=r)
                     source.mask[i].col[j] = r;
             }
             EditorGUILayout.EndHorizontal();
@@ -36,6 +35,7 @@ public class GridMaskEditor : UnityEditor.Editor {
         if (EditorGUI.EndChangeCheck()) {
             Undo.RecordObject(target, "Changed");
         }
+        EditorFix.SetObjectDirty(target);
 
     }
 }

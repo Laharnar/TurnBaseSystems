@@ -15,18 +15,6 @@ public class Collector : UnitAbilities {
     public AttackData blastAttack;
 
 
-    public override AttackData BasicAttack {
-        get {
-            return melleAttack;
-        }
-    }
-
-    public override GridMask BasicMask {
-        get {
-            return melleAttack.attackMask;
-        }
-    }
-
     public override AttackData[] GetNormalAbilities() {
         return AddAbilities(new AttackData[] { melleAttack, defensive, enhanceItem , pickItem, passWeapon, blastAttack });
     }
