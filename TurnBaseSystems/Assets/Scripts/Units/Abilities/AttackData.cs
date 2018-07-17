@@ -51,7 +51,7 @@ public sealed class AttackData {
                 break;
             case AttackType.Aura:
                 GridItem[] attackArea;
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(source, attackData.aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 for (int i = 0; i < attackArea.Length; i++) {
                     if (attackArea[i].filledBy)
@@ -59,7 +59,7 @@ public sealed class AttackData {
                 }
                 break;
             case AttackType.LongRangeAoe:// note: aoe mask attack is for cone attacks, not mouse
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(source, attackData.aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 for (int i = 0; i < attackArea.Length; i++) {
                     if (attackArea[i].filledBy)
@@ -115,7 +115,7 @@ public sealed class AttackData {
                 }
                 break;
             case AttackType.GroundDrain:
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(source, attackData.aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 int groundHits = 0;
                 for (int i = 0; i < attackArea.Length; i++) {
@@ -127,7 +127,7 @@ public sealed class AttackData {
                 source.RestoreAP(groundHits * attackData.restoreAPPerSlotHit);
                 break;
             case AttackType.UnitDrain:
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(source, attackData.aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 int unitsHit = 0;
                 for (int i = 0; i < attackArea.Length; i++) {

@@ -16,13 +16,13 @@ public class GridMaskEditor : UnityEditor.Editor {
         if (source.mask.Length != source.w || (source.mask.Length > 0 && source.mask[0].col.Length != source.l)) {
             source.mask = new BoolArr[source.w];
             for (int i = 0; i < source.w; i++) {
-                source.mask[i] = new BoolArr() { col = new bool[source.w] };
+                source.mask[i] = new BoolArr() { col = new bool[source.l] };
             }
         }
         
-        for (int i = 0; i < source.w; i++) {
+        for (int i = 0; i < source.w && i < source.mask.Length; i++) {
             EditorGUILayout.BeginHorizontal();
-            for (int j = 0; j < source.l; j++) {
+            for (int j = 0; j < source.l && j < source.mask[i].col.Length; j++) {
                 bool r = EditorGUILayout.Toggle(source.mask[i].col[j]);
                 if (source.mask[i].col[j] !=r)
                     source.mask[i].col[j] = r;

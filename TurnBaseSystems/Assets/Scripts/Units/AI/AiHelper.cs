@@ -8,6 +8,10 @@ public static class AiHelper {
         if (attackType == "") {
             Debug.Log("Error, unassigned, attackType");
         }
+        if (template == null) {
+            Debug.Log("Error, template is null.");
+            return null;
+        }
         GridMask mask = template.EmptyCopy();
         for (int i = 0; i < items.Length; i++) {
             int x = items[i].gridX - source.gridX + mask.w / 2;// mask.LowerLeftFromX(source.gridX) + mask.LowerLeftFromX();

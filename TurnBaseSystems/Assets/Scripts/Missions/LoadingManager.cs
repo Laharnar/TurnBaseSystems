@@ -9,7 +9,6 @@ public class LoadingManager : MonoBehaviour {
 
     int activeLoadingScreen = -1;
 
-    public Transform missionEndScreen_child;
 
     private void Awake() {
         if (m != null)
@@ -42,8 +41,8 @@ public class LoadingManager : MonoBehaviour {
     }
 
     public void LoadNextScreen() {
-        if (missionEndScreen_child)
-        missionEndScreen_child.gameObject.SetActive(false);
+        if (MissionManager.m && MissionManager.m.missionEndScreen_child)
+            MissionManager.m.missionEndScreen_child.gameObject.SetActive(false);
         if (activeLoadingScreen == -1) {
             OnLoadMap();
         } else if (activeLoadingScreen == 0) {
@@ -51,7 +50,7 @@ public class LoadingManager : MonoBehaviour {
         } else if (activeLoadingScreen == 1) {
             OnLoadMission();
         } else if (activeLoadingScreen == 2) {
-            OnLoadLevelEndScreen();
+            activeLoadingScreen++;
         }
     }
 
@@ -63,12 +62,7 @@ public class LoadingManager : MonoBehaviour {
         GameRun.OpenMap();
     }
 
-    private void OnLoadLevelEndScreen() {
-        activeLoadingScreen = 3;
-        if (missionEndScreen_child) {
-            missionEndScreen_child.gameObject.SetActive(true);
-            missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
-        }
-        Debug.Log("Todo: save the faction points into file.");
+    public static void ToMainMenu() {
+        SceneManager.LoadScene("mapMissions");
     }
 }

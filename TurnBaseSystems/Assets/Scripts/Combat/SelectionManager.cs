@@ -1,12 +1,7 @@
 ﻿ using System;
 using UnityEngine;
-public class SelectionManager : MonoBehaviour{
-
-    public static SelectionManager m;
-
-    private void Awake() {
-        m = this;
-    }
+public static class SelectionManager {
+    
 
     internal static Transform GetMouseAsObject() {
         Vector2 selection = Camera.main.ScreenToWorldPoint(Input.mousePosition);

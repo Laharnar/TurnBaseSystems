@@ -7,6 +7,11 @@ public class MissionManager:MonoBehaviour {
     public static bool levelCompleted { get; private set; }
 
     Transform[] playerTeam;
+    public Transform missionEndScreen_child;
+
+    private void Awake() {
+        m = this;
+    }
 
     /// <summary>
     /// Before they are deparented from loader
@@ -34,6 +39,8 @@ public class MissionManager:MonoBehaviour {
         Transform[] teamInsts = CharacterLibrary.CreateInstances(team);
 
         //LoadTeamIntoStartArea();
+        if (missionEndScreen_child)
+            missionEndScreen_child.gameObject.SetActive(false);
 
         CombatManager.m.Init();
         for (int i = 0; i < teamInsts.Length; i++) {
@@ -42,4 +49,19 @@ public class MissionManager:MonoBehaviour {
         CombatManager.m.StartCombatLoop();
     }
 
+    public void OnLoadLevelEndScreen() {
+        if (MissionManager.m.missionEndScreen_child) {
+            MissionManager.m.missionEndScreen_child.gameObject.SetActive(true);
+            MissionManager.m.missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+        }
+        //Debug.Log("Todo: save the faction points into file.");
+        SaveLoad.Save();
+
+        //
+        
+    }
+
+    public void Btn_LoadMainMenu() {
+        LoadingManager.ToMainMenu();
+    }
 }

@@ -62,7 +62,7 @@ public class PlayerFlag : FlagController {
             // Set default action
             if (selectedPlayerUnit) {
                 if (selectedPlayerUnit.HasActions && activeAbility == null)
-                    activeAbility = selectedPlayerUnit.abilities.MoveAction;
+                    activeAbility = selectedPlayerUnit.abilities.move;
             }
 
             // load avaliable filter for current ability
@@ -81,7 +81,7 @@ public class PlayerFlag : FlagController {
                 // WaitAbilitySelection(); automatic on buttons
             }
             if (selectedSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
-                if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft) {
+                if (activeAbility.actionCost >   selectedPlayerUnit.ActionsLeft) {
                     Debug.Log("NOT enough actions. Can't attack.");
                 }
                 if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft  

@@ -47,11 +47,6 @@ public class PlayerUIAbilityList : MonoBehaviour {
         m.instances.Clear();
     }
 
-    public static void AssignInteractionToUI(Interaction interaction, int i) {
-        m.instances[i].GetComponent<ButtonInteraction>().interaction = interaction;
-        m.instances[i].GetChild(0).GetComponent<Text>().text += interaction.GetType();
-    }
-
     internal static void LoadAbilitiesOnUI(Unit unit) {
         if (unit == null) {
             Debug.Log("No unit");

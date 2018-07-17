@@ -92,7 +92,7 @@ public class CombatManager : MonoBehaviour {
 
     private IEnumerator WinGame() {
         Debug.Log("WIN!");
-        LoadingManager.m.LoadNextScreen();
+        MissionManager.m.OnLoadLevelEndScreen();
         yield return null;
     }
 

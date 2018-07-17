@@ -169,7 +169,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void MoveAction(GridItem slot) {
         if (moving) return;
-        actionsLeft--;
+        actionsLeft-=abilities.move.actionCost;
         Move(slot);
     }
 
@@ -200,8 +200,10 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     internal void AttackAction(GridItem attackedSlot, Unit other, AttackData atk) {
         if (atk == abilities.move) {
-            Debug.Log("Executing move action");
-            MoveAction(attackedSlot);
+            if (!attackedSlot.filledBy) {
+                Debug.Log("Executing move action");
+                MoveAction(attackedSlot);
+            }
         } else {
             if ((atk.requiresUnit && attackedSlot.filledBy == null) || attacking) {
                 if (attacking) {

@@ -100,11 +100,11 @@ public static class GridAccess {
         return GridManager.m.gridSlots.GetItem(x, y);
     }
 
-    public static GridItem[] LoadLocalAoeAttackLayer(Unit source, GridMask aoeMask, int mouseDirection, GridItem attackedSlot) {
+    public static GridItem[] LoadLocalAoeAttackLayer(GridItem targetedSlot, GridMask aoeMask, int mouseDirection) {
         GridMask curFilter = aoeMask;
         if (curFilter.rotateable)
             curFilter = GridMask.RotateMask(curFilter, mouseDirection);
-        GridItem[] items = GetSlotsInMask(source.gridX, source.gridY, curFilter);
+        GridItem[] items = GetSlotsInMask(targetedSlot.gridX, targetedSlot.gridY, curFilter);
         return items;
     }
 

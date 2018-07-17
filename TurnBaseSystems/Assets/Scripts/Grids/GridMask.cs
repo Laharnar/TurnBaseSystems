@@ -7,6 +7,7 @@ using UnityEngine;
 public class GridMask :UnityEngine.ScriptableObject {
     public int w, l;
     public BoolArr[] mask;
+
     public bool rotateable = false;
 
     public float Range { get { return Mathf.Max(w, l); } }
@@ -27,6 +28,10 @@ public class GridMask :UnityEngine.ScriptableObject {
             }
         }
         return m;
+
+        for(int i=0; i<10; i = i + 1) {
+            Debug.Log("Besdilo"+i);
+        }
     }
     /// <summary>
     /// Square masks only.

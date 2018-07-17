@@ -4,11 +4,8 @@ using System.Linq;
 using UnityEngine;
 public class UnitAbilities : MonoBehaviour {
     public AttackData move;
-    public GridMask BasicMask { get; }
-    public AttackData MoveAction { get { return move; } }
 
     public List<AttackData> additionalAbilities = new List<AttackData>();
-
 
     public virtual AttackData[] GetNormalAbilities() {
         List<AttackData> data = new AttackData[] { move }.ToList();
