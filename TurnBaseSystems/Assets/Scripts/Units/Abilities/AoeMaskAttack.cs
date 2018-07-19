@@ -6,7 +6,7 @@ public class AoeMaskAttack : AoeAttack{
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
        
         GridItem[] attackArea;
-        attackArea = GridAccess.LoadLocalAoeAttackLayer(source, aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+        attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, aoeMask, PlayerFlag.m.mouseDirection);
 
         for (int i = 0; i < attackArea.Length; i++) {
             if (attackArea[i].filledBy)

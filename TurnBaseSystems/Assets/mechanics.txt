@@ -470,3 +470,16 @@ earning reputation as a certain character
  some civs
  30 chars max
  that's 2 months of work... if 1 char per day
+
+missions stacks-
+
+ 14 chars
+14 loyal missions
+3 per faction, 7 factions+loyality
+3 anti faction + empress
+7*4+3 = 32
+
+how should the game be played
+relatively easy - pull enemies, 1 shot retreat
+tank, heal, disable, assasinate
+sneak?

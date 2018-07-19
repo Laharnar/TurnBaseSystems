@@ -20,9 +20,7 @@ public class UserClass : UnitAbilities {
         unit = GetComponent<Unit>();
     }
 
-    public override AttackData[] GetNormalAbilities() {
-        return AddAbilities(new AttackData[] { throwWeapon, melleWeaponAttack, pickWeapon, passWeapon });
-    }
-
-    
+    /*public override StdAttackData[] GetNormalAbilities() {
+        return AddAbilities(new StdAttackData[] { throwWeapon, melleWeaponAttack, pickWeapon, passWeapon });
+    }*/
 }

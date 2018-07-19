@@ -2,17 +2,20 @@
 using System.Reflection;
 using UnityEngine;
 
+public class StdAttackData {
 
-
+}
 /// <summary>
 /// Attacks are manually coded into UnitAbilities-derived classes.
 /// These are what is avaliable to units to execute.
 /// Targets are units.
 /// </summary>
 [System.Serializable]
-public sealed class AttackData {
+public sealed class AttackData : StdAttackData {
+
     public string o_attackName;
     public GridMask attackMask;
+    [System.Obsolete("Don't use")]
     public string attackType = "Normal";
     public int actionCost = 1;
     public bool requiresUnit = true;

@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+
+public enum CombatStatus {
+    Normal,
+    Invisible
+}
 public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
@@ -9,6 +14,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public Pathing pathing;
     public Alliance flag;
     public Detection detection;
+    public CombatStatus combatStatus;
 
     public bool IsPlayer { get { return flag.allianceId == 0; } }
     public bool IsEnemy { get { return flag.allianceId == 1; } }

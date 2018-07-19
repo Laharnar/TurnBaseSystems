@@ -28,9 +28,9 @@ public class Consumer : UnitAbilities, IEndTurnAbilities {
         unit = GetComponent<Unit>();
     }
 
-    public override AttackData[] GetNormalAbilities() {
-        return AddAbilities(new AttackData[]{ basicMelle, pickWeapon, passWeapon, deathCall, waste });
-    }
+    /*public override StdAttackData[] GetNormalAbilities() {
+        return AddAbilities(new StdAttackData[]{ basicMelle, pickWeapon, passWeapon, deathCall, waste });
+    }*/
     
     public AttackData[] GetPassive() {
         return new AttackData[] { restoration };

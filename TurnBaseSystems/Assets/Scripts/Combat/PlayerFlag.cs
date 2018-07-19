@@ -61,8 +61,9 @@ public class PlayerFlag : FlagController {
 
             // Set default action
             if (selectedPlayerUnit) {
-                if (selectedPlayerUnit.HasActions && activeAbility == null)
+                if (selectedPlayerUnit.HasActions && activeAbility == null) {
                     activeAbility = selectedPlayerUnit.abilities.move;
+                }
             }
 
             // load avaliable filter for current ability
@@ -267,6 +268,8 @@ public class PlayerFlag : FlagController {
             selectedUnit = hoveredUnit;
             if (hoveredUnit.IsPlayer)
                 selectedPlayerUnit = hoveredUnit;
+            activeAbility = null;
+            activeAbilityId = 0;
             ShowUI();
         }
     }
@@ -334,7 +337,8 @@ public class PlayerFlag : FlagController {
         if (activeAbility != null) {
             ResetColorForUnit(unitSource, activeAbility.attackMask);
         }
-        activeAbility = unitSource.abilities.GetNormalAbilities()[atkId];
+        activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData;
+        activeAbilityId = 0;
         Debug.Log("Setting active ability "+activeAbilityId);
     }
     
@@ -365,6 +369,7 @@ public class PlayerFlag : FlagController {
             selectedUnit = null;
             selectedPlayerUnit = null;
             activeAbility = null;
+            activeAbilityId = 0;
         }
     }
 

@@ -4,7 +4,7 @@ public class FloraDrain : AoeMaskAttack {
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
 
         GridItem[] attackArea;
-        attackArea = GridAccess.LoadLocalAoeAttackLayer(source, aoeMask, PlayerFlag.m.mouseDirection, attackedSlot);
+        attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, aoeMask, PlayerFlag.m.mouseDirection);
 
         int groundHits = 0;
         for (int i = 0; i < attackArea.Length; i++) {

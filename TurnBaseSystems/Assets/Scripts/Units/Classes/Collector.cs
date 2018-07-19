@@ -15,7 +15,7 @@ public class Collector : UnitAbilities {
     public AttackData blastAttack;
 
 
-    public override AttackData[] GetNormalAbilities() {
-        return AddAbilities(new AttackData[] { melleAttack, defensive, enhanceItem , pickItem, passWeapon, blastAttack });
-    }
+   /* public override StdAttackData[] GetNormalAbilities() {
+        return AddAbilities(new StdAttackData[] { melleAttack, defensive, enhanceItem , pickItem, passWeapon, blastAttack });
+    }*/
 }

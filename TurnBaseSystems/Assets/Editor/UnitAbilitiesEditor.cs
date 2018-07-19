@@ -46,12 +46,14 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         EditorGUILayout.Separator();
 
         EditorGUI.indentLevel++;
-        AttackData[] attacks = source.GetNormalAbilities();
-        for (int i = 0; i < attacks.Length; i++) {
-            attacks[i] = ShowAttackData(attacks[i]);
-            EditorGUILayout.Space();
+        AttackData[] attacks = source.GetNormalAbilities() as AttackData[];
+        if (attacks != null) {
+            for (int i = 0; i < attacks.Length; i++) {
+                attacks[i] = ShowAttackData(attacks[i]);
+                EditorGUILayout.Space();
+            }
+            source.SaveNewAbilities(attacks);
         }
-        source.SaveNewAbilities(attacks);
         for (int i = 0; i < source.additionalAbilities.Count; i++) {
             source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
             if (GUILayout.Button("Remove " + (i + 1) + " (" + source.additionalAbilities[i].o_attackName + ")")) {

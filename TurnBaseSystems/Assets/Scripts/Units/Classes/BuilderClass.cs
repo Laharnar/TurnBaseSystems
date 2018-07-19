@@ -18,7 +18,7 @@ public class BuilderClass : UnitAbilities {
     public AttackData pickWeapon;
     public AttackData passWeapon;
 
-    public override AttackData[] GetNormalAbilities() {
-        return AddAbilities(new AttackData[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon });
-    }
+   /* public override Att[] GetNormalAbilities() {
+        return AddAbilities(new StdAttackData[] { melleAttack, deconstruct, construct, pickWeapon, passWeapon });
+    }*/
 }
