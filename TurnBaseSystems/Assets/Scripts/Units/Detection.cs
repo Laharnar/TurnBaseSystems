@@ -6,7 +6,7 @@ public class Detection {
     internal bool detectedSomeone;
 
     public bool IsDetecting(Unit source, Unit other) {
-        return enemyDetectionMask && GridLookup.IsSlotInMask(source.curSlot, other.curSlot, enemyDetectionMask);
+        return other.combatStatus!= CombatStatus.Invisible && enemyDetectionMask && GridLookup.IsSlotInMask(source.curSlot, other.curSlot, enemyDetectionMask);
     }
 
     public GridItem[] GetGroup(Unit source) {

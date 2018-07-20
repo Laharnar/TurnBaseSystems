@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class UnitAnimations : MonoBehaviour {
+public class AnimationController : MonoBehaviour {
 
     public string[] triggers = new string[] { "Attack", };
 

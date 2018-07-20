@@ -11,9 +11,11 @@ public class MelleLogic : AiLogic {
         if (!unit.detection.detectedSomeone)
             yield break;
 
-        float[] dists = transform.position.GetDistances(pFlag.units.ToArray());
+
+        Unit[] search = pFlag.VisibleUnits;
+        float[] dists = transform.position.GetDistances(search);
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnit = SelectionManager.GetAsSlot(pFlag.units[closestUnitIndex].transform.position);
+        GridItem closestUnit = SelectionManager.GetAsSlot(search[closestUnitIndex].transform.position);
         GridItem nearbySlot;
         if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
             nearbySlot = unit.curSlot;
@@ -32,10 +34,10 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities[0].attackMask)) {
+        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
 
-            unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities[0]);
+            unit.AttackAction2(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);
         }
         while (unit.attacking) {
             yield return null;

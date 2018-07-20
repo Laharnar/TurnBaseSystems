@@ -15,18 +15,26 @@ public class AnimDataHolder:MonoBehaviour {
             if (animSets[activateSets[i]].animTrigger != "") {
                 source.anim.SetTrigger(animSets[activateSets[i]].animTrigger);
             } else if (animSets[activateSets[i]].animBool != "") {
-                source.anim.SetTrigger(animSets[activateSets[i]].animBool);
+                source.anim.SetBool(animSets[activateSets[i]].animBool, animSets[activateSets[i]].animBoolValue);
             }
         }
     }
 
-    public static float GetLongestTriggerAnimLength(Unit source, int[] activateSets) {
+    public static float GetLongestTriggerAnimLength(Unit source, int[] sourceSet) {
         float f = 0;
         AttackAnimationInfo[] animSets = source.abilities.abilityAnimations.animSets;
-        for (int i = 0; i < animSets.Length; i++) {
-            if (animSets[activateSets[i]].animTrigger != "") {
-                if (f < animSets[activateSets[i]].animLength) {
-                    f = animSets[activateSets[i]].animLength;
+        for (int i = 0; i < sourceSet.Length; i++) {
+            if (sourceSet[i] == -1) {
+                Debug.Log("Undefinded, but used animation", source);
+                continue;
+            }
+            if (sourceSet[i] >= animSets.Length) {
+                Debug.Log("Incomlete set, need "+ sourceSet[i]);
+                continue;
+            }
+            if (animSets[sourceSet[i]].animTrigger != "") {
+                if (f < animSets[sourceSet[i]].animLength) {
+                    f = animSets[sourceSet[i]].animLength;
                 }
             }
         }

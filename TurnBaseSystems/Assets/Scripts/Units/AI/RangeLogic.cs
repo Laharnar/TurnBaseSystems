@@ -9,12 +9,17 @@ public class RangeLogic : AiLogic {
         if (!unit.detection.detectedSomeone)
             yield break;
 
-        float[] dists = transform.position.GetDistances(pFlag.units.ToArray());
+        Unit[] search = pFlag.VisibleUnits;
+        float[] dists = transform.position.GetDistances(search);
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnit = pFlag.units[closestUnitIndex].curSlot;
+        GridItem closestUnit = search[closestUnitIndex].curSlot;
+        if (!closestUnit) { // no player units
+            yield break;
+        }
+
         GridItem nearbySlot = unit.curSlot;
-        if (!GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities[0].attackMask)) {
-            nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(unit.curSlot, closestUnit, unit.pathing.moveMask, unit.abilities.additionalAbilities[0].attackMask);
+        if (!GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+            nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(unit.curSlot, closestUnit, unit.pathing.moveMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
 
             if (nearbySlot == null)
                 yield break;
@@ -27,10 +32,10 @@ public class RangeLogic : AiLogic {
             }
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities[0].attackMask)) {
+        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(closestUnit));
 
-            unit.AttackAction(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities[0]);
+            unit.AttackAction2(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);
         }
 
         while (unit.attacking) {

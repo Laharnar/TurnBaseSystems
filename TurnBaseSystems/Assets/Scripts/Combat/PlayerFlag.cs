@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-public class PlayerFlag : FlagController {
 
+public class PlayerFlag : FlagController {
+    
     public static PlayerFlag m;
 
     Unit selectedPlayerUnit;
@@ -39,7 +41,17 @@ public class PlayerFlag : FlagController {
     bool AttackCommandExecuted { get { return MousePress; } }
     bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
 
-    
+    public Unit[] VisibleUnits {
+        get {
+            List<Unit> units1 = new List<Unit>();
+            for (int i = 0; i < units.Count; i++) {
+                if (units[i].combatStatus == CombatStatus.Normal)
+                    units1.Add(units[i]);
+            }
+            return units1.ToArray();
+        }
+    }
+
     public override IEnumerator FlagUpdate() {
         m = this;
         NullifyUnits();
@@ -164,7 +176,6 @@ public class PlayerFlag : FlagController {
     private void ShowArea(Unit unit, GridMask mask) {
         if (selectedPlayerUnit) {
             unit.curSlot.RecolorSlot(3);
-
             bool moveVersion = activeAbilityId == 0;
             RemaskActiveFilter(moveVersion ? 1 : 2, mask);
         } else {
@@ -189,16 +200,7 @@ public class PlayerFlag : FlagController {
     private void WaitMouseOverGrid() {
         hoveredSlot = SelectionManager.GetMouseAsSlot2D();
     }
-
-    private void UpdateVisibleArsenal() {
-        // show active clickable area for movement and attack
-        Unit.activeUnit = null;
-        if (selectedPlayerUnit && selectedPlayerUnit.HasActions && !selectedPlayerUnit.moving && !selectedPlayerUnit.attacking) {
-            Unit.activeUnit = selectedPlayerUnit;
-
-            ShowAttackAndMoveArea(selectedPlayerUnit, activeAbility);
-        }
-    }
+    
 
     private void UpdateColorsDependinOnHoveringTarget() {
         // decolor last hovered unit
@@ -217,24 +219,6 @@ public class PlayerFlag : FlagController {
         }
     }
 
-    private void ShowAttackAndMoveArea(Unit unit, AttackData2 attack) {
-        if (!unit)
-            return;
-        activeAbility = attack;
-        unit.curSlot.RecolorSlot(3);
-        GridMask mask;
-        mask = GridAccess.LoadMaskByInteractionType(selectedPlayerUnit.curSlot, unit.pathing.moveMask, 0, "Normal"); ;// unit.pathing.moveMask;
-        RemaskActiveFilter(1, mask);
-        mask = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, attack.AttackMask, mouseDirection);
-        RemaskActiveFilter(2, mask);
-
-        if (/*(attack as AoeMaskAttack)!= null*/ attack != null && hoveredSlot) {
-            mask = GridAccess.LoadAttackLayer(hoveredSlot, attack.AttackMask, mouseDirection);
-            RemaskActiveFilter(4, mask);
-        }
-    }
-
-
     private void ResetColorForUnit(Unit unit, GridMask mask) {
         if (mask)
             RemaskActiveFilter(0, mask);
@@ -249,7 +233,6 @@ public class PlayerFlag : FlagController {
             ResetColorForUnit(unitSource, activeAbility.AttackMask);
         }
         activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
-        activeAbilityId = 0;
         Debug.Log("Setting active ability "+activeAbilityId);
     }
     

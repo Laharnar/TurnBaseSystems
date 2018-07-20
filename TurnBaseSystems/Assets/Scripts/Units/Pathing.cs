@@ -18,16 +18,22 @@ public class Pathing {
         t.curSlot.filledBy = null;
         t.StartCoroutine(GoTo(t, targetPos));
     }
-
+    public static void SetAnimBool(Unit t, bool value) {
+        if (t && t.anim) {
+            t.anim.SetBool("Walk", value);
+        }
+    }
     internal IEnumerator GoTo(Unit t, Vector3 targetPos) {
         t.moving = true;
-        t.SetAnimBool(true);
+        //AttackData2.RunAnimations(t, t.abilities.move2.standard.animSets);
+        SetAnimBool(t, true);
+        //t.anim.SetTrigger(animSets[activateSets[i]].animTrigger);
         while (Vector3.Distance(t.transform.position, targetPos) > Time.deltaTime*speed) {
             t.transform.Translate((targetPos - t.transform.position).normalized * speed * Time.deltaTime);
             yield return null;
         }
         t.transform.position = targetPos;
-        t.SetAnimBool(false);
+        SetAnimBool(t, false);
         t.moving = false;
     }
 }

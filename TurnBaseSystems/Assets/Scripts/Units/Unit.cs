@@ -20,7 +20,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public bool IsPlayer { get { return flag.allianceId == 0; } }
     public bool IsEnemy { get { return flag.allianceId == 1; } }
 
-    public UnitAnimations anim;
+    public AnimationController anim;
 
 
     public bool NoActions { get { return actionsLeft <= 0; } }
@@ -90,6 +90,10 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 hpUI.background.gameObject.SetActive(true);
                 hpUI.InitBarWithGrey(hp, 10, this);
                 hpUI.ShowHpWithGrey(hp, temporaryArmor);
+            }
+
+            if (!anim) {
+                anim = GetComponentInChildren<AnimationController>();
             }
         }
     }
@@ -288,10 +292,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         yield return null;
         FlagManager.DeRegisterUnit(this);
         Destroy(gameObject);
-    }
-
-    public bool CanMoveTo(GridItem slot) {
-        return CanMove && (pathing.moveMask == null || GridLookup.IsSlotInMask(curSlot, slot, pathing.moveMask));
     }
 
     internal bool CanAttackSlot(GridItem hoveredSlot, GridMask mask) {

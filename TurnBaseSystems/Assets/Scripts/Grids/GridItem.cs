@@ -88,7 +88,7 @@ public class GridItem : MonoBehaviour {
 
 
     /// <summary>
-    /// 
+    /// 0: normal, 1: selected green, 2: attackable red, 3: ally blue, 4: orange, 5: yellow
     /// </summary>
     /// <param name="code">0: normal, 1: selected green, 2: attackable red, 3: ally blue, 4: orange, 5: yellow</param>
     internal void RecolorSlot(int code) {

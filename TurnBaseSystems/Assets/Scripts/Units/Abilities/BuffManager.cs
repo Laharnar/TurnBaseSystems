@@ -17,17 +17,23 @@ public class BuffManager {
                 continue;
             }
 
-            if (registeredBuffSources[i].flag.allianceId != faction)
-                continue;
+            // type: consume only on enemy faction.
+            if (registeredBuffSources[i].flag.allianceId != faction) {
+                registeredBuffs[i].turns--;
 
-            registeredBuffs[i].turns--;
-            if (registeredBuffs[i].turns == 0) {
-                registeredBuffSources[i].combatStatus = registeredBuffs[i].endBuffStatus;
-                AttackData2.RunAnimations(registeredBuffSources[i], registeredBuffs[i].endAnimSets);
-
-                registeredBuffs.RemoveAt(i);
-                registeredBuffSources.RemoveAt(i);
+                OnTurnConsumed(i);
             }
+        }
+    }
+
+    static void OnTurnConsumed(int buffIndex) {
+        int i = buffIndex;
+        if (registeredBuffs[i].turns <= 0) {
+            AttackData2.RunAnimations(registeredBuffSources[i], registeredBuffs[i].endAnimSets);
+            registeredBuffSources[i].combatStatus = registeredBuffs[i].endBuffStatus;
+
+            registeredBuffs.RemoveAt(i);
+            registeredBuffSources.RemoveAt(i);
         }
     }
 }

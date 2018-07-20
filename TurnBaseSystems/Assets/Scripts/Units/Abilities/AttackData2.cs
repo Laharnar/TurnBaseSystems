@@ -50,6 +50,7 @@ public sealed class AttackData2 : StdAttackData {
             Debug.Log("Error. source:" + (source == null) + " slot:" + (attackedSlot == null) + " data:"+(data == null));
         }
 
+        Debug.Log("Using attack "+data.o_attackName +" unit: "+source);
         AttackDataType[] attacks = data.GetAttacks();
 
 
@@ -58,8 +59,8 @@ public sealed class AttackData2 : StdAttackData {
             if (attackedSlot.filledBy) {
                 attackedSlot.filledBy.GetDamaged(data.standard.damage);
             }
+            source.combatStatus = data.standard.setStatus;
         }
-        source.combatStatus = data.standard.setStatus;
         // aoe
         if (data.aoe.used) {
             GridItem[] attackArea;
@@ -68,15 +69,13 @@ public sealed class AttackData2 : StdAttackData {
                 if (attackArea[j].filledBy)
                     attackArea[j].filledBy.GetDamaged(data.aoe.damage);
             }
+            source.combatStatus = data.aoe.setStatus;
         }
-        source.combatStatus = data.standard.setStatus;
         // buff
         if (data.buff.used) {
             BuffManager.Register(source, data.buff);
+            source.combatStatus = data.buff.setStatus;
         }
-        //if (attacks[i].GetType() == typeof(BUFFAttackData)) {
-        source.combatStatus = data.buff.setStatus;
-
     }
 
     /// <summary>
@@ -90,9 +89,9 @@ public sealed class AttackData2 : StdAttackData {
 
     public static float AnimLength(Unit unit, AttackData2 attack) {
         float maxLen = 0;
-        float f1 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets),
-            f2 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets),
-            f3 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets);
+        float f1 = attack.standard.used ? AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets) : 0,
+            f2 = attack.aoe.used ? AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets) : 0,
+            f3 = attack.buff.used ? AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets) : 0;
         if (attack.standard.used) maxLen = maxLen < f1 ? f1 : maxLen;
         if (attack.aoe.used) maxLen = maxLen < f2 ? f2 : maxLen;
         if (attack.buff.used) maxLen = maxLen < f3 ? f3 : maxLen;
