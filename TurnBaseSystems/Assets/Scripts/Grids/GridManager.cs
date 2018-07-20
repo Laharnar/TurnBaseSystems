@@ -108,7 +108,7 @@ public static class GridAccess {
         return items;
     }
 
-    public static GridMask LoadAttackLayer(GridItem slot, GridMask attackMask, int mouseDirection) {
+    public static GridMask LoadAttackLayer(GridItem slot, GridMask attackMask,  int mouseDirection) {
         GridMask curFilter = attackMask;
         curFilter = GridMask.RotateMask(curFilter, mouseDirection);
         GridItem[] items = GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
@@ -195,4 +195,5 @@ public static class GridAccess {
         }
         return items.ToArray();
     }
+
 }
