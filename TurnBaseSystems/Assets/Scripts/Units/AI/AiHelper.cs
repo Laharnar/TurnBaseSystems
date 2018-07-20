@@ -2,7 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 public static class AiHelper {
-
+    public static GridMask MaskFromItems(GridItem source, GridItem[] items, GridMask template) {
+        if (template == null) {
+            Debug.Log("Error, template is null.");
+            return null;
+        }
+        GridMask mask = template.EmptyCopy();
+        for (int i = 0; i < items.Length; i++) {
+            int x = items[i].gridX - source.gridX + mask.w / 2;
+            int y = items[i].gridY - source.gridY + mask.l / 2;
+            mask.mask[x].col[y] = items[i];
+        }
+        return mask;
+    }
 
     public static GridMask FilterByInteractions(GridItem source, GridItem[] items, string attackType, GridMask template) {
         if (attackType == "") {

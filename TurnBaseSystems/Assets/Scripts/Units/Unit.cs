@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum CombatStatus {
     Normal,
-    Invisible
+    Invisible,
+    SameAsBefore
 }
 public partial class Unit : MonoBehaviour, ISlotItem{
 
@@ -154,8 +155,36 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         wep.transform.parent = otherUnit.transform;
         otherUnit.equippedWeapon = wep;
 
-        PlayerFlag.m.activeAbility = abilities.move;
+        PlayerFlag.m.activeAbility = abilities.move2;
     }
+
+    internal void AttackAction2(GridItem attackedSlot, Unit attackedUnit, AttackData2 atk) {
+
+        if (atk == abilities.move2) {
+            if (!attackedSlot.filledBy) {
+                Debug.Log("Executing move action");
+                MoveAction(attackedSlot);
+            }
+        } else {
+            if ((atk.requiresUnit && attackedSlot.filledBy == null) || attacking) {
+                if (attacking) {
+                    Debug.Log("Already attacking. action aborted.");
+                }
+                if (atk.requiresUnit && attackedSlot.filledBy == null) {
+                    Debug.Log("This attack requires unit, no unit there. action aborted.");
+                }
+                return;
+            }
+            Debug.Log("Executing attack " + atk.o_attackName);
+            actionsLeft -= atk.actionCost;
+
+            AttackData2.UseAttack(attackedUnit, attackedSlot, atk);
+
+            AttackCoroutine2(atk);
+
+        }
+    }
+
     public void DeEquip() {
         if (equippedWeapon) {
             equippedWeapon.transform.position = equippedWeapon.transform.position + new Vector3(0, -0.1f);
@@ -170,7 +199,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
 
-        PlayerFlag.m.activeAbility = abilities.move;
+        PlayerFlag.m.activeAbility = abilities.move2;
     }
 
     public void MoveAction(GridItem slot) {
@@ -185,22 +214,33 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         gridY = slot.gridY;
         pathing.GoToCoroutine(this, slot.gridX, slot.gridY);
     }
+
+    void AttackCoroutine2(AttackData2 attack) {
+        if (attacking) return;
+        if (attack.standard.used == attack.aoe.used == attack.buff.used ==false|| anim == null) return;
+        if (attack.standard.used) AttackData2.RunAnimations(this, attack.standard.animSets);
+        if (attack.aoe.used) AttackData2.RunAnimations(this, attack.aoe.animSets);
+        if (attack.buff.used) AttackData2.RunAnimations(this, attack.buff.animSets);
+        float len = AttackData2.AnimLength(this, attack);
+        StartCoroutine(WaitAttack(len));
+    }
+
     void AttackCoroutine(AttackData attack) {
         if (attacking) return;
         Debug.Log("Executing atatck animation "+ attack.animData.useInfo+" "+anim );
         if (!attack.animData.useInfo || anim==null) return;
         int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
         anim.SetTrigger(attackTriggerCode);
-        StartCoroutine(WaitAttack(attack));
+        StartCoroutine(WaitAttack(attack.animData.animLength));
     }
 
     internal void RestoreAP(object p) {
         throw new NotImplementedException();
     }
 
-    IEnumerator WaitAttack(AttackData attack) {
+    IEnumerator WaitAttack(float len) {
         attacking = true;
-        yield return new WaitForSeconds( attack.animData.animLength);
+        yield return new WaitForSeconds(len);
         attacking = false;
     }
 

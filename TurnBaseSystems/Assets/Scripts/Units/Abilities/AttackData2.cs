@@ -1,27 +1,101 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using UnityEngine;
+
 [System.Serializable]
-public sealed class AttackData2: StdAttackData {
+public sealed class AttackData2 : StdAttackData {
     public string o_attackName;
+    public string detailedDescription;
     public int actionCost = 1;
     public bool requiresUnit = true;
     public StandardAttackData standard;
     public AOEAttackData aoe;
     public BUFFAttackData buff;
 
+    public GridMask AttackMask {
+        get {
+            if (standard.used) {
+                return standard.attackRangeMask;
+            }
+            return null;
+        }
+    }
+
     public AttackDataType[] GetAttacks() {
         AttackDataType[] attacks = new AttackDataType[3];
-        if (standard.priority == -1) {
-            standard.priority = 0;
+        if (standard.priority > -1) {
+            if (standard.used)
+                attacks[standard.priority] = standard;
         }
-        if (aoe.priority != -1) {
-            aoe.priority = 0;
+        if (aoe.priority > -1) {
+            if (aoe.used)
+                attacks[aoe.priority] = aoe;
         }
-        if (buff.priority != -1) {
-            buff.priority = 0;
+        if (buff.priority > -1) {
+            if (buff.used)
+                attacks[buff.priority] = buff;
         }
-        attacks[standard.priority] = standard;
-        attacks[aoe.priority] = aoe;
-        attacks[buff.priority] = buff;
         return attacks;
+    }
+
+    /// <summary>
+    /// Executes attack data.
+    /// Included all types of attacks(normal, aoe, buff...)
+    /// Modifies Unit.combatStatus
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="attackedSlot"></param>
+    /// <param name="data"></param>
+    public static void UseAttack(Unit source, GridItem attackedSlot, AttackData2 data) {
+        if (source == null || attackedSlot == null || data==null) {
+            Debug.Log("Error. source:" + (source == null) + " slot:" + (attackedSlot == null) + " data:"+(data == null));
+        }
+
+        AttackDataType[] attacks = data.GetAttacks();
+
+
+        // standard
+        if (data.standard.used) {
+            if (attackedSlot.filledBy) {
+                attackedSlot.filledBy.GetDamaged(data.standard.damage);
+            }
+        }
+        source.combatStatus = data.standard.setStatus;
+        // aoe
+        if (data.aoe.used) {
+            GridItem[] attackArea;
+            attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
+            for (int j = 0; j < attackArea.Length; j++) {
+                if (attackArea[j].filledBy)
+                    attackArea[j].filledBy.GetDamaged(data.aoe.damage);
+            }
+        }
+        source.combatStatus = data.standard.setStatus;
+        // buff
+        if (data.buff.used) {
+            BuffManager.Register(source, data.buff);
+        }
+        //if (attacks[i].GetType() == typeof(BUFFAttackData)) {
+        source.combatStatus = data.buff.setStatus;
+
+    }
+
+    /// <summary>
+    /// Activates triggers and bools in anim controller.
+    /// </summary>
+    /// <param name="unit"></param>
+    /// <param name="triggers"></param>
+    public static void RunAnimations(Unit unit, int[] triggers) {
+        unit.abilities.abilityAnimations.Run(unit, triggers);
+    }
+
+    public static float AnimLength(Unit unit, AttackData2 attack) {
+        float maxLen = 0;
+        float f1 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets),
+            f2 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets),
+            f3 = AnimDataHolder.GetLongestTriggerAnimLength(unit, attack.standard.animSets);
+        if (attack.standard.used) maxLen = maxLen < f1 ? f1 : maxLen;
+        if (attack.aoe.used) maxLen = maxLen < f2 ? f2 : maxLen;
+        if (attack.buff.used) maxLen = maxLen < f3 ? f3 : maxLen;
+        return maxLen;
     }
 }

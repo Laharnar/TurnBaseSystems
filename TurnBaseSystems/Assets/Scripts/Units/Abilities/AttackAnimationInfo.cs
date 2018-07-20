@@ -9,5 +9,4 @@ public class AttackAnimationInfo {
     /// Time, length of animation
     /// </summary>
     public float animLength;
-    public CombatStatus requiredState;
 }

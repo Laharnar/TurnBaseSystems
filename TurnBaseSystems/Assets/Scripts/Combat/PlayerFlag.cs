@@ -18,7 +18,8 @@ public class PlayerFlag : FlagController {
 
     Unit coroUnitSource;
     int activeAbilityId;
-    public AttackData activeAbility;
+    //public AttackData activeAbility;
+    public AttackData2 activeAbility;
     private GridMask curFilter;
 
     OffsetMask mouseToSelectOffset = new OffsetMask();
@@ -53,8 +54,7 @@ public class PlayerFlag : FlagController {
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
                 mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
             }
-
-            if (hoveredSlot ) {
+                        if (hoveredSlot ) {
                 WaitUnitSelection();
                 UpdateColorsDependinOnHoveringTarget();
             }
@@ -62,15 +62,15 @@ public class PlayerFlag : FlagController {
             // Set default action
             if (selectedPlayerUnit) {
                 if (selectedPlayerUnit.HasActions && activeAbility == null) {
-                    activeAbility = selectedPlayerUnit.abilities.move;
+                    activeAbility = selectedPlayerUnit.abilities.move2;
                 }
             }
 
             // load avaliable filter for current ability
-            if (activeAbility!= null && selectedPlayerUnit) {
-                curFilter = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, activeAbility, mouseDirection);
-
-                
+            if ( selectedPlayerUnit) {
+                if ((selectedPlayerUnit.abilities.newVersion && activeAbility != null) || activeAbility != null) {
+                    curFilter = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, activeAbility.AttackMask, mouseDirection);
+                }
             }
             if (Input.GetMouseButtonDown(1)) {
                 selectedSlot = SelectionManager.GetMouseAsSlot2D();
@@ -82,38 +82,53 @@ public class PlayerFlag : FlagController {
                 // WaitAbilitySelection(); automatic on buttons
             }
             if (selectedSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
-                if (activeAbility.actionCost >   selectedPlayerUnit.ActionsLeft) {
-                    Debug.Log("NOT enough actions. Can't attack.");
-                }
-                if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft  
-                    && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
-                    bool isCurMouseHostile = hoveredSlot.filledBy && hoveredSlot.filledBy.flag.allianceId != selectedPlayerUnit.flag.allianceId;
-                    if (activeAbility.requiresUnit && isCurMouseHostile) {
-                        // handle weapon aim
-                        bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
-                        if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
-                            yield return selectedPlayerUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(selectedPlayerUnit, hoveredUnit, selectedPlayerUnit.equippedWeapon.conePref, selectedPlayerUnit.equippedWeapon.StandardAttack.attackMask.Range));
-                            aimSuccesful = CheckIfEnemyHit(hoveredUnit);
-                        }
-                        if (aimSuccesful) {
-                            Debug.Log("Attacking (1)");
+                if (selectedPlayerUnit.abilities.newVersion) {
+                    if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
+                        Debug.Log("NOT enough actions. Can't attack.");
+                    }
+                    if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
+                        && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
+                        bool isCurMouseHostile = hoveredSlot.filledBy && hoveredSlot.filledBy.flag.allianceId != selectedPlayerUnit.flag.allianceId;
+                            // handle weapon aim
+                        Debug.Log("Attacking v2 (0)");
+                        ResetColorForUnit(selectedPlayerUnit, curFilter);
+                        selectedPlayerUnit.AttackAction2(hoveredSlot, hoveredUnit, activeAbility);
+                        CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
+                        yield return null;
+                    }
+                } else {
+                    /*if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
+                        Debug.Log("NOT enough actions. Can't attack.");
+                    }
+                    if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
+                        && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
+                        bool isCurMouseHostile = hoveredSlot.filledBy && hoveredSlot.filledBy.flag.allianceId != selectedPlayerUnit.flag.allianceId;
+                        if (activeAbility.requiresUnit && isCurMouseHostile) {
+                            // handle weapon aim
+                            bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
+                            if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
+                                yield return selectedPlayerUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(selectedPlayerUnit, hoveredUnit, selectedPlayerUnit.equippedWeapon.conePref, selectedPlayerUnit.equippedWeapon.StandardAttack.attackMask.Range));
+                                aimSuccesful = CheckIfEnemyHit(hoveredUnit);
+                            }
+                            if (aimSuccesful) {
+                                Debug.Log("Attacking (1)");
+                                ResetColorForUnit(selectedPlayerUnit, curFilter);
+                                selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
+                                if (selectedPlayerUnit.equippedWeapon) {
+                                    selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, activeAbility);
+                                }
+                                CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
+                            }
+                        } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
+                            Debug.Log("Attacking (2)");
                             ResetColorForUnit(selectedPlayerUnit, curFilter);
                             selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
-                            if (selectedPlayerUnit.equippedWeapon) {
-                                selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, activeAbility);
-                            }
                             CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
                         }
-                    } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
-                        Debug.Log("Attacking (2)");
-                        ResetColorForUnit(selectedPlayerUnit, curFilter);
-                        selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, activeAbility);
-                        CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
-                    }
-                    yield return null;
+                        yield return null;
+                    }*/
                 }
             }
-
 
             // map decolor when unit run out of actions.
             if (selectedUnit && selectedUnit.NoActions) {
@@ -124,110 +139,7 @@ public class PlayerFlag : FlagController {
             if (MissionManager.levelCompleted) {
                 break;
             }
-
-            /*if (units.Count == 0 || NoActionsLeft() || Input.GetKeyDown(KeyCode.Return)) break;
-
-            // update offset. 
-            if (selectedPlayerUnit && hoveredSlot) {
-                mouseToSelectOffset.x = hoveredSlot.gridX - selectedPlayerUnit.gridX;
-                mouseToSelectOffset.y = hoveredSlot.gridY - selectedPlayerUnit.gridY;
-            }
-            if (MouseWheelRotate) {
-                float f = Input.GetAxis("Mouse ScrollWheel");
-                f = f < 0 ? -1 : f > 0 ? 1 : 0;
-                mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
-            }
-
-            UpdateVisibleArsenal();
-            UpdateColorsDependinOnHoveringTarget();
-
-            // get hovered slot and unit in it
-            hoveredSlot = SelectionManager.GetMouseAsSlot2D();
-            if (hoveredSlot == null) { // didn't hover over map
-                yield return null;
-                continue;
-            }
-
-            hoveredUnit = SelectionManager.GetUnitUnderMouse(hoveredSlot);
-
-            // *t button ability press -> a) wait for press-> execute selected attack
-            // b) wait for cancel
-            if (RunningTwoStepAbility) {
-                if (MousePress || Input.GetKeyDown(KeyCode.Escape) || MoveCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanMoveTo(hoveredSlot)
-                    || AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) {
-                    //curAttack = coroUnitSource.abilities.GetNormalAbilities()[coroAtkId];
-                    coroUnitSource.StopCoroutine(twoStepCoro);
-                    twoStepCoro = null;
-                }
-            } else {
-
-                // Selecting player units when pressed.
-                if (MousePress && CurMouseIsPlayerUnit && CurMouseIsDifferentUnit) {
-                    //selectionChanged = true;
-                    DeselectUnit();
-
-                    if (hoveredUnit.HasActions) {
-                        selectedPlayerUnit = hoveredUnit;
-                        PlayerUIAbilityList.LoadAbilitiesOnUI(selectedPlayerUnit);
-                        curAttack = selectedPlayerUnit.abilities.BasicAttack;
-                        //ShowArsenal(selectedPlayerUnit, selectedPlayerUnit.abilities.BasicAttack);
-                    }
-                }
-            }
-
-            // Find filter for active attack, Attack is changed by UI.
-            if (curAttack != null && selectedPlayerUnit) {
-                curFilter = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, curAttack, mouseDirection);
-            }
-            // Note: attack and move commands override the coro call.
-            // move
-            if (MoveCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanMoveTo(hoveredSlot)) {
-                //selectionChanged = true;
-                MoveCurTo(hoveredSlot);
-
-                yield return null;
-            }
-            // attack
-            else {
-                if (AttackCommandExecuted && selectedPlayerUnit && selectedPlayerUnit.CanAttackWith(curAttack) && selectedPlayerUnit.CanAttackSlot(hoveredSlot, curFilter)) { // unit = enemy unit
-                    bool isHostileType = curAttack != null && curAttack.requiresUnit && CurMouseIsHostile;
-                    Debug.Log("Passable: " + true + " requiresAndFoundEnemy:" + isHostileType + " notReqAndFoundEnv" + !curAttack.requiresUnit + " foundAlly" + !(isHostileType || !curAttack.requiresUnit));
-
-                    if (curAttack.requiresUnit && CurMouseIsHostile) {
-                        // handle weapon aim
-                        bool aimSuccesful = true;// by default, always hit, if weapon doesn't use cone ability.
-                        if (selectedPlayerUnit.equippedWeapon && selectedPlayerUnit.equippedWeapon.conePref) {
-                            yield return selectedPlayerUnit.StartCoroutine(WeaponFireMode.WaitPlayerToSetAim(selectedPlayerUnit, hoveredUnit, selectedPlayerUnit.equippedWeapon.conePref, selectedPlayerUnit.equippedWeapon.StandardAttack.attackMask.Range));
-                            aimSuccesful = CheckIfEnemyHit(hoveredUnit);
-                        }
-
-                        if (aimSuccesful) {
-                            ResetColorForUnit(selectedPlayerUnit);
-                            selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
-                            if (selectedPlayerUnit.equippedWeapon) {
-                                selectedPlayerUnit.equippedWeapon.OnDamageEnhanceEffect(selectedPlayerUnit, hoveredSlot, hoveredUnit, curAttack);
-                            }
-                        }
-                    } else { //if (!curAttack.requiresUnit) { // env attack || not hostile, not env = ally
-                        ResetColorForUnit(selectedPlayerUnit);
-                        selectedPlayerUnit.AttackAction(hoveredSlot, hoveredUnit, curAttack);
-                    }
-                    yield return null;
-                }
-            }
-
-            UIManager.PlayerStandardUi(!selectedPlayerUnit);
-            UIManager.PlayerSelectAllyUnitUi(selectedPlayerUnit);
-
-            // map decolor when unit run out of actions.
-            if (selectedPlayerUnit && selectedPlayerUnit.NoActions) {
-                DeselectUnit();
-            }
-
-
-            yield return null;
-
-            NullifyUnits();*/
+            
             yield return null;
 
         }
@@ -276,7 +188,6 @@ public class PlayerFlag : FlagController {
 
     private void WaitMouseOverGrid() {
         hoveredSlot = SelectionManager.GetMouseAsSlot2D();
-
     }
 
     private void UpdateVisibleArsenal() {
@@ -306,7 +217,7 @@ public class PlayerFlag : FlagController {
         }
     }
 
-    private void ShowAttackAndMoveArea(Unit unit, AttackData attack) {
+    private void ShowAttackAndMoveArea(Unit unit, AttackData2 attack) {
         if (!unit)
             return;
         activeAbility = attack;
@@ -314,11 +225,11 @@ public class PlayerFlag : FlagController {
         GridMask mask;
         mask = GridAccess.LoadMaskByInteractionType(selectedPlayerUnit.curSlot, unit.pathing.moveMask, 0, "Normal"); ;// unit.pathing.moveMask;
         RemaskActiveFilter(1, mask);
-        mask = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, attack, mouseDirection);
+        mask = GridAccess.LoadAttackLayer(selectedPlayerUnit.curSlot, attack.AttackMask, mouseDirection);
         RemaskActiveFilter(2, mask);
 
         if (/*(attack as AoeMaskAttack)!= null*/ attack != null && hoveredSlot) {
-            mask = GridAccess.LoadAttackLayer(hoveredSlot, attack, mouseDirection);
+            mask = GridAccess.LoadAttackLayer(hoveredSlot, attack.AttackMask, mouseDirection);
             RemaskActiveFilter(4, mask);
         }
     }
@@ -335,9 +246,9 @@ public class PlayerFlag : FlagController {
     internal void SetActiveAbility(Unit unitSource, int atkId) {
         activeAbilityId = atkId;
         if (activeAbility != null) {
-            ResetColorForUnit(unitSource, activeAbility.attackMask);
+            ResetColorForUnit(unitSource, activeAbility.AttackMask);
         }
-        activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData;
+        activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
         activeAbilityId = 0;
         Debug.Log("Setting active ability "+activeAbilityId);
     }

@@ -6,12 +6,17 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class UnitAnimations : MonoBehaviour {
 
-    public string[] triggers = new string[] { "Attack" };
+    public string[] triggers = new string[] { "Attack", };
 
     Animator anim;
 
     private void Start() {
         anim = GetComponent<Animator>();
+    }
+
+    public void SetTrigger(string code) {
+        if (anim)
+            anim.SetTrigger(code);
     }
 
     public void SetTrigger(int code) {

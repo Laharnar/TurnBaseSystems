@@ -108,8 +108,11 @@ public static class GridAccess {
         return items;
     }
 
-    public static GridMask LoadAttackLayer(GridItem slot, AttackData curAttack, int mouseDirection) {
-        return LoadMaskByInteractionType(slot, curAttack.attackMask, mouseDirection, curAttack.attackType);
+    public static GridMask LoadAttackLayer(GridItem slot, GridMask attackMask, int mouseDirection) {
+        GridMask curFilter = attackMask;
+        curFilter = GridMask.RotateMask(curFilter, mouseDirection);
+        GridItem[] items = GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
+        return AiHelper.MaskFromItems(slot, items, curFilter);
     }
 
     /// <summary>
@@ -120,7 +123,7 @@ public static class GridAccess {
         GridMask curFilter = mask;
         curFilter = GridMask.RotateMask(curFilter, mouseDirection);
         GridItem[] items = GetSlotsInMask(slot.gridX, slot.gridY, curFilter);
-        return AiHelper.FilterByInteractions(slot, items, attackType, curFilter);
+        return AiHelper.MaskFromItems(slot, items, curFilter);
     }
 
     public static GridItem[] GetSlotsInMask(int gridX, int gridY, GridMask mask, OffsetMask offset) {

@@ -12,7 +12,8 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
 
     public override void OnInspectorGUI() {
         UnitAbilities source = target as UnitAbilities;
-        if (Application.isPlaying) {
+        EditorGUI.BeginChangeCheck();
+        /*if (Application.isPlaying) {
             for (int i = 0; i < source.additionalAbilities.Count; i++) {
                 source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
                 EditorGUILayout.Space();
@@ -66,14 +67,14 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         EditorGUI.indentLevel--;
         EditorGUILayout.Separator();
         EditorGUILayout.Separator();
-
+        */
         base.OnInspectorGUI();
-
+        
         if (EditorGUI.EndChangeCheck()) {
             Undo.RecordObject(target, "Changed character");
-        }
+        }/*
         EditorFix.SetObjectDirty(target);
-
+        */
 
     }
 

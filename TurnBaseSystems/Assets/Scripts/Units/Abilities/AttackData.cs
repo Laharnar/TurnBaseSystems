@@ -3,7 +3,6 @@ using System.Reflection;
 using UnityEngine;
 
 public class StdAttackData {
-
 }
 /// <summary>
 /// Attacks are manually coded into UnitAbilities-derived classes.

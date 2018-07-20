@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 public class CombatManager : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class CombatManager : MonoBehaviour {
     Coroutine gameplayUp;
 
     bool init;
+
 
     private void Awake() {
         m = this;
@@ -51,6 +53,8 @@ public class CombatManager : MonoBehaviour {
                 for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
                     FlagManager.flags[j].units[i].OnTurnEnd();
                 }
+                OnTurnEnd(j);
+
                 Debug.Log("Flag done - " + (j + 1));
                 FlagManager.flags[j].NullifyUnits();
                 if (FlagManager.flags[0].units.Count == 0) {
@@ -77,6 +81,10 @@ public class CombatManager : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
+    private void OnTurnEnd(int j) {
+         BuffManager.ConsumeBuffs(j);
+    }
+
     public static void OnUnitExecutesAction(Unit unit) {
         foreach (var items in FactionCheckpoint.checkpointsInLevel) {
             items.CheckpointCheck(unit);
@@ -101,4 +109,6 @@ public class CombatManager : MonoBehaviour {
         yield return null;
 
     }
+
+ 
 }
