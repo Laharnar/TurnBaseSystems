@@ -51,6 +51,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public HpUIController hpUI;
 
+    
+
     /// <summary>
     /// Used by interactions.
     /// </summary>
@@ -97,7 +99,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             }
         }
     }
-
     public void OnTurnEnd() {
         Debug.Log("Applying passives.");
         if (equippedWeapon) {
@@ -125,6 +126,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         temporaryArmor += armorAmount;
         hpUI.ShowHpWithGrey(hp, temporaryArmor);
 
+    }
+
+    internal void RemoveShield() {
+        temporaryArmor = 0;
+        hpUI.ShowHpWithGrey(hp, temporaryArmor);
     }
     private void ResetGreyHp() {
         temporaryArmor = 0;

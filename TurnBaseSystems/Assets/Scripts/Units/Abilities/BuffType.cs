@@ -1,4 +1,5 @@
 ﻿public enum BuffType {
     None,
-    Invisibility
+    Invisibility,
+    Shielded
 }

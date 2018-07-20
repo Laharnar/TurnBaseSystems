@@ -4,6 +4,7 @@
 public class BUFFAttackData : AttackDataType {
 
     public int turns = 1;
+    public int armorAmt;
     public BuffType buffType = BuffType.None;
     public CombatStatus endBuffStatus = CombatStatus.Normal;
     public int[] endAnimSets;

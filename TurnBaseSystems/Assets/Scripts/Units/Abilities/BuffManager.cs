@@ -28,9 +28,14 @@ public class BuffManager {
 
     static void OnTurnConsumed(int buffIndex) {
         int i = buffIndex;
+        Unit source = registeredBuffSources[i];
+        BUFFAttackData buff = registeredBuffs[i];
         if (registeredBuffs[i].turns <= 0) {
-            AttackData2.RunAnimations(registeredBuffSources[i], registeredBuffs[i].endAnimSets);
-            registeredBuffSources[i].combatStatus = registeredBuffs[i].endBuffStatus;
+            AttackData2.RunAnimations(source, buff.endAnimSets);
+            if (buff.buffType == BuffType.Shielded) {
+                source.RemoveShield();
+            }
+            source.combatStatus = buff.endBuffStatus;
 
             registeredBuffs.RemoveAt(i);
             registeredBuffSources.RemoveAt(i);

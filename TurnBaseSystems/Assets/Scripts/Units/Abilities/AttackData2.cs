@@ -73,8 +73,17 @@ public sealed class AttackData2 : StdAttackData {
         }
         // buff
         if (data.buff.used) {
+            ActivateBuff(source, data.buff);
+            
+
             BuffManager.Register(source, data.buff);
             source.combatStatus = data.buff.setStatus;
+        }
+    }
+
+    private static void ActivateBuff(Unit source, BUFFAttackData buff) {
+        if (buff.buffType == BuffType.Shielded) {
+            source.AddShield(buff.armorAmt);
         }
     }
 
