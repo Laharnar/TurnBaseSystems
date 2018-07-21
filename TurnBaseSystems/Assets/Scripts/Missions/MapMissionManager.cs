@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class MapMissionManager : MonoBehaviour {
     public static MapMissionManager m;
-    public List<MissionData> missions = new List<MissionData>();
+    public QuestData[] missions;
     public TextAccess missionText;
 
     int activeMission = -1;
@@ -22,10 +22,11 @@ public class MapMissionManager : MonoBehaviour {
             selected = SelectionManager.GetMouseAsObject();
         }
         if (selected != null) {
+            // choose active mission
             MissionTarget mt = selected.GetComponent<MissionTarget>();
             activeMission = mt.targetMissionId;
             if (activeMission != lastChoice) {
-                missionText.SetText(GetMissionById(activeMission).GetDescription());
+                missionText.SetText(GetQuestDataById(activeMission).GetDescription());
             } else {
                 PlayMission(activeMission);
                 activeMission = -1;
@@ -36,18 +37,18 @@ public class MapMissionManager : MonoBehaviour {
     }
 
     public void PlayMission(int id) {
-        MissionData mission = GetMissionById(id);
+        QuestData mission = GetQuestDataById(id);
         if (mission!=null) {
             Debug.Log("Starting mission " + mission.missionName + " " + mission.missionId + " " + mission.sceneName);
-            LoadingManager.m.activeMission = mission;
-            LoadingManager.m.LoadNextScreen();
+            GameRun.current.activeQuest = mission;
+            LoadingManager.OnLoadCharacterScreen();
         } else {
             Debug.Log("No mission with id "+id);
         }
     }
 
-    private MissionData GetMissionById(int id) {
-        for (int i = 0; i < missions.Count; i++) {
+    private QuestData GetQuestDataById(int id) {
+        for (int i = 0; i < missions.Length; i++) {
             if (missions[i].missionId == id) {
                 return missions[i];
             }

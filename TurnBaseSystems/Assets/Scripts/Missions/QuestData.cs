@@ -1,7 +1,7 @@
 ﻿using System;
 
 [System.Serializable]
-public class MissionData {
+public class QuestData {
     public int missionId;
     public string missionName = "*Classified*";
     public string sceneName;

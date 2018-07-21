@@ -6,14 +6,16 @@ using UnityEngine;
 public class GameRun {
 
     public static GameRun current;
-
+    
     /// <summary>
     /// Which map or mission save should be used.
     /// </summary>
     public static int currentSubSave = 0;
 
     bool playingInMission = false;
-    List<SaveData> mapOrMissionSaves = new List<SaveData>();
+    public List<SaveData> mapOrMissionSaves = new List<SaveData>();
+    public MapInfo currentMap;
+    public QuestData activeQuest;
 
     /// <summary>
     /// Sets up the game by loading data from the save, or makes a new save.
@@ -35,14 +37,23 @@ public class GameRun {
             // **
             runInstance.mapOrMissionSaves.Add(startup);
             SaveLoad.savedGames[activeGame] = runInstance;
-            Debug.Log(SaveLoad.savedGames[activeGame]);
             GameRun.current = runInstance;
+            GameRun.current.currentMap = startup;
+
+            Debug.Log(SaveLoad.savedGames[activeGame]);
+        } else {
+            Debug.Log(savedGames[activeGame]);
         }
+        GameRun.current = SaveLoad.savedGames[activeGame];
         SaveLoad.Save();
     }
 
     public static void OpenMap() {
         // loads correct ui for factions, their characters, missions, completed missions
+
+        // Load mission data from external file
+        //MapMissionManager.m.missions = QuestLibrary.LoadMissions();
+
     }
 
     static void InitMission(GameRun game) {

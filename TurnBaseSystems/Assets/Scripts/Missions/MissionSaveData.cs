@@ -1,14 +1,12 @@
 ﻿/// <summary>
 /// Current mission state info.
-/// character positions, checkpoints, 
+/// character positions, checkpoints,
+/// Use ONLY when loading and saving current mission date.
+/// If game is running from map, ignore it. Use MissionData instead
 /// </summary>
 [System.Serializable]
-public class MissionInfo : SaveData {
+public class MissionSaveData : SaveData {
     public string missionName;
     public MissionCharacter[] allCharacters;
     public FactionCheckpoint[] allCheckpoints;
-}
-[System.Serializable]
-public abstract class SaveData {
-
 }

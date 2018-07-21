@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using System.Collections.Generic;
+/// <summary>
 /// mission end save(or map load save): 
 /// before mission starts
 /// selected team
@@ -14,4 +15,5 @@ public class MapInfo: SaveData {
     /// </summary>
     public Character[] allPlayerControllableCharacters;
     // skill tree data, science tree, etc
+    public QuestData[] quests;
 }

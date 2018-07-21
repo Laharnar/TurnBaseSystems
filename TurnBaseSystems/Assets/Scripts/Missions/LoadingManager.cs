@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class LoadingManager : MonoBehaviour {
     public static LoadingManager m;
-    internal MissionData activeMission;
-    internal Character[] playerPickedTeam;
 
     int activeLoadingScreen = -1;
 
@@ -21,23 +19,25 @@ public class LoadingManager : MonoBehaviour {
         OnLoadMap();
     }
 
-    private void OnLoadCharacterScreen() {
-        activeLoadingScreen = 1;
+    public static void OnLoadCharacterScreen() {
+        m.activeLoadingScreen = 1;
         SceneManager.LoadScene("teamSelection");
     }
 
 
-    private void OnLoadMission() {
+    public void OnLoadMission() {
+        if (MissionManager.m && MissionManager.m.missionEndScreen_child)
+            MissionManager.m.missionEndScreen_child.gameObject.SetActive(false);
         activeLoadingScreen = 2;
-        SceneManager.LoadScene(activeMission.sceneName);
+        SceneManager.LoadScene(GameRun.current.activeQuest.sceneName);
         StartCoroutine(LateMissionStartup());
 
     }
 
     private IEnumerator LateMissionStartup() {
         yield return new WaitForSeconds(2);
-
-        MissionManager.m.Init(playerPickedTeam);
+        Debug.Log("Disabled");
+        //MissionManager.m.Init(CharacterLibrary.CreateInstances(playerPickedTeam));
     }
 
     public void LoadNextScreen() {
@@ -59,6 +59,8 @@ public class LoadingManager : MonoBehaviour {
         // TODO: Move this to main menu later, don't forget to set activeGame there
         SaveLoad.Load();
         GameRun.Init(SaveLoad.activeGame, SaveLoad.savedGames);
+
+        GameRun.current = SaveLoad.savedGames[SaveLoad.activeGame];
         GameRun.OpenMap();
     }
 
