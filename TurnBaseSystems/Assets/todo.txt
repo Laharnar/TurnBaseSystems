@@ -275,7 +275,14 @@ BUG TESTING ROUND 8.7.2018
 empty masks on characters <<fixed by hand
 
 bugs stop main game loop <<rewritten loop
-missing text on ui fixed
+missing text on ui -fixed 
 
 16.7.2018
 ablity data as scriptable float objects.
+
+22.7.2018 2 DAY CYCLE
+world map:
+map missions get enabled 1 by 1, like levels
+combat: 
+spells are enabled only if you have enough energy
+also next unit button that jumps to next free unit or ends turn, shows how many units are still avliable

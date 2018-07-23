@@ -33,6 +33,16 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public Character AsCharacterData { get { return new Character(this);  } }
 
+    public bool CanDoAnyAction { get {
+            foreach (var item in abilities.GetNormalAbilities()) {
+                if (item.actionCost <= ActionsLeft) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public int hp = 5;
 
     public int maxActions = 2;

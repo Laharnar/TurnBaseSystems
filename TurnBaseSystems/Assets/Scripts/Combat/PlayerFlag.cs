@@ -31,15 +31,6 @@ public class PlayerFlag : FlagController {
     public int mouseDirection = 1;
     private GridMask curAoeFilter;
 
-    bool MousePress { get { return Input.GetKeyDown(KeyCode.Mouse0); } }
-    bool Mouse2Press { get { return Input.GetKeyDown(KeyCode.Mouse1); } }
-    bool CurMouseIsPlayerUnit { get { return hoveredUnit && hoveredUnit.flag.allianceId == 0; } }
-    bool CurMouseIsEnemyUnit { get { return hoveredUnit && hoveredUnit.flag.allianceId != 0; } }
-    bool CurMouseIsWalkable { get { return hoveredSlot && hoveredSlot.Walkable; } }
-    bool CurMouseIsHostile { get { return hoveredUnit && selectedPlayerUnit && hoveredUnit.flag.allianceId != selectedPlayerUnit.flag.allianceId; } }
-    bool CurMouseIsDifferentUnit { get { return hoveredUnit != selectedPlayerUnit; } }
-    bool MoveCommandExecuted { get { return Mouse2Press && CurMouseIsWalkable; } }
-    bool AttackCommandExecuted { get { return MousePress; } }
     bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
 
     public Unit[] VisibleUnits {
@@ -71,7 +62,6 @@ public class PlayerFlag : FlagController {
             }
             if (hoveredSlot ) {
                 WaitUnitSelection();
-                UpdateColorsDependinOnHoveringTarget();
             }
 
             // Set default action
@@ -99,6 +89,9 @@ public class PlayerFlag : FlagController {
                 //UIManager.PlayerSelectAllyUnitUi(false, selectedPlayerUnit);
                 // WaitAbilitySelection(); automatic on buttons
             }
+            if (hoveredSlot) {
+                UpdateColorsDependinOnHoveringTarget();
+            }
             if (selectedSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
                 if (selectedPlayerUnit.abilities.newVersion) {
                     if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
@@ -112,6 +105,7 @@ public class PlayerFlag : FlagController {
                         ResetColorForUnit(selectedPlayerUnit, curFilter);
                         ResetColorForUnit(selectedPlayerUnit, curAoeFilter);
                         selectedPlayerUnit.AttackAction2(hoveredSlot, hoveredUnit, activeAbility);
+                        OnUnitExectutesAction();
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
                         yield return null;
                     }
@@ -119,9 +113,12 @@ public class PlayerFlag : FlagController {
             }
 
             // map decolor when unit run out of actions.
-            if (selectedUnit && selectedUnit.NoActions) {
-                DeselectUnit();
-                ShowUI();
+            if (selectedUnit) {
+                if (selectedUnit.NoActions || !selectedUnit.CanDoAnyAction) {
+                    RemaskActiveFilter(0, curFilter);
+                    RemaskActiveFilter(0, curAoeFilter);
+                    //ShowUI();
+                }
             }
 
             if (MissionManager.levelCompleted) {
@@ -144,16 +141,23 @@ public class PlayerFlag : FlagController {
         yield return null;
     }
 
+    private void OnUnitExectutesAction() {
+        ShowUI();// update with buttons are enabled
+
+    }
+
     private void ShowUI() {
         UIManager.PlayerStandardUi(!selectedPlayerUnit && !selectedUnit);
         UIManager.PlayerSelectAllyUnitUi(selectedPlayerUnit!= null && selectedUnit!= null, selectedPlayerUnit);
     }
 
     private void ShowArea(Unit unit, GridMask mask) {
-        if (selectedPlayerUnit) {
+        if (unit) {
             unit.curSlot.RecolorSlot(3);
-            bool moveVersion = activeAbilityId == 0;
-            RemaskActiveFilter(moveVersion ? 1 : 2, mask);
+            if (unit.CanDoAnyAction) {
+                bool moveVersion = activeAbilityId == 0;
+                RemaskActiveFilter(moveVersion ? 1 : 2, mask);
+            }
         } else {
             if (selectedUnit) // an enemy
                 unit.curSlot.RecolorSlot(2);

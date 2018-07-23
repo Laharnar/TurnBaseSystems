@@ -1,8 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class UIManager :MonoBehaviour{
-
+public class UIManager : MonoBehaviour {
     public static UIManager m;
     public Transform pSelectAlly;
     public Transform playerUI;
@@ -12,10 +11,9 @@ public class UIManager :MonoBehaviour{
 
     public static void PlayerSelectAllyUnitUi(bool v, Unit unit) {
         if (m.pSelectAlly)
-        m.pSelectAlly.gameObject.SetActive(v);
-        if (v == false)
-            PlayerUIAbilityList.ClearInstanceList();
-        else if (unit)
+            m.pSelectAlly.gameObject.SetActive(v);
+        PlayerUIAbilityList.ClearInstanceList();
+        if (unit)
             PlayerUIAbilityList.LoadAbilitiesOnUI(unit);
     }
 

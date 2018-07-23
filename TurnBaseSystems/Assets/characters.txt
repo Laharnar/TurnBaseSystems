@@ -17,3 +17,88 @@ range attack
 
 caster - consumer
 range cast > attack
+
+
+robot 
+self explodes - high risk high reward
+laser shot, or rocket shot
+
+poisonous zombie
+passive aoe - poison cloud, damage all, emmit a cloud at the end of every turn
+self heal
+
+poisonous zombie, ACTIVE version
+bite - panick the enemy, and bleed
+aoe - poison cloud, damage all, emmit a cloud at the end of every turn
+
+info broker
+talking option - aoe distraction, automatically doesn't enter combat when visible
+gas cloud - invisible in area, and automatically slashes after every move
+
+enforcer
+parry - block all attacks this turn
+slash, simple attack
+
+escort
+talking option - distract
+steal and poison - cannot enter combat, poison dart when moving past
+
+goblin
+passive - decapitate, when attacking from behind, works on allies OR auto attack when close
+slingshot
+
+kid
+dash steal - distract, make enemies run after him, reduce dmg by 1 for 1 turn
+passive, when attacked from behind, tank the shot
+
+witch
+consume area
+send collected energy in aoe attack
+
+priest
+focus, creates a healing area, until unit moves
+shockwave, doesn't stop the area
+
+alien
+shock gun - stuns target
+orbital strike huge aoe, broken ass shit shot
+
+goat warrior
+berserk, every attack, adds him another move, or attack dmg, or range tile
+a slash
+
+specialist
+passive - deflect. deflects first melle attack, reduced dmg to second by half
+pistol shot
+
+deserter
+sword
+pistol shot, 2 ammo, then reload
+
+hipo
+nose shock, jumps forward to smash into the ground with his mighty nose
+nose swing, extremly powerful melle attack,
+
+slime
+passive digest - can move on enemies, and digest them slowly, stuns enemies for 1 turn
+shiny look, distracts enemies with sparkling eyes
+
+aoe shield ally
+
+twins
+passive - connection, both suffer damage, die together
+ritual, one of twins sets up an aoe attack, and-or other releases it.
+
+No law - automatic violence, culture of honor
+culture brings values about violence
+so does primal biology.
+
+enemies - 
+melle
+slash
+block, first attack
+
+range
+long range shot
+closer shot
+

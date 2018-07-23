@@ -152,10 +152,10 @@ dynamic dark.
 which one?
 straight
 over the top
-
+***********************
 colorful to colorless?
 maybe drain abilities create a decolor effect on camera.
-
+****************************
 something with many people's focus,.
 
 galactic? that's too big
@@ -198,12 +198,20 @@ more of a combatless social tactical turn based?
 core player with supporting team.
 with minimal faction contact.
 
-** team **
+** team ****************************
 can be hired from other factions. requires high enough influence.
 mafia, burners gang, bikers, monsters, techies, ai, militia, magis, plus police and queen.
 teachers, scientists, kids
+merchants, pirates, spartans, royalists, empress, gladiators, pyromancers, witches, 
+elf, military, mafia, bandits, clerics
 
-** events **
+the npcs*************
+the clown, politician, empress assistant, empress, city guard, kids, teachers, aliens
+slingshot, crossbow, mage, sniper, rock throwing orc - earth mage - hafu, toph,
+tree, syche, flower
+shadow warrior, black hodies with shadow spike stuff.
+********************************************+
+** events *****************
 assasionation of empress
 assasination of gank leader.
 guy picking off enemies.
@@ -218,6 +226,7 @@ a careful father and his sons - the makuta
 essence
 fighting groups
 these revenge guys who "survived throuhg the worst"... those don't brag about it.
+******************************
 
 ** map **
 faction areas
@@ -242,13 +251,13 @@ loyal soldiers don't leave you over low faction influence.
 They are sorted by recognition.
 
 
-**
+
 Start coming up with characters, with factions.
-merchants, pirates, spartans, royalists, empress, gladiators, pyromancers, witches, 
-elf, military, mafia, bandits, clerics
+************
 character:
 2 core skills
 class or specialization
+*******************
 
 Build a team - 4 people? 3? what would be the right balance?
 3 is a little low for missions. depending on difficulty.
@@ -302,11 +311,7 @@ alchemist researcher - potions and gun, aoe attacks
 
 i also need out of combat look.
 
-the npcs
-the clown, politician, empress assistant, empress, city guard, kids, teachers, aliens
-slingshot, crossbow, mage, sniper, rock throwing orc - earth mage - hafu, toph,
-tree, syche, flower
-shadow warrior, black hodies with shadow spike stuff.
+
 
 
 casting, lux laser, explosion, charged homing ball, dragoon, 
@@ -429,9 +434,12 @@ automatic reward from story
 
 5 missions
 
-each factions has it's own story line, which earns you loyalty.
+****************************
+each factions has it's own story line << -----------
+, which earns you loyalty.
 doing all their missions gives you loyalty.
 doing other's missions loses you loyalty if factions is an enemy in the story.
+***************************
 
 hiring a team memeber from that faction, earns you right to plea 
 - or have 1 or 2 more chance at them, depending on faction.
@@ -483,3 +491,21 @@ how should the game be played
 relatively easy - pull enemies, 1 shot retreat
 tank, heal, disable, assasinate
 sneak?
+
+standard missions, teams
+10 missions-20 missions, maps
+find characters on missions, between civilians.
+
+*************+
+time slow mode
+once per turn unit, allow whole team to react to enemy turn, once
+passive - can move mid enemy turn, when enemy enters range
+passive - if you can predict their move and you step behind them - backstab
+
+this could make it 4 abilities... slow mode and normal.
+and mixed classes
+*****************
+
+enemies could use civilians.
+*********************
+dark blood abilities and shiny cute ones.
