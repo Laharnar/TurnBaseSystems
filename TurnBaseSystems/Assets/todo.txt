@@ -1,8 +1,9 @@
 ﻿SPRITE LAYERS.
 
-background 0
+background art 0
 walls bellow grid items 5
 grid items are on top of everything. below units. 10
+checkpoints 15
 units 20
 items 25
 
