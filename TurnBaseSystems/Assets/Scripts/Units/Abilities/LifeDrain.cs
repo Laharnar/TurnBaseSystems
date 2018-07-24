@@ -2,7 +2,7 @@
 public class LifeDrain : AoeMaskAttack {
     public int restoreAPPerUnitHit = 2;
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-
+        /*
         GridItem[] attackArea;
         attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, aoeMask, PlayerFlag.m.mouseDirection);
 
@@ -13,6 +13,6 @@ public class LifeDrain : AoeMaskAttack {
                 unitsHit++;
             }
         }
-        source.RestoreAP(unitsHit * restoreAPPerUnitHit);
+        source.RestoreAP(unitsHit * restoreAPPerUnitHit);*/
     }
 }

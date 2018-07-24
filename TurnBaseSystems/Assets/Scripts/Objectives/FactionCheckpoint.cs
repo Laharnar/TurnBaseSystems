@@ -30,12 +30,10 @@ public class FactionCheckpoint : MonoBehaviour {
 
     public bool isMissionGoal = false;
     [SerializeField] Unit alreadyUsed = null;
-    [SerializeField] GridItem slot;
 
 	// Use this for initialization
 	void Start () {
-         slot = GridManager.SnapToGrid(transform.position);
-        transform.position = slot.transform.position;
+        transform.position = GridManager.SnapPoint(transform.position);
         checkpointsInLevel.Add(this);
     }
 
@@ -46,7 +44,7 @@ public class FactionCheckpoint : MonoBehaviour {
     }
 
     bool AreConditionsMet(Unit other) {
-        return !alreadyUsed && GridLookup.IsSlotInMask(slot, other.curSlot, rangeCheck)
+        return !alreadyUsed && GridLookup.IsPosInMask(transform.position, other.curSlot, rangeCheck)
             && FactionsMatch(other, checkpointTrigger);
     }
 

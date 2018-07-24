@@ -10,6 +10,7 @@ public class StdAttackData {
 /// Targets are units.
 /// </summary>
 [System.Serializable]
+[System.Obsolete("Not actively used")]
 public sealed class AttackData : StdAttackData {
 
     public string o_attackName;
@@ -28,6 +29,7 @@ public sealed class AttackData : StdAttackData {
     public AttackBaseType attackFunction;
     public AttackTypeData attackData;
 
+    [System.Obsolete("Not actively used")]
     public void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (attackFunction == null) {
             attackFunction = AttackBaseType.GetAttackType(attackType_EditorOnly);
@@ -39,8 +41,9 @@ public sealed class AttackData : StdAttackData {
         else Debug.Log("No attack function defined");
     }
 
+    [System.Obsolete("Not actively used")]
     public static void ApplyDamage(Unit source, GridItem attackedSlot, AttackData attack) {
-        if (!attackedSlot) {
+        if (attackedSlot!=null) {
             Debug.Log("Missing SLOT reference. Error in getting slots.");
             return;
         }
@@ -52,31 +55,31 @@ public sealed class AttackData : StdAttackData {
                 }
                 break;
             case AttackType.Aura:
-                GridItem[] attackArea;
+                /*GridItem[] attackArea;
                 attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 for (int i = 0; i < attackArea.Length; i++) {
                     if (attackArea[i].filledBy)
                         attackArea[i].filledBy.GetDamaged(attack.attackData.damage);
-                }
+                }*/
                 break;
             case AttackType.LongRangeAoe:// note: aoe mask attack is for cone attacks, not mouse
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
+                /*attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 for (int i = 0; i < attackArea.Length; i++) {
                     if (attackArea[i].filledBy)
                         attackArea[i].filledBy.GetDamaged(attackData.damage);
-                }
+                }*/
                 break;
             case AttackType.Hunker:
                 source.AddShield(attackData.armorAmount);
                 source.RestoreAP(attackData.restoresAp);
                 break;
             case AttackType.Pickup:
-                if (attackedSlot.fillAsPickup) {
+                /*if (attackedSlot.fillAsPickup) {
                     source.EquipAction(attackedSlot.fillAsPickup);
                     attackedSlot.DetachPickupFromSlot();
-                }
+                }*/
                 break;
             case AttackType.ThrowEquipped:
                 if (source.equippedWeapon) {
@@ -110,14 +113,14 @@ public sealed class AttackData : StdAttackData {
                 }
                 break;
             case AttackType.Deconstruct:
-                if (attackedSlot.fillAsStructure) {
+                /*if (attackedSlot.fillAsStructure) {
                     source.materials += attackedSlot.fillAsStructure.materialValue;
                     attackedSlot.RemoveInteractions(attackedSlot.fillAsStructure.GetComponent<InteractiveEnvirounment>().interactions);
                     attackedSlot.fillAsStructure.Destruct();
-                }
+                }*/
                 break;
             case AttackType.GroundDrain:
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
+                /*attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 int groundHits = 0;
                 for (int i = 0; i < attackArea.Length; i++) {
@@ -126,10 +129,10 @@ public sealed class AttackData : StdAttackData {
                             groundHits++;
                     }
                 }
-                source.RestoreAP(groundHits * attackData.restoreAPPerSlotHit);
+                source.RestoreAP(groundHits * attackData.restoreAPPerSlotHit);*/
                 break;
             case AttackType.UnitDrain:
-                attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
+                /*attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, attackData.aoeMask, PlayerFlag.m.mouseDirection);
 
                 int unitsHit = 0;
                 for (int i = 0; i < attackArea.Length; i++) {
@@ -138,7 +141,7 @@ public sealed class AttackData : StdAttackData {
                         unitsHit++;
                     }
                 }
-                source.RestoreAP(unitsHit * attackData.restoreAPPerUnitHit);
+                source.RestoreAP(unitsHit * attackData.restoreAPPerUnitHit);*/
                 break;
             case AttackType.RestoreAP:
                 source.RestoreAP(attackData.restoresAp);

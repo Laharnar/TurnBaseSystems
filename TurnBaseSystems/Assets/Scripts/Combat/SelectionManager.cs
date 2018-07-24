@@ -1,7 +1,16 @@
 ﻿ using System;
 using UnityEngine;
 public static class SelectionManager {
-    
+
+
+    internal static Vector2 GetMouseAsPoint() {
+        Vector2 selection = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D[] hits = GetAllSelection2D(selection);
+        if (hits != null) {
+            return hits[0].point;
+        }
+        return new Vector2();
+    }
 
     internal static Transform GetMouseAsObject() {
         Vector2 selection = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -69,17 +78,21 @@ public static class SelectionManager {
         return null;
     }
 
+    [System.Obsolete("no more prefs that use grid item compoentn")]
     public static GridItem GetAsSlot(Vector2 selection) {
         RaycastHit2D[] hits = GetAllSelection2D(selection);
         if (hits != null) {
             foreach (var item in hits) {
                 GridItem slot = item.transform.GetComponent<GridItem>();
-                if (slot) {
+                if (slot!=null) {
                     return slot;
                 }
             }
         }
         return null;
+    }
+    internal static Vector3 MouseAsPos() {
+        return GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
     }
 
     public static Unit GetUnitUnderMouse(GridItem refSlot) {

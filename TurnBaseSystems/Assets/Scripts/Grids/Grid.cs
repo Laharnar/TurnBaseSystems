@@ -2,40 +2,89 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Grid<T> where T: GridItem{
-    public T[,] data { get; private set; }
-    private int width;
-    private int length;
+public class Grid{
+    public GridItem[,] data { get; private set; }
+    private GridMask mask;
+    int width { get { return mask.w; } }
+    int length { get { return mask.l; } }
 
-    public Grid(int width, int length) {
-        this.width = width;
-        this.length = length;
+    public Grid(GridMask mask) {
+        this.mask = mask;
     }
 
-    public Grid(int width, int length, Transform rootLoader):this(width, length) {
-        data = new T[width, length];
+    public Grid(GridMask mask, Transform rootLoader) {
+        this.mask = mask;
+        int width = mask.w, length = mask.l;
+        data = new GridItem[width, length];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
                 int id = i*length+j;
                 if (id < rootLoader.childCount) {
-                    data[i, j] = rootLoader.GetChild(id).GetComponent<T>();
-                    data[i, j].InitGrid(i, j);
+                    data[i, j] = new GridItem(){instance=rootLoader.GetChild(id)};
+                    //data[i, j].InitGrid(i, j);
                 }
             }
         }
     }
 
-    public void InitGrid(Vector2 posStart, Vector2 itemDimensions, Transform pref, Transform parent) {
-        InitGrid(width, length, posStart, itemDimensions, pref, parent);
+    internal void ShowColor(int v) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                if (data[i, j] == null)
+                    continue;
+                data[i, j].RecolorSlot(v);
+            }
+        }
     }
 
-    internal T GetItem(int x, int y) {
-        if (x < width && y < length && y > -1 && x > -1)
-            return data[x, y];
-        Debug.LogError("Grid/GetItem - Out of range exception: "+x +" "+ y+" " + width+" "+length);
+    /// <summary>
+    /// Pass null to destroy whole grid.
+    /// </summary>
+    /// <param name="mask"></param>
+    internal void HalfRemove(GridMask mask) {
+        data = new GridItem[width, length];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                if (mask && mask.Get(i, j) == false && data[i, j] == null)
+                    continue;
+                GameObject.Destroy(data[i, j].instance.gameObject);
+                data[i, j] = null;
+            }
+        }
+    }
+
+    public Grid InitGridCenter(Vector2 center) {
+        data = CreateGrid(width, length, center - new Vector2(GridManager.m.itemDimensions.x*width/2, GridManager.m.itemDimensions.y*length/2), GridManager.m.itemDimensions, GridManager.m.pref, GridManager.m.gridParent, null);
+        return this;
+    }
+
+    public Grid InitGridCenter(Vector2 center, GridMask mask) {
+        data = CreateGrid(width, length, center - new Vector2(GridManager.m.itemDimensions.x * width / 2, GridManager.m.itemDimensions.y * length / 2), GridManager.m.itemDimensions, GridManager.m.pref, GridManager.m.gridParent, mask);
+        return this;
+    }
+
+    internal GridItem GetItem(int i, int j) {
+        if (i < width && j < length && j > -1 && i > -1)
+            return data[i, j];
+        Debug.LogError("Grid/GetItem - Out of range exception: "+i +" "+ j+" " + width+" "+length);
         return null;
     }
-
+    /// <summary>
+    /// Assumes existance of grid item with this position.
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="gridCenter"></param>
+    /// <returns></returns>
+    internal GridItem GetItemByXY(Vector3 pos) {
+        pos = GridManager.SnapPoint(pos);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                if (data[i, j].worldPosition == pos)
+                    return data[i, j];
+            }
+        }
+        return null;
+    }
 
     public GridItem[] AsArray() {
         GridItem[] arr = new GridItem[width * length];
@@ -47,35 +96,27 @@ public class Grid<T> where T: GridItem{
         return arr;
     }
 
-    public void InitGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent) {
+    public static GridItem[,] CreateGrid(int w, int l, Vector2 posStart, Vector2 itemSize, Transform itemPref, Transform parent, GridMask mask) {
         if (w == 0 && l == 0)
-            return;
+            return null;
 
-        T[,] newGrid = new T[w, l];
-        if (data != null) {
-            int wOld = data.GetLength(0), lOld = data.GetLength(1);
-            for (int i = w; i < wOld; i++) {
-                for (int j = 0; j < lOld; j++) {
-                    data[i, j].Null();
-                    data[i, j] = null;
-                }
-            }
-        }
+        GridItem[,] newGrid = new GridItem[w, l];
 
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < l; j++) {
-                /*if (i < wOld && j < lOld && data[i, j] != null) {
-                    newGrid[i, j] = data[i, j];
-                } else */{
-                    newGrid[i, j] = GameObject.Instantiate(itemPref).GetComponent<GridItem>() as T;
+                if (mask && !mask.Get(i, j)) {
+                    continue;
                 }
-                newGrid[i, j].transform.parent = parent;
-                newGrid[i, j].transform.name = "("+i+":"+j+")"+ newGrid[i, j].name;
-                newGrid[i, j].transform.position = posStart + new Vector2(itemSize.x * i, itemSize.y * j);
+
+                newGrid[i, j] = GridManager.NewGridInstance(posStart + new Vector2(itemSize.x * i, itemSize.y * j));
+                    //new GridItem() { instance = GameObject.Instantiate(itemPref) };//.GetComponent<GridItem>();
+                /*newGrid[i, j].instance.parent = parent;
+                newGrid[i, j].instance.name = "("+i+":"+j+")"+ newGrid[i, j].instance.name;
+                newGrid[i, j].position = posStart + new Vector2(itemSize.x * i, itemSize.y * j);
                 newGrid[i, j].gridX = i;
-                newGrid[i, j].gridY = j;
+                newGrid[i, j].gridY = j;*/
             }
         }
-        data = newGrid;
+        return newGrid;
     }
 }

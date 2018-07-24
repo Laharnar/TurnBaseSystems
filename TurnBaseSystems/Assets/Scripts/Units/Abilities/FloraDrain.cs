@@ -3,7 +3,7 @@ public class FloraDrain : AoeMaskAttack {
     public int restoreAPPerSlotHit = 2;
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
 
-        GridItem[] attackArea;
+        /*GridItem[] attackArea;
         attackArea = GridAccess.LoadLocalAoeAttackLayer(attackedSlot, aoeMask, PlayerFlag.m.mouseDirection);
 
         int groundHits = 0;
@@ -13,6 +13,6 @@ public class FloraDrain : AoeMaskAttack {
                     groundHits++;
             }
         }
-        source.RestoreAP(groundHits * restoreAPPerSlotHit);
+        source.RestoreAP(groundHits * restoreAPPerSlotHit);*/
     }
 }

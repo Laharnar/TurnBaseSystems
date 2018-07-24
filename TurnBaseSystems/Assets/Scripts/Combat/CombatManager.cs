@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour {
 
     bool init;
 
+    public List<Unit> units = new List<Unit>();
 
     private void Awake() {
         m = this;

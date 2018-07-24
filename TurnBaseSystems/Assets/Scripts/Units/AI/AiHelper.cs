@@ -16,33 +16,6 @@ public static class AiHelper {
         return mask;
     }
 
-    public static GridMask FilterByInteractions(GridItem source, GridItem[] items, string attackType, GridMask template) {
-        if (attackType == "") {
-            Debug.Log("Error, unassigned, attackType");
-        }
-        if (template == null) {
-            Debug.Log("Error, template is null.");
-            return null;
-        }
-        GridMask mask = template.EmptyCopy();
-        for (int i = 0; i < items.Length; i++) {
-            int x = items[i].gridX - source.gridX + mask.w / 2;// mask.LowerLeftFromX(source.gridX) + mask.LowerLeftFromX();
-            int y = items[i].gridY - source.gridY + mask.l / 2;// mask.LowerLeftFromY(source.gridY) + mask.LowerLeftFromX();
-            /*int indI =  - mask.w / 2;
-            int indJ = j - mask.l / 2;
-            /*if (gridX + indI > -1 && gridX + indI < m.width && gridY + indJ > -1 && gridY + indJ < m.length) {
-                GridItem item = m.gridSlots.GetItem(gridX + indI, gridY + indJ);
-                mask.Get[items[i].gridX].col[items[i].gridY] = GridItem.TypeFilter(items[i], attackType);
-                if (mask.Get(i, j)) {
-                */
-            //if (x > -1 && x < GridManager.m.width && y > -1 && y < GridManager.m.length) {
-
-                mask.mask[x].col[y] = GridItem.TypeFilter(items[i], attackType);
-            //}
-        }
-        return mask;
-    }
-
     public static float[] GetDistances<T>(this Vector3 source, T[] units) where T: MonoBehaviour {
         float[] distances = new float[units.Length];
         for (int i = 0; i < units.Length; i++) {
@@ -240,7 +213,7 @@ public static class AiHelper {
         // Dir from target to source, then take closest neighbour to it.
         List<GridItem> nbrs = Neighbours(targetSlot);
         for (int i = 0; i < nbrs.Count; i++) {
-            if (!nbrs[i].Walkable) {
+            if (targetSlot == null) {
                 nbrs.RemoveAt(i);
                 i--;
                 continue;

@@ -33,9 +33,9 @@ public class Weapon:MonoBehaviour,IInteractible {
         }
     }
 
-    public static GridItem BelongsTo(Weapon wep) {
+    /*public static GridItem BelongsTo(Weapon wep) {
         return GridManager.SnapToGrid(wep.transform.position);
-    }
+    }*/
 
     internal void Enhance(int numOfTurns) {
         if (enhanced) {
@@ -44,7 +44,7 @@ public class Weapon:MonoBehaviour,IInteractible {
         } else Debug.Log("No enhance ability on this weapon");
     }
 
-    public static void AssignAllDroppedWeaponsToSlots() {
+    /*public static void AssignAllDroppedWeaponsToSlots() {
         for (int i = 0; i < Weapon.weapons.Count; i++) {
             if (!Weapon.weapons[i].dropped)
                 continue;
@@ -56,7 +56,7 @@ public class Weapon:MonoBehaviour,IInteractible {
                 }
             }
         }
-    }
+    }*/
 
     internal void OnDamageEnhanceEffect(Unit selectedPlayerUnit, GridItem attackedSlot, Unit attackedUnit, AttackData curAttack) {
         if (enhanceCounter > 0) {

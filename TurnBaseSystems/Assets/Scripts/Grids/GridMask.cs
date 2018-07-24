@@ -12,12 +12,22 @@ public class GridMask :UnityEngine.ScriptableObject {
 
     public float Range { get { return Mathf.Max(w, l); } }
 
+    public Vector2 HalfDiagonal {
+        get {
+            return new Vector2(w / 2, l / 2);
+        }
+    }
+
     public int LowerLeftFromX(int x) {
         return x - w / 2;
     }
 
     public int LowerLeftFromY(int y) {
         return y - l / 2;
+    }
+
+    internal Vector2 AsMaskCoordinates(Vector2 sourcexy, Vector2 targetxy) {
+        return (targetxy - sourcexy) + HalfDiagonal;// get dir from source, then change, 0,0 into center of mask
     }
 
     public GridMask MirroredAxis() {
@@ -93,8 +103,24 @@ public class GridMask :UnityEngine.ScriptableObject {
         }
     }
 
+    public static GridMask One {
+        get {
+            return new GridMask() {
+                l = 1,
+                w = 1,
+                mask = new BoolArr[1] { new BoolArr() { col = new bool[1] { true } } },
+                rotateable = false
+            };
+        }
+    }
+
     public bool Get(int i, int j) {
         return mask[i].col[j];
+    }
+    public bool Get(Vector2 ij) {
+        if (ij.x > -1 && ij.x < w && ij.y > -1 && ij.y < l) 
+            return mask[(int)ij.x].col[(int)ij.y];
+        return false;
     }
 
     /// <summary>

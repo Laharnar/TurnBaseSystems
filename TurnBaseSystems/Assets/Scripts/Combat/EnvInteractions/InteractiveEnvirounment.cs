@@ -10,10 +10,10 @@ using UnityEngine;
 /// Contains a list of interactions assigned on structures, weapons, walls, etc.
 /// Assign interactions by hand depending on type of env.
 /// </summary>
-/// <see cref="GridItem.TypeFilter(GridItem, string)"/>
 public class InteractiveEnvirounment : MonoBehaviour {
 
     // stuff that this slot represents/ abilities that can be use on it.
+    [System.Obsolete("Shouldnt be used")]
     public List<Interaction> interactions = new List<Interaction>();
         
     public bool HasInteraction(string type) {

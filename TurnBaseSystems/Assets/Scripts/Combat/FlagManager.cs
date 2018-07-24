@@ -9,6 +9,8 @@ public class FlagManager {
         }
 
         flags[u.flag.allianceId].units.Add(u);
+
+        CombatManager.m.units.Add(u);
     }
 
     internal static void DeRegisterUnit(Unit u) {

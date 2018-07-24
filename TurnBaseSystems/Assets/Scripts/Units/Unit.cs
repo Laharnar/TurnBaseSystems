@@ -10,7 +10,6 @@ public enum CombatStatus {
 public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
-    public int gridX, gridY;
     public bool moving = false;
     public Pathing pathing;
     public Alliance flag;
@@ -55,9 +54,9 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal UnitAbilities abilities;
     public AiLogic ai;
 
-    public GridItem curSlot;
+    //public GridItem curSlot;
 
-    public Weapon equippedWeapon;
+    //public Weapon equippedWeapon;
 
     public HpUIController hpUI;
 
@@ -88,10 +87,12 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
         ap = maxAP;
         ResetActions();
-        GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
-        if (slot) {
-            curSlot = slot;
-            Move(slot);
+        //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
+        Vector3 snapPos = GridManager.SnapPoint(transform.position);
+        //if (slot) {
+            //curSlot = slot;
+            transform.position = snapPos;
+            //Move(slot);
             FlagManager.RegisterUnit(this);
 
             if (!abilities) {
@@ -107,11 +108,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             if (!anim) {
                 anim = GetComponentInChildren<AnimationController>();
             }
-        }
+        //}
     }
     public void OnTurnEnd() {
         Debug.Log("Applying passives.");
-        if (equippedWeapon) {
+        /*if (equippedWeapon) {
             if (equippedWeapon.enhanceCounter >0) {
                 equippedWeapon.enhanceCounter--;
             }
@@ -119,13 +120,13 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 if (equippedWeapon.enhanced)
                     equippedWeapon.enhanced.OnDeEquipEffect(equippedWeapon);
             }
-        }
-        if ((abilities as IEndTurnAbilities) != null) {
+        }*/
+        /*if ((abilities as IEndTurnAbilities) != null) {
             AttackData[] passives = (abilities as IEndTurnAbilities).GetPassive();
             for (int i = 0; i < passives.Length; i++) {
                 passives[i].ApplyDamage(this, null);
             }
-        }
+        }*/
     }
 
     public void OnTurnStart() {
@@ -169,11 +170,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public void PassWeapon(Weapon wep, Unit otherUnit) {
-        equippedWeapon = null;
+        //equippedWeapon = null;
         wep.dropped = false;
         wep.transform.position = otherUnit.transform.position;
         wep.transform.parent = otherUnit.transform;
-        otherUnit.equippedWeapon = wep;
+        //otherUnit.equippedWeapon = wep;
 
         PlayerFlag.m.activeAbility = abilities.move2;
     }
@@ -206,19 +207,19 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public void DeEquip() {
-        if (equippedWeapon) {
+        /*if (equippedWeapon) {
             equippedWeapon.transform.position = equippedWeapon.transform.position + new Vector3(0, -0.1f);
             equippedWeapon.transform.parent = null;
             equippedWeapon.dropped = true;
             equippedWeapon = null;
-        }
+        }*/
     }
     public void Equip(Weapon wep) {
-        equippedWeapon = wep;
+        /*equippedWeapon = wep;
         equippedWeapon.dropped = false;
         equippedWeapon.transform.position = transform.position;
         equippedWeapon.transform.parent = transform;
-
+        */
         PlayerFlag.m.activeAbility = abilities.move2;
     }
 
@@ -230,9 +231,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     private void Move(GridItem slot) {
         if (moving ) return;
-        gridX = slot.gridX;
-        gridY = slot.gridY;
-        pathing.GoToCoroutine(this, slot.gridX, slot.gridY);
+        pathing.GoToCoroutine(this, slot.worldPosition);
     }
 
     void AttackCoroutine2(AttackData2 attack) {
@@ -264,6 +263,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         attacking = false;
     }
 
+    [System.Obsolete("Not used, use attackaction2")]
     internal void AttackAction(GridItem attackedSlot, Unit other, AttackData atk) {
         if (atk == abilities.move) {
             if (!attackedSlot.filledBy) {
@@ -286,8 +286,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
             AttackCoroutine(atk);
 
-            if (equippedWeapon)
-                equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);
+            /*if (equippedWeapon)
+                equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);*/
         }
     }
 
@@ -309,10 +309,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         FlagManager.DeRegisterUnit(this);
         Destroy(gameObject);
     }
-
-    internal bool CanAttackSlot(GridItem hoveredSlot, GridMask mask) {
-        return hoveredSlot && GridLookup.IsSlotInMask(this.curSlot, hoveredSlot, mask);
-    }
+    
     
 
     internal bool CanAttackWith(AttackData curAttack) {
