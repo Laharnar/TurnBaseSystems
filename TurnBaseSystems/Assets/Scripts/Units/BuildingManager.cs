@@ -8,8 +8,8 @@ public class BuildingManager:MonoBehaviour {
     }
     internal void CreateWall(GridItem target) {
         
-        target.fillAsStructure= Instantiate(wallPref, target.transform.position, new Quaternion()).GetComponent<Structure>();
-        target.GetComponent<GridItem>().AddEnvInteraction("Combustible", "Consumable");
+        target.fillAsStructure= Instantiate(wallPref, target.worldPosition, new Quaternion()).GetComponent<Structure>();
+        //target.GetComponent<GridItem>().AddEnvInteraction("Combustible", "Consumable");
     }
 }
 

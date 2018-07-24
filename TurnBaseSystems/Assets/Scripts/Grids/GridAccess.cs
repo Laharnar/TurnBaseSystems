@@ -92,4 +92,19 @@ public static class GridAccess {
         return items.ToArray();
     }
     */
+    internal static GridItem[] GetSlotsInMask(object gridX, object gridY, GridMask mask) {
+        throw new NotImplementedException();
+    }
+
+    internal static GridItem GetItem(int v, int gridY) {
+        throw new NotImplementedException();
+    }
+
+    internal static GridItem[] OnlyAlliedUnits(GridItem[] gridItem, int allianceId) {
+        throw new NotImplementedException();
+    }
+
+    internal static GridItem[] GetSlotsInMask(GridItem curSlot, GridMask groupSizeMask) {
+        throw new NotImplementedException();
+    }
 }

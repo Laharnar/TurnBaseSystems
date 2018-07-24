@@ -21,6 +21,9 @@ public class GridItem {
 
     // snapped position of object inside the grid
     Vector3 _pos;
+    internal int gridX;
+    internal int gridY;
+
     internal Vector3 worldPosition {
         get {
             return _pos;

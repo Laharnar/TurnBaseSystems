@@ -4,7 +4,7 @@
 public class RangedAttack : AttackBaseType {
     public int damage=1;
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-        if (!attackedSlot) {
+       /* if (!attackedSlot) {
             Debug.Log("Missing SLOT reference. Error in getting slots.");
             return;
         }
@@ -12,7 +12,7 @@ public class RangedAttack : AttackBaseType {
             attackedSlot.filledBy.GetDamaged(damage);
         } else {
             Debug.Log("Not unit in slot. Change tag to Normal");
-        }
+        }*/
     }
 
 }

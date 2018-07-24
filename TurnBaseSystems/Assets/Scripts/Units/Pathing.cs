@@ -6,18 +6,14 @@ public class Pathing {
     public float speed = 10f;
     public GridMask moveMask;
 
-    public void GoToCoroutine(Unit t, int x, int y) {
-        Vector3 targetPos = GridAccess.GetItem(x, y).transform.position;
-        t.curSlot.filledBy = null;
-        GridAccess.GetItem(x, y).filledBy = t;
-        t.curSlot = GridAccess.GetItem(x, y);
+    public void GoToCoroutine(Unit t, Vector3 targetPos) {
+        //Vector3 targetPos=GridAccess.GetItem(x, y).worldPosition
+        //t.curSlot.filledBy = null;
+        //GridAccess.GetItem(x, y).filledBy = t;
+        //t.curSlot = GridAccess.GetItem(x, y);
         t.StartCoroutine(GoTo(t, targetPos));
     }
 
-    public void GoToCoroutine(Unit t, Vector3 targetPos) {
-        t.curSlot.filledBy = null;
-        t.StartCoroutine(GoTo(t, targetPos));
-    }
     public static void SetAnimBool(Unit t, bool value) {
         if (t && t.anim) {
             t.anim.SetBool("Walk", value);

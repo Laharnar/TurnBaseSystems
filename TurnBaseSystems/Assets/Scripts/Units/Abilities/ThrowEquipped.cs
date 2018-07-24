@@ -1,7 +1,7 @@
 ﻿[System.Serializable]
 public class ThrowEquipped : AttackBaseType {
     public override void ApplyDamage(Unit source, GridItem attackedSlot) {
-        if (source.equippedWeapon) {
+        /*if (source.equippedWeapon) {
             // throw at enemy = damage, at ally = pass, at ground = de equip
             if (attackedSlot.filledBy && source.flag != attackedSlot.filledBy.flag) {
                 attackedSlot.filledBy.GetDamaged(source.equippedWeapon.thrownDamage);
@@ -15,7 +15,7 @@ public class ThrowEquipped : AttackBaseType {
             }
         }
         source.equippedWeapon = null;
-        
+        */
     }
 }
 

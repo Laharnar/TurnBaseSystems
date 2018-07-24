@@ -44,7 +44,7 @@ public class FactionCheckpoint : MonoBehaviour {
     }
 
     bool AreConditionsMet(Unit other) {
-        return !alreadyUsed && GridLookup.IsPosInMask(transform.position, other.curSlot, rangeCheck)
+        return !alreadyUsed && GridLookup.IsPosInMask(transform.position, other.transform.position, rangeCheck)
             && FactionsMatch(other, checkpointTrigger);
     }
 

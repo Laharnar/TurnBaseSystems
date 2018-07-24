@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public static class GridLookup {
 
     /// <summary>
@@ -41,5 +42,9 @@ public static class GridLookup {
             return mask.Get(differenceij);
         }
         return false;*/
+    }
+
+    internal static bool IsSlotInMask(GridItem source, GridItem gridItem, GridMask mask) {
+        throw new NotImplementedException();
     }
 }

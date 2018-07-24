@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 public static class AiHelper {
-    public static GridMask MaskFromItems(GridItem source, GridItem[] items, GridMask template) {
+    /*public static GridMask MaskFromItems(GridItem source, GridItem[] items, GridMask template) {
         if (template == null) {
             Debug.Log("Error, template is null.");
             return null;
@@ -14,7 +14,7 @@ public static class AiHelper {
             mask.mask[x].col[y] = items[i];
         }
         return mask;
-    }
+    }*/
 
     public static float[] GetDistances<T>(this Vector3 source, T[] units) where T: MonoBehaviour {
         float[] distances = new float[units.Length];
@@ -23,7 +23,14 @@ public static class AiHelper {
         }
         return distances;
     }
-
+    public static float[] GetDistances(this Vector3 source, GridItem[] units) {
+        float[] distances = new float[units.Length];
+        for (int i = 0; i < units.Length; i++) {
+            if (units[i]!= null)
+            distances[i] = Vector3.Distance(units[i].worldPosition, source);
+        }
+        return distances;
+    }
     public static int GetIndexOfMin(this float[] list) {
         float min = float.MaxValue;
         int minI = -1;
@@ -47,13 +54,13 @@ public static class AiHelper {
     /// <returns></returns>
     internal static GridItem ClosestToAttackEdgeOverMoveMask(GridItem curSlot, GridItem target, GridMask moveMask, GridMask attackMask) {
         // gets slot where unit should be moved to still be in attack range
-        GridItem optimalMovePos = ClosestFreeSlotOnEdge(curSlot.transform.position, target, attackMask);
+        GridItem optimalMovePos = ClosestFreeSlotOnEdge(curSlot.worldPosition, target, attackMask);
         GridItem viable = FurthestFreeSlotOnEdge(curSlot, target, moveMask);
         List<GridItem> list = new List<GridItem> { optimalMovePos, viable };
         list = FilterByMask(list, curSlot, moveMask);
         if (list.Count == 2)
             list = new List<GridItem>() { optimalMovePos };
-        float[] dists = GetDistances<GridItem>(target.transform.position, list.ToArray());
+        float[] dists = GetDistances(target.worldPosition, list.ToArray());
         return list[GetIndexOfMin(dists)]; 
     }
 
@@ -78,11 +85,11 @@ public static class AiHelper {
     /// <returns></returns>
     public static GridItem FurthestFreeSlotOnEdge(GridItem maskSource, GridItem targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position - maskSource.transform.position);
+        Vector3 dir = (targetSlot.worldPosition - maskSource.worldPosition);
         dir.Normalize();
         GridItem[] nbrs = GridAccess.GetSlotsInMask(maskSource.gridX, maskSource.gridY, mask);
-        float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position + dir, nbrs);
-        float[] distsToSource = GetDistances<GridItem>(maskSource.transform.position - dir, nbrs);
+        float[] distsToTarget = GetDistances(targetSlot.worldPosition + dir, nbrs);
+        float[] distsToSource = GetDistances(maskSource.worldPosition - dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
         // Slot that also on edge, is furthest away from mask and closest to source
         int index = 0;
@@ -109,11 +116,11 @@ public static class AiHelper {
     /// <returns></returns>
     public static GridItem ClosestFreeSlotOnEdge(Vector3 pos, GridItem targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position- pos);
+        Vector3 dir = (targetSlot.worldPosition - pos);
         dir.Normalize();
         GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
-        float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position + dir, nbrs);
-        float[] distsToSource = GetDistances<GridItem>(pos - dir, nbrs);
+        float[] distsToTarget = GetDistances(targetSlot.worldPosition + dir, nbrs);
+        float[] distsToSource = GetDistances(pos - dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
         // Slot that also on edge, is furthest away from mask and closest to source
         int index = 0;
@@ -141,10 +148,10 @@ public static class AiHelper {
     /// <returns></returns>
     public static GridItem ClosestFreeSlotOnOppositeEdge(Vector3 pos, GridItem targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position- pos).normalized;
+        Vector3 dir = (targetSlot.worldPosition - pos).normalized;
         GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
-        float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position -dir, nbrs);
-        float[] distsToSource = GetDistances<GridItem>(pos + dir, nbrs);
+        float[] distsToTarget = GetDistances(targetSlot.worldPosition - dir, nbrs);
+        float[] distsToSource = GetDistances(pos + dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
         // Slot that also on edge, is furthest away from mask and closest to source
         int index = 0;
@@ -174,10 +181,10 @@ public static class AiHelper {
     public static GridItem ClosestFreeSlotStillInMask(Vector3 pos, GridItem targetSlot, GridMask mask) {
 
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position- pos).normalized;
+        Vector3 dir = (targetSlot.worldPosition - pos).normalized;
         GridItem[] nbrs = GridAccess.GetSlotsInMask(targetSlot.gridX, targetSlot.gridY, mask);
-        float[] distsToTarget = GetDistances<GridItem>(targetSlot.transform.position - dir, nbrs);
-        float[] distsToSource = GetDistances<GridItem>(pos + dir, nbrs);
+        float[] distsToTarget = GetDistances(targetSlot.worldPosition - dir, nbrs);
+        float[] distsToSource = GetDistances(pos + dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
         int index = 0;
         float minSum = float.MaxValue;
@@ -197,9 +204,9 @@ public static class AiHelper {
     /// <returns></returns>
     public static GridItem ClosestSlotToSlot(Vector3 pos, GridItem targetSlot) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot.transform.position- pos).normalized;
+        Vector3 dir = (targetSlot.worldPosition - pos).normalized;
         List<GridItem> nbrs = Neighbours(targetSlot);
-        float[] dists = GetDistances<GridItem>(targetSlot.transform.position-dir, nbrs.ToArray());
+        float[] dists = GetDistances(targetSlot.worldPosition - dir, nbrs.ToArray());
         return nbrs[dists.GetIndexOfMin()];
     }
     
@@ -222,8 +229,8 @@ public static class AiHelper {
         if (nbrs.Count == 0) {
             return null;
         }
-        Vector3 dir = (targetSlot.transform.position- pos).normalized;
-        float[] dists = GetDistances<GridItem>(targetSlot.transform.position - dir, nbrs.ToArray());
+        Vector3 dir = (targetSlot.worldPosition- pos).normalized;
+        float[] dists = GetDistances(targetSlot.worldPosition - dir, nbrs.ToArray());
         return nbrs[dists.GetIndexOfMin()];
     }
 
@@ -235,8 +242,8 @@ public static class AiHelper {
             Debug.Log("no moves");
             return null;
         }
-        Vector3 dir = (targetSlot.transform.position- source.transform.position).normalized;
-        float[] dists = GetDistances<GridItem>(targetSlot.transform.position - dir, nbrs.ToArray());
+        Vector3 dir = (targetSlot.worldPosition - source.worldPosition).normalized;
+        float[] dists = GetDistances(targetSlot.worldPosition - dir, nbrs.ToArray());
         return nbrs[dists.GetIndexOfMin()];
     }
 

@@ -13,7 +13,7 @@ public class RangeLogic : AiLogic {
         float[] dists = transform.position.GetDistances(search);
         int closestUnitIndex = dists.GetIndexOfMin();
         GridItem closestUnit = search[closestUnitIndex].curSlot;
-        if (!closestUnit) { // no player units
+        if (closestUnit!= null) { // no player units
             yield break;
         }
 

@@ -77,6 +77,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     bool init = false;
     public int factionId;
     internal int loyalty;
+    internal GridItem curSlot;
 
     private void Start() {
         Init();

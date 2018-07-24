@@ -81,7 +81,7 @@ public sealed class AttackData : StdAttackData {
                     attackedSlot.DetachPickupFromSlot();
                 }*/
                 break;
-            case AttackType.ThrowEquipped:
+            /*case AttackType.ThrowEquipped:
                 if (source.equippedWeapon) {
                     // throw at enemy = damage, at ally = pass, at ground = de equip
                     if (attackedSlot.filledBy && source.flag != attackedSlot.filledBy.flag) {
@@ -105,7 +105,7 @@ public sealed class AttackData : StdAttackData {
             case AttackType.EnhanceWeapon:
                 if (source.equippedWeapon)
                     source.equippedWeapon.Enhance(attackData.numOfTurns);
-                break;
+                break;*/
             case AttackType.Building:
                 if (!attackedSlot.fillAsStructure) {
                     source.materials = 0;
