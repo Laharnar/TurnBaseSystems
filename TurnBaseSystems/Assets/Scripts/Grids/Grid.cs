@@ -42,24 +42,19 @@ public class Grid{
     /// </summary>
     /// <param name="mask"></param>
     internal void HalfRemove(GridMask mask) {
-        data = new GridItem[width, length];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
-                if (mask && mask.Get(i, j) == false && data[i, j] == null)
+                if ((mask && mask.Get(i, j) == false && data[i, j] == null) ||data[i,j]==null)
                     continue;
+                
                 GameObject.Destroy(data[i, j].instance.gameObject);
                 data[i, j] = null;
             }
         }
     }
 
-    public Grid InitGridCenter(Vector2 center) {
-        data = CreateGrid(width, length, center - new Vector2(GridManager.m.itemDimensions.x*width/2, GridManager.m.itemDimensions.y*length/2), GridManager.m.itemDimensions, GridManager.m.pref, GridManager.m.gridParent, null);
-        return this;
-    }
-
     public Grid InitGridCenter(Vector2 center, GridMask mask) {
-        data = CreateGrid(width, length, center - new Vector2(GridManager.m.itemDimensions.x * width / 2, GridManager.m.itemDimensions.y * length / 2), GridManager.m.itemDimensions, GridManager.m.pref, GridManager.m.gridParent, mask);
+        data = CreateGrid(width, length, center - new Vector2(GridManager.m.itemDimensions.x * (width-1) / 2, GridManager.m.itemDimensions.y * (length-1) / 2), GridManager.m.itemDimensions, GridManager.m.pref, GridManager.m.gridParent, mask);
         return this;
     }
 
@@ -101,10 +96,11 @@ public class Grid{
             return null;
 
         GridItem[,] newGrid = new GridItem[w, l];
-
+        int skip = 0;
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < l; j++) {
-                if (mask && !mask.Get(i, j)) {
+                if (mask!=null && !mask.Get(i, j)) {
+                    skip ++;
                     continue;
                 }
 
@@ -117,6 +113,7 @@ public class Grid{
                 newGrid[i, j].gridY = j;*/
             }
         }
+        Debug.Log("New grid. "+w + " "+l+ " skipped:"+skip+" "+((float)skip/((float)w*l)));
         return newGrid;
     }
 }

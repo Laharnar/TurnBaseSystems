@@ -77,13 +77,12 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
     public void Init() {
         if (init) return;
-        init = true;
 
         ap = maxAP;
         ResetActions();
         //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
-        Vector3 snapPos = GridManager.SnapPoint(transform.position);
-        //if (slot) {
+        if (CombatManager.m) {
+            Vector3 snapPos = GridManager.SnapPoint(transform.position);
             //curSlot = slot;
             transform.position = snapPos;
             //Move(slot);
@@ -102,7 +101,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             if (!anim) {
                 anim = GetComponentInChildren<AnimationController>();
             }
-        //}
+            init = true;
+        }
     }
     public void OnTurnEnd() {
         Debug.Log("Applying passives.");
@@ -194,7 +194,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Debug.Log("Executing attack " + atk.o_attackName);
             actionsLeft -= atk.actionCost;
 
-            AttackData2.UseAttack(attackedUnit, attackedSlot, atk);
+            AttackData2.UseAttack(this, attackedSlot, atk);
 
             AttackCoroutine2(atk);
 

@@ -12,8 +12,8 @@ public class MissionManager:MonoBehaviour {
     private void Awake() {
         m = this;
 
-        if (fastLoad)
-            Init(CharacterLoader.TempLoadTeam(fastLoadTeam));
+        if (GameRun.current == null)
+            Init(CharacterLibrary.CreateInstances(fastLoadTeam));
         else {
             Init(CharacterLoader.LoadActiveTeam());
         }

@@ -17,7 +17,15 @@ public class CharacterLibrary:MonoBehaviour {
 
         // optional: load all possible characters and prefs from the file.
     }
-    
+
+    internal static Transform[] CreateInstances(int[] team) {
+        Transform[] instances = new Transform[team.Length];
+        for (int i = 0; i < team.Length; i++) {
+            Transform t = m.GetInstance(team[i]);
+            instances[i] = t;
+        }
+        return instances;
+    }
 
     internal static Transform[] CreateInstances(Character[] team) {
         Transform[] instances = new Transform[team.Length];
@@ -37,4 +45,9 @@ public class CharacterLibrary:MonoBehaviour {
         return null;
     }
 
+    private Transform GetInstance(int characteri) {
+        if (characteri < characterCode.Length)
+            return Instantiate(characterPrefs[characteri]);
+        return null;
+    }
 }

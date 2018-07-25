@@ -97,12 +97,12 @@ public static class GridAccess {
         Unit[] units = CombatManager.m.units.ToArray();
         Vector3[] snapped = new Vector3[units.Length];
         for (int i = 0; i < units.Length; i++) {
-            snapped[i] = GridManager.SnapPoint(units[i]);
+            snapped[i] = GridManager.SnapPoint(units[i].transform.position);
         }
         for (int i = 0; i < filter.Length; i++) {
             for (int j = 0; j < snapped.Length; j++) {
-                if (filter[i] == snapped[j] && units[i].flag.allianceId == allianceId) {
-                    items.Add(units[i]);
+                if (filter[i] == snapped[j] && units[j].flag.allianceId == allianceId) {
+                    items.Add(units[j]);
                 }
             }
         }
@@ -114,7 +114,7 @@ public static class GridAccess {
         Unit[] units = CombatManager.m.units.ToArray();
         Vector3[] snapped = new Vector3[units.Length];
         for (int i = 0; i < units.Length; i++) {
-            snapped[i] = GridManager.SnapPoint(units[i]);
+            snapped[i] = GridManager.SnapPoint(units[i].transform.position);
         }
         for (int i = 0; i < filter.Length; i++) {
             for (int j = 0; j < snapped.Length; j++) {
@@ -128,6 +128,7 @@ public static class GridAccess {
 
 
     internal static Unit GetUnitAtPos(Vector3 attackedSlot) {
+        CombatManager.m.UnitNullCheck();
         for (int i = 0; i < CombatManager.m.units.Count; i++) {
             if (GridManager.SnapPoint(CombatManager.m.units[i].transform.position)
                 == attackedSlot) {

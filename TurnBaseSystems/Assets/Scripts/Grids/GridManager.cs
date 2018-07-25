@@ -16,7 +16,8 @@ public partial class GridManager : MonoBehaviour {
     public Color defaultColor;
 
     internal static Grid NewGridInstance(Vector3 position, GridMask curAoeFilter) {
-        Grid g = new Grid(curAoeFilter).InitGridCenter(position);
+        position = SnapPoint(position, true);
+        Grid g = new Grid(curAoeFilter).InitGridCenter(position, curAoeFilter);
         return g;
     }
 
@@ -39,8 +40,9 @@ public partial class GridManager : MonoBehaviour {
     }*/
 
     public static Vector3 SnapPoint(Vector3 point){
+        return SnapPoint(point, true);
         Vector3 o = point;
-        point = point - m.gridParent.transform.position + (Vector3)m.itemDimensions / 2;
+        //point = point /*- m.gridParent.transform.position*/ + (Vector3)m.itemDimensions / 2;
         point.x = point.x - point.x % m.itemDimensions.x;
         point.y = point.y - point.y % m.itemDimensions.y;
         return point;
@@ -48,6 +50,25 @@ public partial class GridManager : MonoBehaviour {
 
     internal static Transform NewGridPrefInstance(Vector3 pos) {
         return Instantiate(m.pref, pos, new Quaternion());
+    }
+
+    internal static Vector3 SnapPoint(Vector2 point, bool offset) {
+        //point = point /*- m.gridParent.transform.position*/ + (Vector3)m.itemDimensions / 2;
+        if (offset && point.x < 0) {
+            point.x -= m.itemDimensions.x / 2;
+        } else if (offset && point.x > 0) {
+            point.x += m.itemDimensions.x / 2;
+        }
+        if (offset && point.y < 0) {
+            point.y -= m.itemDimensions.y / 2;
+        } else if (offset && point.y > 0) {
+            point.y += m.itemDimensions.y / 2;
+        }
+
+        point.x = point.x - point.x % m.itemDimensions.x;
+        point.y = point.y - point.y % m.itemDimensions.y;
+        
+        return point;
     }
 
     internal static GridItem NewGridInstance(Vector3 pos) {

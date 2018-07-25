@@ -46,8 +46,8 @@ public sealed class AttackData2 : StdAttackData {
     /// <param name="attackedSlot"></param>
     /// <param name="data"></param>
     public static void UseAttack(Unit source, Vector3 attackedSlot, AttackData2 data) {
-        if (source == null || attackedSlot == null || data==null) {
-            Debug.Log("Error. source:" + (source == null) + " slot:" + (attackedSlot == null) + " data:"+(data == null));
+        if (source == null || data==null) {
+            Debug.Log("Error. source:" + (source == null) + " slot:" + attackedSlot + " data:"+(data == null));
         }
 
         Debug.Log("Using attack "+data.o_attackName +" unit: "+source);
@@ -66,7 +66,7 @@ public sealed class AttackData2 : StdAttackData {
         if (data.aoe.used) {
             Grid attackArea;
             data.aoe.aoeMask = GridMask.RotateMask(data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
-            attackArea = new Grid(data.aoe.aoeMask).InitGridCenter(attackedSlot);
+            attackArea = new Grid(data.aoe.aoeMask).InitGridCenter(attackedSlot, data.aoe.aoeMask);
             // GridAccess.LoadLocalAoeAttackLayer(attackedSlot, data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
             attackArea.AsArray();
             Unit u = GridAccess.GetUnitAtPos(attackedSlot);

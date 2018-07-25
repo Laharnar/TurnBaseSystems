@@ -15,10 +15,6 @@ public static class CharacterLoader {
         return new Transform[0];
     }
     
-    internal static Transform[] TempLoadTeam(int[] fastLoadTeam) {
-        throw new NotImplementedException();
-    }
-
     internal static Transform[] LoadActiveTeam() {
         return CharacterLibrary.CreateInstances(GameRun.current.currentMap.activeTeam);
     }

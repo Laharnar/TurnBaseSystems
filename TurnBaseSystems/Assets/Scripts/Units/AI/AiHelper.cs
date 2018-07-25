@@ -94,6 +94,9 @@ public static class AiHelper {
     /// <returns></returns>
     public static Vector3 FurthestFreeSlotOnEdge(Vector3 maskSource, Vector3 targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
+        maskSource = GridManager.SnapPoint(maskSource);
+        targetSlot = GridManager.SnapPoint(targetSlot);
+
         Vector3 dir = (targetSlot - maskSource);
         dir.Normalize();
         Vector3[] nbrs = mask.GetPositions(maskSource);
@@ -159,6 +162,8 @@ public static class AiHelper {
     /// <returns></returns>
     public static Vector3 ClosestFreeSlotOnOppositeEdge(Vector3 pos, Vector3 targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
+        pos = GridManager.SnapPoint(pos);
+        targetSlot = GridManager.SnapPoint(targetSlot);
         Vector3 dir = (targetSlot - pos).normalized;
         Vector3[] nbrs = mask.GetPositions(targetSlot);
         float[] distsToTarget = GetDistances(targetSlot - dir, nbrs);
@@ -244,7 +249,7 @@ public static class AiHelper {
         for (int i = 0; i < nbrs.Length; i++) {
             res[i] = nbrs[i];
         }
-        res[5] = (FurthestFreeSlotOnEdge(source, targetSlot, mask));
+        res[4] = (FurthestFreeSlotOnEdge(source, targetSlot, mask));
         res = FilterByMask(res, source, mask);
         if (res.Length == 0) {
             Debug.Log("no moves");

@@ -42,6 +42,8 @@ public class MelleLogic : AiLogic {
         while (unit.attacking) {
             yield return null;
         }
+        CombatManager.m.UnitNullCheck();
+
         // end unit turn
         yield return null;
     }

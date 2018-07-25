@@ -111,5 +111,12 @@ public class CombatManager : MonoBehaviour {
 
     }
 
- 
+    internal void UnitNullCheck() {
+        for (int i = 0; i < units.Count; i++) {
+            if (units[i] == null) {
+                units.RemoveAt(i);
+                i--;
+            }
+        }
+    }
 }

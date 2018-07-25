@@ -108,12 +108,12 @@ public class GridMask :UnityEngine.ScriptableObject {
 
     public static GridMask One {
         get {
-            return new GridMask() {
-                l = 1,
-                w = 1,
-                mask = new BoolArr[1] { new BoolArr() { col = new bool[1] { true } } },
-                rotateable = false
-            };
+            GridMask gm = ScriptableObject.CreateInstance<GridMask>();
+            gm.l = 1;
+            gm.w = 1;
+            gm.mask = new BoolArr[1] { new BoolArr() { col = new bool[1] { true } } };
+            gm.rotateable = false;
+            return gm;
         }
     }
 

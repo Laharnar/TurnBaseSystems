@@ -30,15 +30,8 @@ public class LoadingManager : MonoBehaviour {
             MissionManager.m.missionEndScreen_child.gameObject.SetActive(false);
         activeLoadingScreen = 2;
         SceneManager.LoadScene(GameRun.current.activeQuest.sceneName);
-        StartCoroutine(LateMissionStartup());
-
     }
 
-    private IEnumerator LateMissionStartup() {
-        yield return new WaitForSeconds(2);
-        Debug.Log("Disabled");
-        //MissionManager.m.Init(CharacterLibrary.CreateInstances(playerPickedTeam));
-    }
 
     public void LoadNextScreen() {
         if (MissionManager.m && MissionManager.m.missionEndScreen_child)
