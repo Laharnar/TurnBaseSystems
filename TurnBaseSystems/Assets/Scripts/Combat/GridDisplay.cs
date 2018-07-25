@@ -11,7 +11,7 @@ public class GridDisplay {
     }
 
     public static void DisplayGrid(Unit unit, int v, GridMask mask) {
-        Grid g = GridManager.NewGridInstance(unit.curSlot.worldPosition, mask);
+        Grid g = GridManager.NewGridInstance(GridManager.SnapPoint(unit.transform.position), mask);
         g.ShowColor(v);
         grids.Add(unit, g);
         allGrids.Add(g);

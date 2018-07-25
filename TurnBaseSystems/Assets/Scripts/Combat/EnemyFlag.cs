@@ -5,7 +5,6 @@ public class EnemyFlag : FlagController {
 
     public override IEnumerator FlagUpdate() {
         NullifyUnits();
-        Unit.activeUnit = null;
 
         // detect player units in range, and alert nearby allies
         foreach (var unit in units) {
@@ -13,19 +12,17 @@ public class EnemyFlag : FlagController {
             for (int i = 0; i < pFlag.units.Count; i++) {
                 if (unit.detection.IsDetecting(unit, pFlag.units[i])) {
                     unit.detection.detectedSomeone = true;
-                    GridItem[] units = unit.detection.GetGroup(unit);
+                    Unit[] units = unit.detection.GetGroup(unit);
                     for (int j = 0; j < units.Length; j++) {
-                        units[j].filledBy.detection.detectedSomeone = true;
+                        units[j].detection.detectedSomeone = true;
                     }
                 }
             }
         }
 
         for (int i = 0; i < units.Count; i++) {
-            Unit.activeUnit = units[i];
             UnityEngine.Debug.Log("running once...");
             yield return units[i].StartCoroutine(RunAi(units[i]));
-            Unit.activeUnit = null;
 
             if (MissionManager.levelCompleted) {
                 break;

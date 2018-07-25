@@ -92,19 +92,48 @@ public static class GridAccess {
         return items.ToArray();
     }
     */
-    internal static GridItem[] GetSlotsInMask(object gridX, object gridY, GridMask mask) {
-        throw new NotImplementedException();
+    public static Unit[] OnlyAlliedUnits(Vector3[] filter, int allianceId) {
+        List<Unit> items = new List<Unit>();
+        Unit[] units = CombatManager.m.units.ToArray();
+        Vector3[] snapped = new Vector3[units.Length];
+        for (int i = 0; i < units.Length; i++) {
+            snapped[i] = GridManager.SnapPoint(units[i]);
+        }
+        for (int i = 0; i < filter.Length; i++) {
+            for (int j = 0; j < snapped.Length; j++) {
+                if (filter[i] == snapped[j] && units[i].flag.allianceId == allianceId) {
+                    items.Add(units[i]);
+                }
+            }
+        }
+        return items.ToArray();
     }
 
-    internal static GridItem GetItem(int v, int gridY) {
-        throw new NotImplementedException();
+    internal static Unit[] OnlyHostileUnits(Vector3[] filter, int skippedAllianceId) {
+        List<Unit> items = new List<Unit>();
+        Unit[] units = CombatManager.m.units.ToArray();
+        Vector3[] snapped = new Vector3[units.Length];
+        for (int i = 0; i < units.Length; i++) {
+            snapped[i] = GridManager.SnapPoint(units[i]);
+        }
+        for (int i = 0; i < filter.Length; i++) {
+            for (int j = 0; j < snapped.Length; j++) {
+                if (filter[i] == snapped[j] && units[i].flag.allianceId != skippedAllianceId) {
+                    items.Add(units[i]);
+                }
+            }
+        }
+        return items.ToArray();
     }
 
-    internal static GridItem[] OnlyAlliedUnits(GridItem[] gridItem, int allianceId) {
-        throw new NotImplementedException();
-    }
 
-    internal static GridItem[] GetSlotsInMask(GridItem curSlot, GridMask groupSizeMask) {
-        throw new NotImplementedException();
+    internal static Unit GetUnitAtPos(Vector3 attackedSlot) {
+        for (int i = 0; i < CombatManager.m.units.Count; i++) {
+            if (GridManager.SnapPoint(CombatManager.m.units[i].transform.position)
+                == attackedSlot) {
+                return CombatManager.m.units[i];
+            }
+        }
+        return null;
     }
 }

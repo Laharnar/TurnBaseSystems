@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 public class RangeLogic : AiLogic {
 
@@ -12,14 +13,14 @@ public class RangeLogic : AiLogic {
         Unit[] search = pFlag.VisibleUnits;
         float[] dists = transform.position.GetDistances(search);
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnit = search[closestUnitIndex].curSlot;
+        Unit closestUnit = search[closestUnitIndex];
         if (closestUnit!= null) { // no player units
             yield break;
         }
 
-        GridItem nearbySlot = unit.curSlot;
-        if (!GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
-            nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(unit.curSlot, closestUnit, unit.pathing.moveMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
+        Vector3 nearbySlot = GridManager.SnapPoint(unit.transform.position);
+        if (!GridLookup.IsPosInMask(nearbySlot, closestUnit.transform.position, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+            nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(nearbySlot, closestUnit.transform.position, unit.pathing.moveMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
 
             if (nearbySlot == null)
                 yield break;
@@ -32,10 +33,10 @@ public class RangeLogic : AiLogic {
             }
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
-            yield return unit.StartCoroutine(DebugGrid.BlinkColor(closestUnit));
+        if (GridLookup.IsPosInMask(nearbySlot, closestUnit.transform.position, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+            yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
 
-            unit.AttackAction2(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);
+            unit.AttackAction2(nearbySlot, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);
         }
 
         while (unit.attacking) {

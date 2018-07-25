@@ -15,15 +15,15 @@ public class MelleLogic : AiLogic {
         Unit[] search = pFlag.VisibleUnits;
         float[] dists = transform.position.GetDistances(search);
         int closestUnitIndex = dists.GetIndexOfMin();
-        GridItem closestUnit = SelectionManager.GetAsSlot(search[closestUnitIndex].transform.position);
-        GridItem nearbySlot;
-        if (AiHelper.IsNeighbour(unit.curSlot, closestUnit))// don't move when already near
-            nearbySlot = unit.curSlot;
+        Vector3 closestUnit = GridManager.SnapPoint(search[closestUnitIndex].transform.position); //SelectionManager.GetAsSlot(search[closestUnitIndex].transform.position);
+        Vector3 nearbySlot;
+        if (AiHelper.IsNeighbour(unit.transform.position, closestUnit))// don't move when already near
+            nearbySlot = unit.transform.position;
         else {
             if (!unit.pathing.moveMask)
                 nearbySlot = AiHelper.ClosestFreeSlotToSlot(transform.position, closestUnit);
             else
-                nearbySlot = AiHelper.ClosestToTargetOverMask(unit.curSlot, closestUnit, unit.pathing.moveMask);
+                nearbySlot = AiHelper.ClosestToTargetOverMask(unit.transform.position, closestUnit, unit.pathing.moveMask);
                 //nearbySlot = AiHelper.ClosestFreeSlotOnEdge(transform.position, closestUnit, unit.pathing.moveMask);
         }
         if (nearbySlot == null)
@@ -34,7 +34,7 @@ public class MelleLogic : AiLogic {
             yield return null;
         }
         // command 2
-        if (GridLookup.IsSlotInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+        if (GridLookup.IsPosInMask(nearbySlot, closestUnit, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
 
             unit.AttackAction2(closestUnit, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);

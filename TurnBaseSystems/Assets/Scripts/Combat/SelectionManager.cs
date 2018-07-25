@@ -67,6 +67,11 @@ public static class SelectionManager {
         RaycastHit2D[] hits = GetAllSelection2D(pos);
         if (hits != null) {
             foreach (var item in hits) {
+                /*Unit u = GridAccess.GetUnitAtPos(item.point);
+                if (u) {
+                    return u;
+                }*/
+                
                 if (item.transform.parent == null)
                     continue;
                 Unit asUnit = item.transform.parent.GetComponent<Unit>();
@@ -95,8 +100,8 @@ public static class SelectionManager {
         return GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
     }
 
-    public static Unit GetUnitUnderMouse(GridItem refSlot) {
-        Unit cur = refSlot.filledBy;
+    public static Unit GetUnitUnderMouse(Vector3 refSlot) {
+        Unit cur = GridAccess.GetUnitAtPos(refSlot);
         if (cur == null) // maybe hovering over unit's head, which is in other slot.
             cur = SelectionManager.GetMouseAsUnit2D();
         return cur;

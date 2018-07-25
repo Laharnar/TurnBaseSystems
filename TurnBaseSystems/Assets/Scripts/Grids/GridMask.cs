@@ -12,6 +12,7 @@ public class GridMask :UnityEngine.ScriptableObject {
 
     public float Range { get { return Mathf.Max(w, l); } }
 
+
     public Vector2 HalfDiagonal {
         get {
             return new Vector2(w / 2, l / 2);
@@ -27,6 +28,8 @@ public class GridMask :UnityEngine.ScriptableObject {
     }
 
     internal Vector2 AsMaskCoordinates(Vector2 sourcexy, Vector2 targetxy) {
+        sourcexy = GridManager.SnapPoint(sourcexy);
+        targetxy = GridManager.SnapPoint(targetxy);
         return (targetxy - sourcexy) + HalfDiagonal;// get dir from source, then change, 0,0 into center of mask
     }
 
@@ -117,9 +120,9 @@ public class GridMask :UnityEngine.ScriptableObject {
     public bool Get(int i, int j) {
         return mask[i].col[j];
     }
-    public bool Get(Vector2 ij) {
-        if (ij.x > -1 && ij.x < w && ij.y > -1 && ij.y < l) 
-            return mask[(int)ij.x].col[(int)ij.y];
+    public bool Get(Vector2 difij) {
+        if (difij.x > -1 && difij.x < w && difij.y > -1 && difij.y < l) 
+            return mask[(int)difij.x].col[(int)difij.y];
         return false;
     }
 
@@ -152,7 +155,31 @@ public class GridMask :UnityEngine.ScriptableObject {
                 return attackMask;
         }
     }
-    
+
+
+    internal bool IsPosInMask(Vector3 source, Vector3 other) {
+        source = GridManager.SnapPoint(source);
+        other = GridManager.SnapPoint(other);
+        Vector2 differenceij = AsMaskCoordinates(source, other);
+        return Get(differenceij);
+    }
+
+    internal Vector3[] GetPositions(Vector3 start) {
+        start = GridManager.SnapPoint(start);
+        List<Vector3> pos = new List<Vector3>();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                if (mask[i].col[j]) {
+
+                    pos.Add(new Vector3(i* GridManager.m.itemDimensions.x,
+                        j* GridManager.m.itemDimensions.y) 
+                        + start);
+                }
+            }
+        }
+        return pos.ToArray();
+    }
+
     /*
     internal static GridMask FullMask(GridItem[] items) {
         return CreateInstance<GridMask>().EmptyInit(items);

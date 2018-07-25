@@ -64,8 +64,4 @@ public partial class GridManager : MonoBehaviour {
     internal static GridItem NewGridInstanceAtMouse() {
         return NewGridInstance(SelectionManager.GetMouseAsPoint());
     }
-
-    internal static Vector3 SnapPoint(object position) {
-        throw new NotImplementedException();
-    }
 }

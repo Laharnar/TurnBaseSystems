@@ -1,4 +1,6 @@
 ﻿using System;
+using UnityEngine;
+
 [Serializable]
 public class Detection {
     public GridMask enemyDetectionMask;
@@ -6,10 +8,12 @@ public class Detection {
     internal bool detectedSomeone;
 
     public bool IsDetecting(Unit source, Unit other) {
-        return other.combatStatus!= CombatStatus.Invisible && enemyDetectionMask && GridLookup.IsSlotInMask(source.curSlot, other.curSlot, enemyDetectionMask);
+        return other.combatStatus!= CombatStatus.Invisible && enemyDetectionMask && enemyDetectionMask.IsPosInMask(source.transform.position, other.transform.position);
     }
 
-    public GridItem[] GetGroup(Unit source) {
-        return groupSizeMask == null ? new GridItem[0] : GridAccess.OnlyAlliedUnits(GridAccess.GetSlotsInMask(source.curSlot, groupSizeMask), source.flag.allianceId);
+    public Unit[] GetGroup(Unit source) {
+        if (groupSizeMask == null)
+            return null;
+        return  GridAccess.OnlyAlliedUnits(groupSizeMask.GetPositions(source.transform.position), source.flag.allianceId);
     }
 }

@@ -8,11 +8,11 @@ public class PlayerFlag : FlagController {
 
     Unit selectedPlayerUnit;
     Unit selectedUnit;
-    GridItem selectedSlot;
+    Vector3 selectedSlot;
 
     Unit hoveredUnit;
     Unit lastHoveredUnit;
-    GridItem hoveredSlot;
+    Vector3 hoveredSlot;
 
     Coroutine twoStepCoro;
     bool RunningTwoStepAbility { get { return twoStepCoro != null; } }
@@ -84,9 +84,9 @@ public class PlayerFlag : FlagController {
                 }
             }
             if (Input.GetMouseButtonDown(1)) {
-                if (selectedSlot == null)
-                    selectedSlot = GridManager.NewGridInstanceAtMouse();
-                else selectedSlot.worldPosition = SelectionManager.MouseAsPos();
+                //if (selectedSlot == null)
+                selectedSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
+                //else selectedSlot = SelectionManager.MouseAsPos();
                 //selectedSlot = SelectionManager.GetMouseAsSlot2D();
             }
             // show abilities
@@ -105,10 +105,8 @@ public class PlayerFlag : FlagController {
                         Debug.Log("NOT enough actions. Can't attack.");
                     }
                     if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
-                        && hoveredSlot != null && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot.worldPosition, curFilter))
-                        { // unit = enemy unit
-                        bool isCurMouseHostile = hoveredSlot.filledBy && hoveredSlot.filledBy.flag.allianceId != selectedPlayerUnit.flag.allianceId;
-                            // handle weapon aim
+                        && hoveredSlot != null && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, curFilter))
+                        { 
                         Debug.Log("Attacking v2 (0)");
                         GridDisplay.HideGrid(selectedPlayerUnit, curFilter);
                         GridDisplay.HideGrid(selectedPlayerUnit, curAoeFilter);
@@ -194,10 +192,10 @@ public class PlayerFlag : FlagController {
     }
 
     private void WaitMouseOverGrid() {
-        if (hoveredSlot == null) {
-            hoveredSlot = GridManager.NewGridInstanceAtMouse();
-        }
-        hoveredSlot.worldPosition = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
+        //if (hoveredSlot == null) {
+            //hoveredSlot = GridManager.NewGridInstanceAtMouse();
+        //}
+        hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
         //hoveredSlot = SelectionManager.GetMouseAsSlot2D();
     }
     

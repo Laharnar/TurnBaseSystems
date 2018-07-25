@@ -60,13 +60,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public HpUIController hpUI;
 
-    
-
-    /// <summary>
-    /// Used by interactions.
-    /// </summary>
-    [System.Obsolete("Don't use interactions.")]
-    public static Unit activeUnit;
 
     internal int materials;
 
@@ -77,7 +70,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     bool init = false;
     public int factionId;
     internal int loyalty;
-    internal GridItem curSlot;
+    //internal GridItem curSlot;
 
     private void Start() {
         Init();
@@ -180,19 +173,20 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         PlayerFlag.m.activeAbility = abilities.move2;
     }
 
-    internal void AttackAction2(GridItem attackedSlot, Unit attackedUnit, AttackData2 atk) {
-
+    internal void AttackAction2(Vector3 attackedSlot, Unit attackedUnit, AttackData2 atk) {
+        attackedSlot = GridManager.SnapPoint(attackedSlot);
+        Unit u = GridAccess.GetUnitAtPos(attackedSlot);
         if (atk == abilities.move2) {
-            if (!attackedSlot.filledBy) {
+            if (!u) {
                 Debug.Log("Executing move action");
                 MoveAction(attackedSlot);
             }
         } else {
-            if ((atk.requiresUnit && attackedSlot.filledBy == null) || attacking) {
+            if ((atk.requiresUnit && u == null) || attacking) {
                 if (attacking) {
                     Debug.Log("Already attacking. action aborted.");
                 }
-                if (atk.requiresUnit && attackedSlot.filledBy == null) {
+                if (atk.requiresUnit && u == null) {
                     Debug.Log("This attack requires unit, no unit there. action aborted.");
                 }
                 return;
@@ -224,15 +218,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         PlayerFlag.m.activeAbility = abilities.move2;
     }
 
-    public void MoveAction(GridItem slot) {
+    public void MoveAction(Vector3 slot) {
         if (moving) return;
         actionsLeft-=abilities.move.actionCost;
         Move(slot);
     }
 
-    private void Move(GridItem slot) {
+    private void Move(Vector3 slot) {
         if (moving ) return;
-        pathing.GoToCoroutine(this, slot.worldPosition);
+        pathing.GoToCoroutine(this, slot);
     }
 
     void AttackCoroutine2(AttackData2 attack) {
@@ -262,34 +256,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         attacking = true;
         yield return new WaitForSeconds(len);
         attacking = false;
-    }
-
-    [System.Obsolete("Not used, use attackaction2")]
-    internal void AttackAction(GridItem attackedSlot, Unit other, AttackData atk) {
-        if (atk == abilities.move) {
-            if (!attackedSlot.filledBy) {
-                Debug.Log("Executing move action");
-                MoveAction(attackedSlot);
-            }
-        } else {
-            if ((atk.requiresUnit && attackedSlot.filledBy == null) || attacking) {
-                if (attacking) {
-                    Debug.Log("Already attacking. action aborted.");
-                }
-                if (atk.requiresUnit && attackedSlot.filledBy == null) {
-                    Debug.Log("This attack requires unit, no unit there. action aborted.");
-                }
-                return;
-            }
-            Debug.Log("Executing attack "+ atk.o_attackName);
-            actionsLeft -= atk.actionCost;
-            atk.ApplyDamage(this, attackedSlot);
-
-            AttackCoroutine(atk);
-
-            /*if (equippedWeapon)
-                equippedWeapon.OnDamageEnhanceEffect(this, attackedSlot, other, atk);*/
-        }
     }
 
     public void GetDamaged(int realDmg) {

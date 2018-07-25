@@ -45,7 +45,7 @@ public sealed class AttackData2 : StdAttackData {
     /// <param name="source"></param>
     /// <param name="attackedSlot"></param>
     /// <param name="data"></param>
-    public static void UseAttack(Unit source, GridItem attackedSlot, AttackData2 data) {
+    public static void UseAttack(Unit source, Vector3 attackedSlot, AttackData2 data) {
         if (source == null || attackedSlot == null || data==null) {
             Debug.Log("Error. source:" + (source == null) + " slot:" + (attackedSlot == null) + " data:"+(data == null));
         }
@@ -56,8 +56,9 @@ public sealed class AttackData2 : StdAttackData {
 
         // standard
         if (data.standard.used) {
-            if (attackedSlot.filledBy) {
-                attackedSlot.filledBy.GetDamaged(data.standard.damage);
+            Unit u = GridAccess.GetUnitAtPos(attackedSlot);
+            if (u) {
+                u.GetDamaged(data.standard.damage);
             }
             source.combatStatus = data.standard.setStatus;
         }
@@ -65,16 +66,13 @@ public sealed class AttackData2 : StdAttackData {
         if (data.aoe.used) {
             Grid attackArea;
             data.aoe.aoeMask = GridMask.RotateMask(data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
-            attackArea = new Grid(data.aoe.aoeMask).InitGridCenter(attackedSlot.worldPosition);
+            attackArea = new Grid(data.aoe.aoeMask).InitGridCenter(attackedSlot);
             // GridAccess.LoadLocalAoeAttackLayer(attackedSlot, data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
             attackArea.AsArray();
-            for (int i = 0; i < CombatManager.m.units.Count; i++) {
-                if (GridManager.SnapPoint(CombatManager.m.units[i].transform.position) 
-                    == attackedSlot.worldPosition) {
-                    CombatManager.m.units[i].GetDamaged(data.aoe.damage);
+            Unit u = GridAccess.GetUnitAtPos(attackedSlot);
+            if (u)
+                u.GetDamaged(data.aoe.damage);
 
-                }
-            }
             /*for (int j = 0; j < attackArea.Length; j++) {
                 if (attackArea[j].filledBy)
                     attackArea[j].filledBy.GetDamaged(data.aoe.damage);
@@ -84,7 +82,6 @@ public sealed class AttackData2 : StdAttackData {
         // buff
         if (data.buff.used) {
             ActivateBuff(source, data.buff);
-            
 
             BuffManager.Register(source, data.buff);
             source.combatStatus = data.buff.setStatus;

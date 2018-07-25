@@ -44,7 +44,4 @@ public static class GridLookup {
         return false;*/
     }
 
-    internal static bool IsSlotInMask(GridItem source, GridItem gridItem, GridMask mask) {
-        throw new NotImplementedException();
-    }
 }
