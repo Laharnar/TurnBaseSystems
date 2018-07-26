@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MissionManager:MonoBehaviour {
     public static MissionManager m;
@@ -8,6 +9,7 @@ public class MissionManager:MonoBehaviour {
     public bool fastLoad = false;
     public int[] fastLoadTeam;
     public Transform missionEndScreen_child;
+    public Text missionEndScreenText;
 
     private void Awake() {
         m = this;
@@ -62,7 +64,8 @@ public class MissionManager:MonoBehaviour {
     public void OnLoadLevelEndScreen() {
         if (MissionManager.m.missionEndScreen_child) {
             MissionManager.m.missionEndScreen_child.gameObject.SetActive(true);
-            MissionManager.m.missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+            //MissionManager.m.missionEndScreen_child.GetComponentInChildren<TextAccess>().SetText(LevelRewardManager.m.AsText());
+            m.missionEndScreenText.text = Time.timeSinceLevelLoad.ToString();
         }
         //Debug.Log("Todo: save the faction points into file.");
         SaveLoad.Save();

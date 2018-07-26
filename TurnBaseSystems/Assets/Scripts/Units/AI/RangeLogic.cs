@@ -7,7 +7,7 @@ public class RangeLogic : AiLogic {
         // command 1.
         PlayerFlag pFlag = FlagManager.flags[0] as PlayerFlag;
 
-        if (!unit.detection.detectedSomeone)
+        if (!unit.detection.detectedSomeone || pFlag.VisibleUnits.Length == 0)
             yield break;
 
         Unit[] search = pFlag.VisibleUnits;
@@ -18,25 +18,25 @@ public class RangeLogic : AiLogic {
             yield break;
         }
 
-        Vector3 nearbySlot = GridManager.SnapPoint(unit.transform.position);
-        if (!GridLookup.IsPosInMask(nearbySlot, closestUnit.transform.position, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
-            nearbySlot = AiHelper.ClosestToAttackEdgeOverMoveMask(nearbySlot, closestUnit.transform.position, unit.pathing.moveMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
+        Vector3 selfPos = GridManager.SnapPoint(unit.transform.position);
+        Vector3 enemyPos = GridManager.SnapPoint(closestUnit.transform.position);
+        Vector3 targetMovePos;
+        if (!GridLookup.IsPosInMask(selfPos, enemyPos, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+            targetMovePos = AiHelper.MaxRangeOnMask(selfPos, closestUnit.transform.position, unit.pathing.moveMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
 
-            if (nearbySlot == null)
-                yield break;
-
-            yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
+            yield return unit.StartCoroutine(DebugGrid.BlinkColor(targetMovePos));
                 
-            unit.MoveAction(nearbySlot);
+            unit.MoveAction(targetMovePos);
             while (unit.moving) {
                 yield return null;
             }
+             selfPos = GridManager.SnapPoint(unit.transform.position);
         }
         // command 2
-        if (GridLookup.IsPosInMask(nearbySlot, closestUnit.transform.position, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
-            yield return unit.StartCoroutine(DebugGrid.BlinkColor(nearbySlot));
+        if (GridLookup.IsPosInMask(selfPos, enemyPos, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
+            yield return unit.StartCoroutine(DebugGrid.BlinkColor(enemyPos));
 
-            unit.AttackAction2(nearbySlot, pFlag.units[closestUnitIndex], unit.abilities.additionalAbilities2[0]);
+            unit.AttackAction2(enemyPos, unit.abilities.additionalAbilities2[0]);
         }
 
         while (unit.attacking) {

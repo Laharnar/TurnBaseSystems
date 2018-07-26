@@ -93,6 +93,7 @@ public static class GridAccess {
     }
     */
     public static Unit[] OnlyAlliedUnits(Vector3[] filter, int allianceId) {
+        CombatManager.m.UnitNullCheck();
         List<Unit> items = new List<Unit>();
         Unit[] units = CombatManager.m.units.ToArray();
         Vector3[] snapped = new Vector3[units.Length];

@@ -173,7 +173,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         PlayerFlag.m.activeAbility = abilities.move2;
     }
 
-    internal void AttackAction2(Vector3 attackedSlot, Unit attackedUnit, AttackData2 atk) {
+    internal void AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
         if (atk == abilities.move2) {

@@ -19,14 +19,6 @@ public class GridMask :UnityEngine.ScriptableObject {
         }
     }
 
-    public int LowerLeftFromX(int x) {
-        return x - w / 2;
-    }
-
-    public int LowerLeftFromY(int y) {
-        return y - l / 2;
-    }
-
     internal Vector2 AsMaskCoordinates(Vector2 sourcexy, Vector2 targetxy) {
         sourcexy = GridManager.SnapPoint(sourcexy);
         targetxy = GridManager.SnapPoint(targetxy);
@@ -156,7 +148,6 @@ public class GridMask :UnityEngine.ScriptableObject {
         }
     }
 
-
     internal bool IsPosInMask(Vector3 source, Vector3 other) {
         source = GridManager.SnapPoint(source);
         other = GridManager.SnapPoint(other);
@@ -164,8 +155,24 @@ public class GridMask :UnityEngine.ScriptableObject {
         return Get(differenceij);
     }
 
+    internal Vector3[] GetFreePositions(Vector3 start) {
+        start = GridManager.SnapPoint(start) - (Vector3)HalfDiagonal;
+        List<Vector3> pos = new List<Vector3>();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                Vector3 p = new Vector3(i * GridManager.m.itemDimensions.x,
+                        j * GridManager.m.itemDimensions.y)
+                        + start;
+                if (mask[i].col[j] && !GridAccess.GetUnitAtPos(p)) {
+
+                    pos.Add(p);
+                }
+            }
+        }
+        return pos.ToArray();
+    }
     internal Vector3[] GetPositions(Vector3 start) {
-        start = GridManager.SnapPoint(start);
+        start = GridManager.SnapPoint(start) - (Vector3)HalfDiagonal; ;
         List<Vector3> pos = new List<Vector3>();
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < l; j++) {
@@ -179,49 +186,7 @@ public class GridMask :UnityEngine.ScriptableObject {
         }
         return pos.ToArray();
     }
-
-    /*
-    internal static GridMask FullMask(GridItem[] items) {
-        return CreateInstance<GridMask>().EmptyInit(items);
-
-    }
     
-    /// <summary>
-    /// Note: doesn't work around edges.
-    /// </summary>
-    /// <param name="its"></param>
-    /// <returns></returns>
-    private GridMask EmptyInit(GridItem[] its) {
-        int minx = int.MaxValue, miny = int.MaxValue, maxx = int.MinValue, maxy = int.MinValue;
-        for (int i = 0; i < its.Length; i++) {
-            if (its[i].gridX < minx) {
-                minx = its[i].gridX;
-            }
-            if (its[i].gridX > maxx) {
-                maxx = its[i].gridX;
-            }
-            if (its[i].gridY < miny) {
-                miny = its[i].gridY;
-            }
-            if (its[i].gridY > maxy) {
-                maxy = its[i].gridY;
-            }
-        }
-        w = maxx - minx + 1;
-        l = maxy - miny + 1;
-        Debug.Log(maxx + "-"+minx + "+1, "+maxy +"-"+miny+" +1");
-        mask = new BoolArr[w];
-        for (int i = 0; i < w; i++) {
-            mask[i] = new BoolArr();
-            mask[i].col = new bool[l];
-        }
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < l; j++) {
-                mask[i].col[j] = true;
-            }
-        }
-        return this;
-    }*/
 }
 
 [System.Serializable]

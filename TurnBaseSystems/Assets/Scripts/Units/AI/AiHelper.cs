@@ -18,23 +18,14 @@ public static class AiHelper {
     public static float[] GetDistances(this Vector3 source, Unit[] positions) {
         float[] distances = new float[positions.Length];
         for (int i = 0; i < positions.Length; i++) {
-            distances[i] = Vector3.Distance(positions[i].transform.position, source);
+            distances[i] = Vector3.Distance(GridManager.SnapPoint(positions[i].transform.position), source);
         }
         return distances;
     }
-    public static float[] GetDistances(this Vector3 source, Vector3[] positions){
+    public static float[] GetDistances(this Vector3 source, Vector3[] positions) {
         float[] distances = new float[positions.Length];
         for (int i = 0; i < positions.Length; i++) {
             distances[i] = Vector3.Distance(positions[i], source);
-        }
-        return distances;
-    }
-
-    public static float[] GetDistances(this Vector3 source, GridItem[] units) {
-        float[] distances = new float[units.Length];
-        for (int i = 0; i < units.Length; i++) {
-            if (units[i]!= null)
-            distances[i] = Vector3.Distance(units[i].worldPosition, source);
         }
         return distances;
     }
@@ -50,28 +41,6 @@ public static class AiHelper {
         return minI;
     }
 
-    /// <summary>
-    /// Example: Put range unit on max attack range.
-    /// NOT 100% reliable.
-    /// </summary>
-    /// <param name="curSlot"></param>
-    /// <param name="target"></param>
-    /// <param name="moveMask"></param>
-    /// <param name="attackMask"></param>
-    /// <returns></returns>
-    internal static Vector3 ClosestToAttackEdgeOverMoveMask(Vector3 curSlot, Vector3 target, GridMask moveMask, GridMask attackMask) {
-        // gets slot where unit should be moved to still be in attack range
-        curSlot = GridManager.SnapPoint(curSlot);
-        target = GridManager.SnapPoint(target);
-        Vector3 optimalMovePos = ClosestFreeSlotOnEdge(curSlot, target, attackMask);
-        Vector3 viable = FurthestFreeSlotOnEdge(curSlot, target, moveMask);
-        Vector3[] list = new Vector3[2] { optimalMovePos, viable };
-        list = FilterByMask(list, curSlot, moveMask);
-        if (list.Length == 2)
-            list = new Vector3[1] { optimalMovePos };
-        float[] dists = GetDistances(target, list);
-        return list[GetIndexOfMin(dists)]; 
-    }
 
     public static int GetIndexOfMax(this float[] list) {
         float max = float.MinValue;
@@ -85,6 +54,28 @@ public static class AiHelper {
         return maxI;
     }
 
+    /// <summary>
+    /// Example: Put range unit on max attack range.
+    /// NOT 100% reliable.
+    /// </summary>
+    /// <param name="curSlot"></param>
+    /// <param name="target"></param>
+    /// <param name="moveMask"></param>
+    /// <param name="attackMask"></param>
+    /// <returns></returns>
+    internal static Vector3 MaxRangeOnMask(Vector3 curSlot, Vector3 target, GridMask moveMask, GridMask attackMask) {
+        // gets slot where unit should be moved to still be in attack range
+        curSlot = GridManager.SnapPoint(curSlot);
+        target = GridManager.SnapPoint(target);
+        Vector3 optimalMovePos = NbrOrMaskPos(curSlot, target, attackMask);
+        Vector3 viable = ClosestToTarget(curSlot, target, moveMask);
+        Vector3[] list = new Vector3[2] { optimalMovePos, viable };
+        list = FilterByMask(list, curSlot, moveMask);
+        if (list.Length == 2)
+            list = new Vector3[1] { optimalMovePos };
+        float[] dists = GetDistances(target, list);
+        return list[GetIndexOfMin(dists)]; 
+    }
 
     /// <summary>
     /// Pick a slot that's furthest away from mask source, and closest to target.
@@ -92,32 +83,40 @@ public static class AiHelper {
     /// <param name="pos">pos which defines which side we want</param>
     /// <param name="targetSlot">attacked unit, to which we are applying mask</param>
     /// <returns></returns>
-    public static Vector3 FurthestFreeSlotOnEdge(Vector3 maskSource, Vector3 targetSlot, GridMask mask) {
+    public static Vector3 ClosestToTarget(Vector3 maskSource, Vector3 targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
         maskSource = GridManager.SnapPoint(maskSource);
         targetSlot = GridManager.SnapPoint(targetSlot);
 
-        Vector3 dir = (targetSlot - maskSource);
-        dir.Normalize();
-        Vector3[] nbrs = mask.GetPositions(maskSource);
-        float[] distsToTarget = GetDistances(targetSlot + dir, nbrs);
-        float[] distsToSource = GetDistances(maskSource - dir, nbrs);
+        Vector3 dir = (targetSlot - maskSource).normalized;
+        Vector3[] maskAroundSource = mask.GetFreePositions(maskSource);
+        if (maskAroundSource.Length == 0) {
+            Debug.Log("Mask is zero. Aborting.");
+            return maskSource;
+        }
+        float[] distsToTarget = GetDistances(targetSlot, maskAroundSource);
+        float[] distsToSource = GetDistances(maskSource, maskAroundSource);
         // Closest slot in max range is the slot with minimum summed distance.
         // Slot that also on edge, is furthest away from mask and closest to source
-        int index = 0;
+        int index = IndexOfClosestToTarget(distsToTarget, distsToSource);
+        return maskAroundSource[index];
+    }
+
+    public static int IndexOfClosestToTarget(float[] distsToTarget, float[] distsToSource) {
+        int index = -1;
         float minSum = float.MaxValue;
         float minDistFromTarget = float.MaxValue;
         float maxDistFromSource = float.MinValue;
-        for (int i = 0; i < distsToTarget.Length; i++) {
-            if (distsToTarget[i] + distsToSource[i] <= minSum
-                && distsToTarget[i] < minDistFromTarget && distsToSource[i] > maxDistFromSource) {
+        for (int i = 0; i < distsToTarget.Length && i < distsToSource.Length; i++) {
+            if (distsToTarget[i] + distsToSource[i] < minSum
+                && distsToTarget[i] <= minDistFromTarget && distsToSource[i] >= maxDistFromSource) {
                 minSum = distsToTarget[i] + distsToSource[i];
                 minDistFromTarget = distsToTarget[i];
                 maxDistFromSource = distsToSource[i];
                 index = i;
             }
         }
-        return nbrs[index];
+        return index;
     }
 
     /// <summary>
@@ -126,13 +125,13 @@ public static class AiHelper {
     /// <param name="pos">pos which defines which side we want</param>
     /// <param name="targetSlot">attacked unit, to which we are applying mask</param>
     /// <returns></returns>
-    public static Vector3 ClosestFreeSlotOnEdge(Vector3 pos, Vector3 targetSlot, GridMask mask) {
+    public static Vector3 NbrOrMaskPos(Vector3 pos, Vector3 targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
         pos = GridManager.SnapPoint(pos);
         targetSlot = GridManager.SnapPoint(targetSlot);
         Vector3 dir = (targetSlot - pos);
         dir.Normalize();
-        Vector3[] nbrs = mask.GetPositions(targetSlot);
+        Vector3[] nbrs = mask.GetFreePositions(targetSlot);
         float[] distsToTarget = GetDistances(targetSlot + dir, nbrs);
         float[] distsToSource = GetDistances(pos - dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -160,12 +159,12 @@ public static class AiHelper {
     /// <param name="pos">pos which defines which side we want</param>
     /// <param name="targetSlot">attacked unit, to which we are getting slot</param>
     /// <returns></returns>
-    public static Vector3 ClosestFreeSlotOnOppositeEdge(Vector3 pos, Vector3 targetSlot, GridMask mask) {
+    public static Vector3 FurthestAwayFromTarget(Vector3 pos, Vector3 targetSlot, GridMask mask) {
         // Dir from target to source, then take closest neighbour to it.
         pos = GridManager.SnapPoint(pos);
         targetSlot = GridManager.SnapPoint(targetSlot);
         Vector3 dir = (targetSlot - pos).normalized;
-        Vector3[] nbrs = mask.GetPositions(targetSlot);
+        Vector3[] nbrs = mask.GetFreePositions(targetSlot);
         float[] distsToTarget = GetDistances(targetSlot - dir, nbrs);
         float[] distsToSource = GetDistances(pos + dir, nbrs);
         // Closest slot in max range is the slot with minimum summed distance.
@@ -186,46 +185,6 @@ public static class AiHelper {
         return nbrs[index];
     }
 
-
-    /// <summary>
-    /// Gets slot with shortest distance of all slots in range.
-    /// NOT RELIABLE to return edge. Use closestfreeslotonedge instead.
-    /// </summary>
-    /// <param name="pos">pos which defines which side we want</param>
-    /// <param name="targetSlot">attacked unit, to which we are getting slot</param>
-    /// <returns></returns>
-    public static Vector3 ClosestFreeSlotStillInMask(Vector3 pos, Vector3 targetSlot, GridMask mask) {
-        pos = GridManager.SnapPoint(pos);
-        targetSlot = GridManager.SnapPoint(targetSlot);
-        // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot - pos).normalized;
-        Vector3[] nbrs = mask.GetPositions(targetSlot);
-        float[] distsToTarget = GetDistances(targetSlot - dir, nbrs);
-        float[] distsToSource = GetDistances(pos + dir, nbrs);
-        // Closest slot in max range is the slot with minimum summed distance.
-        int index = 0;
-        float minSum = float.MaxValue;
-        for (int i = 0; i < distsToTarget.Length; i++) {
-            if (distsToTarget[i]+distsToSource[i] < minSum) {
-                minSum = distsToTarget[i] + distsToSource[i];
-                index = i;
-            }
-        }
-        return nbrs[index];
-    }
-    /// <summary>
-    /// Gets closest slot next to target slot.
-    /// </summary>
-    /// <param name="pos">pos which defines which side we want</param>
-    /// <param name="targetSlot">attacked unit, to which we are getting slot</param>
-    /// <returns></returns>
-    public static Vector3 ClosestSlotToSlot(Vector3 pos, Vector3 targetSlot) {
-        // Dir from target to source, then take closest neighbour to it.
-        Vector3 dir = (targetSlot - pos).normalized;
-        Vector3[] nbrs = Neighbours(targetSlot);
-        float[] dists = GetDistances(targetSlot - dir, nbrs);
-        return nbrs[dists.GetIndexOfMin()];
-    }
     
     /// <summary>
     /// Gets closest slot next to target slot.
@@ -233,7 +192,7 @@ public static class AiHelper {
     /// <param name="pos">pos which defines which side we want</param>
     /// <param name="targetSlot">attacked unit, to which we are getting slot</param>
     /// <returns></returns>
-    public static Vector3 ClosestFreeSlotToSlot(Vector3 pos, Vector3 targetSlot) {
+    public static Vector3 ClosestNbour(Vector3 pos, Vector3 targetSlot) {
         // Dir from target to source, then take closest neighbour to it.
         Vector3[] nbrs = Neighbours(targetSlot);
         Vector3 dir = (targetSlot - pos).normalized;
@@ -249,22 +208,24 @@ public static class AiHelper {
         for (int i = 0; i < nbrs.Length; i++) {
             res[i] = nbrs[i];
         }
-        res[4] = (FurthestFreeSlotOnEdge(source, targetSlot, mask));
+        res[4] = (ClosestToTarget(source, targetSlot, mask));
+        //Debug.Log(" furthest "+ res[4] + "" +mask.IsPosInMask(source, res[4]));
         res = FilterByMask(res, source, mask);
+        //Debug.Log("FILTER Lne "+res.Length);
         if (res.Length == 0) {
-            Debug.Log("no moves");
-            return new Vector3(-1000000, 0, 0);
+            Debug.Log("no moves, moving to self");
+            return source;
         }
-        Vector3 dir = (targetSlot - source).normalized;
-        float[] dists = GetDistances(targetSlot - dir, nbrs);
-        return nbrs[dists.GetIndexOfMin()];
+        Vector3 sourceToTarget = (targetSlot - source).normalized;
+        float[] dists = GetDistances(targetSlot - sourceToTarget, res);
+        return res[dists.GetIndexOfMin()];
     }
 
 
     public static Vector3[] FilterByMask(Vector3[] items, Vector3 source, GridMask mask) {
         List<Vector3> list = new List<Vector3>();
         for (int i = 0; i < items.Length; i++) {
-            if (!GridLookup.IsPosInMask(source, items[i], mask)) {
+            if (GridLookup.IsPosInMask(source, items[i], mask)) {
                 list.Add(items[i]);
             }
         }

@@ -46,7 +46,7 @@ public class Grid{
             for (int j = 0; j < length; j++) {
                 if ((mask && mask.Get(i, j) == false && data[i, j] == null) ||data[i,j]==null)
                     continue;
-                
+                if (data[i, j].instance)
                 GameObject.Destroy(data[i, j].instance.gameObject);
                 data[i, j] = null;
             }

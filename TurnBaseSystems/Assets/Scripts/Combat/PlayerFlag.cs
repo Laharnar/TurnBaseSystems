@@ -58,13 +58,14 @@ public class PlayerFlag : FlagController {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
                 mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
-                GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
 
-                RecalcFulters();
-                GridDisplay.DisplayGrid(selectedUnit, activeAbilityId== 0 ? 1 : 2, curFilter);
-                GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
-                //ResetColorForUnit(selectedPlayerUnit, curFilter);
-                //ResetColorForUnit(selectedPlayerUnit, curAoeFilter);
+                if (selectedPlayerUnit) {
+                    GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+
+                    RecalcFulters();
+                    GridDisplay.DisplayGrid(selectedUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
+                    GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
+                }
             }
             WaitUnitSelection();
 
@@ -107,11 +108,12 @@ public class PlayerFlag : FlagController {
                     if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
                         && hoveredSlot != null && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, curFilter))
                         { 
-                        Debug.Log("Attacking v2 (0)");
-                        
+                        Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
+                        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+
                         //ResetColorForUnit(selectedPlayerUnit, curFilter);
                         //ResetColorForUnit(selectedPlayerUnit, curAoeFilter);
-                        selectedPlayerUnit.AttackAction2(hoveredSlot, hoveredUnit, activeAbility);
+                        selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
                         OnUnitExectutesAction();
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
 
@@ -161,11 +163,17 @@ public class PlayerFlag : FlagController {
     }
 
     private void RecalcFulters() {
+        if (activeAbility == null)
+            return;
         if (activeAbility.standard.used) {
             curFilter = GridMask.RotateMask(activeAbility.AttackMask, mouseDirection);
+        } else {
+            curFilter = null;
         }
         if (activeAbility.aoe.used) {
             curAoeFilter = GridMask.RotateMask(activeAbility.aoe.aoeMask, mouseDirection);
+        } else {
+            curAoeFilter = null;
         }
     }
     void DisplayGrid() {
