@@ -42,6 +42,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         }
     }
 
+    public int maxHp = 5;
     public int hp = 5;
 
     public int maxActions = 2;
@@ -82,6 +83,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         ResetActions();
         //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
         if (CombatManager.m) {
+            hp = maxHp;
             Vector3 snapPos = GridManager.SnapPoint(transform.position);
             //curSlot = slot;
             transform.position = snapPos;
@@ -196,7 +198,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
             AttackData2.UseAttack(this, attackedSlot, atk);
 
-            AttackCoroutine2(atk);
+            AttackAnimations(atk);
 
         }
     }
@@ -229,23 +231,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         pathing.GoToCoroutine(this, slot);
     }
 
-    void AttackCoroutine2(AttackData2 attack) {
+    void AttackAnimations(AttackData2 attack) {
         if (attacking) return;
-        if (attack.standard.used == attack.aoe.used == attack.buff.used ==false|| anim == null) return;
+        if (anim == null) { Debug.Log("Can't run animations, no animator", this); return; }
+        if (!attack.standard.used && !attack.aoe.used && !attack.buff.used) return;
         if (attack.standard.used) AttackData2.RunAnimations(this, attack.standard.animSets);
         if (attack.aoe.used) AttackData2.RunAnimations(this, attack.aoe.animSets);
-        if (attack.buff.used) AttackData2.RunAnimations(this, attack.buff.animSets);
+        if (attack.buff.used) { AttackData2.RunAnimations(this, attack.buff.animSets); }
         float len = AttackData2.AnimLength(this, attack);
         StartCoroutine(WaitAttack(len));
-    }
-
-    void AttackCoroutine(AttackData attack) {
-        if (attacking) return;
-        Debug.Log("Executing atatck animation "+ attack.animData.useInfo+" "+anim );
-        if (!attack.animData.useInfo || anim==null) return;
-        int attackTriggerCode = anim.TriggerToId( attack.animData.animTrigger);
-        anim.SetTrigger(attackTriggerCode);
-        StartCoroutine(WaitAttack(attack.animData.animLength));
     }
 
     internal void RestoreAP(object p) {
@@ -260,10 +254,13 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void GetDamaged(int realDmg) {
         if (dead) return;
-        int dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);
-        int armorLeft = Mathf.Clamp(temporaryArmor- realDmg, 0, temporaryArmor);
-        temporaryArmor = armorLeft;
-        hp = hp - dmgToHp;
+        int dmgToHp = realDmg;
+        if (realDmg > 0) {
+            dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);
+            int armorLeft = Mathf.Clamp(temporaryArmor - realDmg, 0, temporaryArmor);
+            temporaryArmor = armorLeft;
+        }
+        hp = Mathf.Clamp(hp - dmgToHp, 0, maxHp);
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
         if (hp <= 0) {
             StartCoroutine(Death());

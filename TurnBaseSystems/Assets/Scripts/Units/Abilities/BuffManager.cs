@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
+
 public class BuffManager {
 
     public static List<BUFFAttackData> registeredBuffs = new List<BUFFAttackData>();
@@ -39,6 +41,8 @@ public class BuffManager {
 
             registeredBuffs.RemoveAt(i);
             registeredBuffSources.RemoveAt(i);
+
+            Debug.Log("Ended status.");
         }
     }
 }

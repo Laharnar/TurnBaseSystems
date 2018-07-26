@@ -194,7 +194,7 @@ public static class AiHelper {
     /// <returns></returns>
     public static Vector3 ClosestNbour(Vector3 pos, Vector3 targetSlot) {
         // Dir from target to source, then take closest neighbour to it.
-        Vector3[] nbrs = Neighbours(targetSlot);
+        Vector3[] nbrs = FreeNeighbours(targetSlot);
         Vector3 dir = (targetSlot - pos).normalized;
         float[] dists = GetDistances(targetSlot - dir, nbrs);
         return nbrs[dists.GetIndexOfMin()];
@@ -204,7 +204,7 @@ public static class AiHelper {
         source = GridManager.SnapPoint(source);
         targetSlot = GridManager.SnapPoint(targetSlot);
         Vector3[] res = new Vector3[5];
-        Vector3[] nbrs = Neighbours(targetSlot);
+        Vector3[] nbrs = FreeNeighbours(targetSlot);
         for (int i = 0; i < nbrs.Length; i++) {
             res[i] = nbrs[i];
         }
@@ -234,15 +234,34 @@ public static class AiHelper {
 
     public static bool IsNeighbour(Vector3 slot, Vector3 other) {
         other = GridManager.SnapPoint(other);
-        Vector3[] slots = Neighbours(slot);
-        for (int i = 0; i < 4; i++) {
+        Vector3[] slots = FreeNeighbours(slot);
+        for (int i = 0; i < slots.Length; i++) {
             if (slots[i].x == other.x && slots[i].y == other.y) {
                 return true;
             }
         }
         return false;
     }
-
+    public static Vector3[] FreeNeighbours(Vector3 slot) {
+        Vector3[] slots = Neighbours(slot);
+        int free = slots.Length;
+        bool[] taken = new bool[slots.Length];
+        for (int i = 0; i < slots.Length; i++) {
+            if (GridAccess.GetUnitAtPos(slots[i])) {
+                taken[i] = true;
+                free--;
+            }
+        }
+        Vector3[] nslots = new Vector3[free];
+        int n = 0;
+        for (int i = 0; i < slots.Length; i++) {
+            if (!taken[i]) {
+                nslots[n] = slots[i];
+                n++;
+            }
+        }
+        return nslots;
+    }
     public static Vector3[] Neighbours(Vector3 slot) {
         slot = GridManager.SnapPoint(slot);
         float x = GridManager.m.itemDimensions.x;
@@ -253,6 +272,7 @@ public static class AiHelper {
         slots[1] = new Vector3(slot.x, slot.y - y, slot.z);
         slots[2] = new Vector3(slot.x + x, slot.y, slot.z);
         slots[3] = new Vector3(slot.x, slot.y + y, slot.z);
+
         return slots;
     }
 }
