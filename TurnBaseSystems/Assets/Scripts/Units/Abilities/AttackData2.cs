@@ -58,17 +58,17 @@ public sealed class AttackData2 : StdAttackData {
         if (data.standard.used) {
             Unit u = GridAccess.GetUnitAtPos(attackedSlot);
             if (u) {
-                u.GetDamaged(data.standard.damage++);
+                u.GetDamaged(data.standard.damage);
             }
             source.combatStatus = data.standard.setStatus;
         }
         // aoe
         if (data.aoe.used) {
             Grid attackArea;
-            data.aoe.aoeMask = GridMask.RotateMask(data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
-            attackArea = new Grid(data.aoe.aoeMask).InitGridCenter(attackedSlot, data.aoe.aoeMask);
+            GridMask mask = GridMask.RotateMask(data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
+            attackArea = new Grid(mask).InitGridCenter(attackedSlot, mask);
             // GridAccess.LoadLocalAoeAttackLayer(attackedSlot, data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
-            Vector3[] vec = data.aoe.aoeMask.GetPositions(attackedSlot);
+            Vector3[] vec = mask.GetPositions(attackedSlot);
             for (int i = 0; i < vec.Length; i++) {
                 Unit u = GridAccess.GetUnitAtPos(vec[i]);
                 if (u)

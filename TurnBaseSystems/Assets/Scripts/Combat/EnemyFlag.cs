@@ -21,7 +21,6 @@ public class EnemyFlag : FlagController {
         }
 
         for (int i = 0; i < units.Count; i++) {
-            UnityEngine.Debug.Log("running once...");
             yield return units[i].StartCoroutine(RunAi(units[i]));
 
             if (MissionManager.levelCompleted) {

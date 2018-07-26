@@ -101,7 +101,7 @@ public class GridItem {
             code == 1 ? Color.green :
             code == 2 ? Color.red : 
             code == 3 ? Color.blue :
-            code == 4 ? new Color(1,0.2f,0,1)://orange
+            code == 4 ? new Color(1,0.6f,0,2)://orange
                 Color.yellow;
     }
 

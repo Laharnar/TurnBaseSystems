@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class Pathing {
     public float speed = 10f;
-    public GridMask moveMask;
+    //public GridMask moveMask;
 
     public void GoToCoroutine(Unit t, Vector3 targetPos) {
         //Vector3 targetPos=GridAccess.GetItem(x, y).worldPosition

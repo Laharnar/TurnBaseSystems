@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 public class UnitAbilities : MonoBehaviour {
     public bool newVersion = false;
-    public AttackData move;
     public AttackData2 move2;
 
     public List<AttackData> additionalAbilities = new List<AttackData>();
@@ -38,13 +37,9 @@ public class UnitAbilities : MonoBehaviour {
         
         List<StdAttackData> d = new List<StdAttackData>();
         
-        if (newVersion) {
-            d.Add(move2);
-            d.AddRange(additionalAbilities2.ToArray());
-        } else {
-            d.Add(move);
-            d.AddRange(additionalAbilities.ToArray());
-        }
+        d.Add(move2);
+        d.AddRange(additionalAbilities2.ToArray());
+        
         d.AddRange(data);
         return d.ToArray();
     }

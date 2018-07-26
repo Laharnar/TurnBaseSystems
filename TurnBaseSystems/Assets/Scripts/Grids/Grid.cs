@@ -113,7 +113,7 @@ public class Grid{
                 newGrid[i, j].gridY = j;*/
             }
         }
-        Debug.Log("New grid. "+w + " "+l+ " skipped:"+skip+" "+((float)skip/((float)w*l)));
+        //Debug.Log("New grid. "+w + " "+l+ " skipped:"+skip+" "+((float)skip/((float)w*l)));
         return newGrid;
     }
 }

@@ -27,13 +27,7 @@ public class MelleLogic : AiLogic {
             targetMovePos = selfPos;
         }
         else {
-            if (!unit.pathing.moveMask) {
-                Debug.Log("ERRORRR, this can't happen. missing mask");
-                targetMovePos = AiHelper.ClosestNbour(transform.position, enemyPos);
-            } else {
-
-                targetMovePos = AiHelper.ClosestToTargetOverMask(unit.transform.position, enemyPos, unit.pathing.moveMask);
-            }
+            targetMovePos = AiHelper.ClosestToTargetOverMask(unit.transform.position, enemyPos, unit.abilities.move2.standard.attackRangeMask);
         }
         if (targetMovePos != selfPos)
         {

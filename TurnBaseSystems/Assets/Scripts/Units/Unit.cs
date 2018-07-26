@@ -220,7 +220,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void MoveAction(Vector3 slot) {
         if (moving) return;
-        actionsLeft-=abilities.move.actionCost;
+        actionsLeft-=abilities.move2.actionCost;
         Move(slot);
     }
 

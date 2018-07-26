@@ -14,24 +14,30 @@ public class PlayerFlag : FlagController {
     Unit lastHoveredUnit;
     Vector3 hoveredSlot;
 
-    Coroutine twoStepCoro;
-    bool RunningTwoStepAbility { get { return twoStepCoro != null; } }
-
-    Unit coroUnitSource;
     int lastAbilityId;
     int activeAbilityId;
     //public AttackData activeAbility;
     public AttackData2 activeAbility;
     private GridMask curFilter;
 
-    OffsetMask mouseToSelectOffset = new OffsetMask();
     /// <summary>
     /// Don't edit outside this script.
     /// </summary>
-    public int mouseDirection = 1;
+    public int mouseDirection = 0;
     private GridMask curAoeFilter;
 
     bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
+
+    void Reset() {
+        selectedPlayerUnit = null;
+        selectedUnit = null;
+        hoveredUnit = null;
+        lastHoveredUnit = null;
+        lastAbilityId = 0;
+        activeAbilityId = 0;
+        curFilter = null;
+        curAoeFilter = null;
+    }
 
     public Unit[] VisibleUnits {
         get {
@@ -53,7 +59,8 @@ public class PlayerFlag : FlagController {
             GridDisplay.TmpHideGrid(hoveredSlot, GridMask.One);
 
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
-            GridDisplay.TmpDisplayGrid(hoveredSlot, 5, GridMask.One);
+            if (!selectedPlayerUnit || hoveredSlot != selectedSlot)
+                GridDisplay.TmpDisplayGrid(hoveredSlot, 5, GridMask.One);
             if (MouseWheelRotate) {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
@@ -73,22 +80,14 @@ public class PlayerFlag : FlagController {
             if (selectedPlayerUnit) {
                 if ((selectedPlayerUnit.abilities.newVersion && activeAbility != null) || activeAbility != null) {
                     RecalcFulters();
-                    
                 }
             }
             if (Input.GetMouseButtonDown(1)) {
-                //if (selectedSlot == null)
                 selectedSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
-                //else selectedSlot = SelectionManager.MouseAsPos();
-                //selectedSlot = SelectionManager.GetMouseAsSlot2D();
             }
             // show abilities
             if (selectedUnit) {
-                GridDisplay.DisplayGrid(selectedUnit, 3, GridMask.One);
-                //ShowArea(selectedUnit, curFilter);
-                //ShowAoe(selectedUnit, curAoeFilter);
-                //UIManager.PlayerSelectAllyUnitUi(false, selectedPlayerUnit);
-                // WaitAbilitySelection(); automatic on buttons
+                GridDisplay.DisplayGrid(selectedUnit, selectedUnit.IsPlayer? 3: 2, GridMask.One);
             }
             if (lastAbilityId != activeAbilityId) {
                /* GridDisplay.HideGrid(selectedUnit, curFilter, curAoeFilter);
@@ -108,7 +107,7 @@ public class PlayerFlag : FlagController {
                     if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
                         && hoveredSlot != null && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, curFilter))
                         { 
-                        Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
+                        //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
                         GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
 
                         //ResetColorForUnit(selectedPlayerUnit, curFilter);
@@ -150,6 +149,10 @@ public class PlayerFlag : FlagController {
             yield return null;
 
         }
+        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+        Reset();
+        ShowUI();
+        
         // Wait until all actions are complete
         for (int i = 0; i < units.Count; i++) {
             while (units[i].moving) {
@@ -219,7 +222,7 @@ public class PlayerFlag : FlagController {
     
 
     internal void SetActiveAbility(Unit unitSource, int atkId) {
-        Debug.Log("Setting active ability "+activeAbilityId);
+        Debug.Log("Setting active ability "+ atkId);
         lastAbilityId = activeAbilityId;
         activeAbilityId = atkId;
         activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
@@ -231,7 +234,6 @@ public class PlayerFlag : FlagController {
 
         if (lastHoveredUnit && lastHoveredUnit != hoveredUnit && lastHoveredUnit != selectedPlayerUnit) {
             GridDisplay.HideGrid(lastHoveredUnit);
-            //GridManager.RecolorSlot(0, lastHoveredUnit.curSlot);
             // Color currently hovered unit depending on alliance
             if (hoveredUnit && hoveredUnit != selectedPlayerUnit) {
                 if (hoveredUnit.flag.allianceId == 0) { // player, can select
@@ -246,7 +248,7 @@ public class PlayerFlag : FlagController {
 
     private void DeselectUnit() {
         if (selectedUnit) {
-            GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+            GridDisplay.HideGrid(selectedUnit, curFilter, curAoeFilter);
             selectedUnit = null;
             selectedPlayerUnit = null;
             activeAbility = null;

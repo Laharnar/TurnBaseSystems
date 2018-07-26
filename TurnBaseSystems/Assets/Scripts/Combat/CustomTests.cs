@@ -7,9 +7,11 @@ public class CustomTests: MonoBehaviour {
         m = this;
     }
     private void Update() {
-        GridMask m = FlagManager.flags[1].units[0].pathing.moveMask;
-        Vector3 r = new Vector3(-FlagManager.flags[1].units[0].pathing.moveMask.w / 2, 0, 0);
         if (i == 0) {
+
+            GridMask m = FlagManager.flags[1].units[0].abilities.move2.AttackMask;
+            Vector3 r = new Vector3(-FlagManager.flags[1].units[0].abilities.move2.AttackMask.w / 2, 0, 0);
+
             Test("AiHelper.ClosestToTargetOverMask1", AiHelper.ClosestToTargetOverMask(new Vector3(), new Vector3(-100, 0, 0), m), r);
             Test("AiHelper.ClosestToTarget", AiHelper.ClosestToTarget(new Vector3(), new Vector3(-100, 0, 0), m), r);
             Print("Get mask positions", m.GetFreePositions(new Vector3()));
@@ -18,9 +20,9 @@ public class CustomTests: MonoBehaviour {
             float[] distsToSource = new float[] { 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 };
             float[] distsToTarget = new float[] { 3, 4, 5, 4, 1, 2, 3, 4, 5, 4, 3, 2 };
             Test("AiHelper.IndexOfClosestToTarget", AiHelper.IndexOfClosestToTarget(distsToTarget, distsToSource), 4);
-        } else {
-            i--;
         }
+            i--;
+        
     }
     private static void Print(string context, bool data) {
         Debug.Log(context+" "+data);
