@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-
-public enum CombatStatus {
-    Normal,
-    Invisible,
-    SameAsBefore
-}
 public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
@@ -14,6 +8,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public Pathing pathing;
     public Alliance flag;
     public Detection detection;
+    public CombatStats stats;
     public CombatStatus combatStatus;
 
     public bool IsPlayer { get { return flag.allianceId == 0; } }
@@ -43,7 +38,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public int maxHp = 5;
-    public int hp = 5;
+    public int logHp;
+    public int hp { get { return stats.GetSum(CombatStatType.Hp); } } //set { stats.Set(CombatStatType.Hp, value); logHp = value; } }
 
     public int maxActions = 2;
     int actionsLeft = 2;
@@ -60,18 +56,18 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     //public Weapon equippedWeapon;
 
     public HpUIController hpUI;
+    //internal int materials;
 
+    public int logTemporaryArmor;
+    public int temporaryArmor { get { return stats.GetSum(CombatStatType.Armor); } }// set { stats.Set(CombatStatType.Armor, value); logTemporaryArmor = value; } }
 
-    internal int materials;
+    public Vector3 snapPos { get { return GridManager.SnapPoint(transform.position); } }
 
-    // Collector class -- armor. It's effect is lost at beginning of next turn.
-    public int temporaryArmor;
     public bool attacking = false;
 
     bool init = false;
     public int factionId;
     internal int loyalty;
-    //internal GridItem curSlot;
 
     private void Start() {
         Init();
@@ -83,7 +79,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         ResetActions();
         //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
         if (CombatManager.m) {
-            hp = maxHp;
+            //hp = maxHp;
+            stats.Increase(null, CombatStatType.Hp, maxHp);
             Vector3 snapPos = GridManager.SnapPoint(transform.position);
             //curSlot = slot;
             transform.position = snapPos;
@@ -127,22 +124,32 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void OnTurnStart() {
         ResetActions();
-        ResetGreyHp();
+        attacking = false;
+        //ResetGreyHp();
     }
-    public void AddShield(int armorAmount) {
-        temporaryArmor += armorAmount;
+    /*public void AddShield(int armorAmount) {
+        temporaryArmor = Mathf.Clamp(temporaryArmor + armorAmount, 0, 10);
+        hpUI.ShowHpWithGrey(hp, temporaryArmor);
+
+    }*/
+
+    public void AddShield(AttackDataType abilitySource, int armorAmount) {
+        stats.Set(abilitySource, CombatStatType.Armor, temporaryArmor + armorAmount);
+        
+
+        //temporaryArmor = Mathf.Clamp(temporaryArmor + armorAmount, 0, 10);
         hpUI.ShowHpWithGrey(hp, temporaryArmor);
 
     }
 
-    internal void RemoveShield() {
+    /*internal void RemoveShield() {
         temporaryArmor = 0;
         hpUI.ShowHpWithGrey(hp, temporaryArmor);
-    }
-    private void ResetGreyHp() {
+    }*/
+    /*private void ResetGreyHp() {
         temporaryArmor = 0;
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
-    }
+    }*/
 
     public void ResetActions(int val=-1) {
         if (val == -1)
@@ -175,13 +182,14 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         PlayerFlag.m.activeAbility = abilities.move2;
     }
 
-    internal void AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
+    internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
         if (atk == abilities.move2) {
             if (!u) {
                 Debug.Log("Executing move action");
                 MoveAction(attackedSlot);
+                return 1;
             }
         } else {
             if ((atk.requiresUnit && u == null) || attacking) {
@@ -191,7 +199,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 if (atk.requiresUnit && u == null) {
                     Debug.Log("This attack requires unit, no unit there. action aborted.");
                 }
-                return;
+                return -1;
             }
             Debug.Log("Executing attack " + atk.o_attackName);
             actionsLeft -= atk.actionCost;
@@ -199,17 +207,9 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             AttackData2.UseAttack(this, attackedSlot, atk);
 
             AttackAnimations(atk);
-
+            return 2;
         }
-    }
-
-    public void DeEquip() {
-        /*if (equippedWeapon) {
-            equippedWeapon.transform.position = equippedWeapon.transform.position + new Vector3(0, -0.1f);
-            equippedWeapon.transform.parent = null;
-            equippedWeapon.dropped = true;
-            equippedWeapon = null;
-        }*/
+        return -1;
     }
     public void Equip(Weapon wep) {
         /*equippedWeapon = wep;
@@ -242,10 +242,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         StartCoroutine(WaitAttack(len));
     }
 
-    internal void RestoreAP(object p) {
-        throw new NotImplementedException();
-    }
-
     IEnumerator WaitAttack(float len) {
         attacking = true;
         yield return new WaitForSeconds(len);
@@ -255,12 +251,18 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public void GetDamaged(int realDmg) {
         if (dead) return;
         int dmgToHp = realDmg;
+
         if (realDmg > 0) {
             dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);
-            int armorLeft = Mathf.Clamp(temporaryArmor - realDmg, 0, temporaryArmor);
-            temporaryArmor = armorLeft;
+            //int armorLeft = Mathf.Clamp(temporaryArmor - realDmg, 0, temporaryArmor);
+            stats.Reduce(CombatStatType.Armor, realDmg);
+            Debug.Log(temporaryArmor);
+            //temporaryArmor = armorLeft;
         }
-        hp = Mathf.Clamp(hp - dmgToHp, 0, maxHp);
+
+        stats.Set(null, CombatStatType.Hp, Mathf.Clamp(hp - dmgToHp, 0, maxHp));
+        //hp = Mathf.Clamp(hp - dmgToHp, 0, maxHp);
+
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
         if (hp <= 0) {
             StartCoroutine(Death());
@@ -273,10 +275,5 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         FlagManager.DeRegisterUnit(this);
         Destroy(gameObject);
     }
-    
-    
 
-    internal bool CanAttackWith(AttackData curAttack) {
-        return curAttack.actionCost <= actionsLeft;
-    }
 }

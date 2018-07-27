@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+
 [System.Serializable]
 public sealed class AttackData2 : StdAttackData {
     public string o_attackName;
@@ -10,6 +11,7 @@ public sealed class AttackData2 : StdAttackData {
     public StandardAttackData standard;
     public AOEAttackData aoe;
     public BUFFAttackData buff;
+    public EmpowerAlliesData aura;
 
     public GridMask AttackMask {
         get {
@@ -86,7 +88,7 @@ public sealed class AttackData2 : StdAttackData {
 
     private static void ActivateBuff(Unit source, BUFFAttackData buff) {
         if (buff.buffType == BuffType.Shielded) {
-            source.AddShield(buff.armorAmt);
+            source.AddShield(buff, buff.armorAmt);
         }
     }
 

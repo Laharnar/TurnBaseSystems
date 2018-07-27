@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,6 +47,7 @@ public class CombatManager : MonoBehaviour {
             for (int j = 0; j < FlagManager.flags.Count; j++) {
                 activeFlagTurn = j;
 
+                OnTurnStart(j);
                 for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
                     FlagManager.flags[j].units[i].OnTurnStart();
                 }
@@ -82,6 +84,18 @@ public class CombatManager : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
+    private void OnTurnStart(int allianceId) {
+        for (int i = 0; i < units.Count; i++) {
+            for (int j = 0; j < units[i].abilities.additionalAbilities2.Count; j++) {
+                EmpowerAlliesData aura = units[i].abilities.additionalAbilities2[j].aura;
+                if (units[i].abilities.additionalAbilities2[j].aura.used) {
+                    aura.DeEffectArea(units[i].snapPos);
+                    aura.EffectArea(units[i].snapPos);
+                }
+            }
+        }  
+    }
+
     private void OnTurnEnd(int j) {
          BuffManager.ConsumeBuffs(j);
     }
@@ -89,6 +103,38 @@ public class CombatManager : MonoBehaviour {
     public static void OnUnitExecutesAction(Unit unit) {
         foreach (var items in FactionCheckpoint.checkpointsInLevel) {
             items.CheckpointCheck(unit);
+        }
+        CombatManager.m.UnitNullCheck();
+    }
+
+    public static void CombatAction(Unit selectedPlayerUnit, Vector3 hoveredSlot, AttackData2 activeAbility) {
+        Vector3 curPos = GridManager.SnapPoint(selectedPlayerUnit.transform.position);
+        int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
+        if (action == 1) {// move
+            OnUnitExecutesMoveAction(curPos, hoveredSlot, selectedPlayerUnit);
+        }
+    }
+
+    public static void OnUnitExecutesMoveAction(Vector3 oldPos, Vector3 newPos, Unit unit) {
+        // on enter - on exit.
+        
+        // has to get all auras in old pos, and all auras in new pos, then apply new effect and lose old
+        // for unit pos get all auras - all units - all abilities - in mask check - save m*n
+        foreach (var combatUnit in m.units) {
+            Vector3 snap = GridManager.SnapPoint(combatUnit.transform.position);
+            foreach (var ability in combatUnit.abilities.additionalAbilities2) {
+                if (ability.aura.used) {
+                    bool inOld = ability.aura.auraRange.IsPosInMask(snap, oldPos);
+                    bool inNew = ability.aura.auraRange.IsPosInMask(snap, newPos);
+                    bool changedAura=oldPos!=newPos;
+                    if (inOld && !inNew) {
+                        ability.aura.LoseEffect(unit);
+                    }
+                    if (!inOld && inNew) {
+                        ability.aura.Effect(unit);
+                    }
+                }
+            }
         }
     }
 

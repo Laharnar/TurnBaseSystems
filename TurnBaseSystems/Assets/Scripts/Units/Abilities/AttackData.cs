@@ -72,8 +72,8 @@ public sealed class AttackData : StdAttackData {
                 }*/
                 break;
             case AttackType.Hunker:
-                source.AddShield(attackData.armorAmount);
-                source.RestoreAP(attackData.restoresAp);
+                /*source.AddShield(attackData.armorAmount);
+                source.RestoreAP(attackData.restoresAp);*/
                 break;
             case AttackType.Pickup:
                 /*if (attackedSlot.fillAsPickup) {
@@ -107,10 +107,10 @@ public sealed class AttackData : StdAttackData {
                     source.equippedWeapon.Enhance(attackData.numOfTurns);
                 break;*/
             case AttackType.Building:
-                if (!attackedSlot.fillAsStructure) {
+                /*if (!attackedSlot.fillAsStructure) {
                     source.materials = 0;
                     BuildingManager.m.CreateWall(attackedSlot);
-                }
+                }*/
                 break;
             case AttackType.Deconstruct:
                 /*if (attackedSlot.fillAsStructure) {

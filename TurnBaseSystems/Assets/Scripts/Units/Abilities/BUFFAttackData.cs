@@ -1,5 +1,4 @@
 ﻿using System;
-
 [System.Serializable]
 public class BUFFAttackData : AttackDataType {
 
@@ -13,8 +12,10 @@ public class BUFFAttackData : AttackDataType {
         BUFFAttackData buff = new BUFFAttackData();
         buff.turns = turns;
         buff.buffType = buffType;
+        buff.armorAmt = armorAmt;
         buff.endBuffStatus = endBuffStatus;
         buff.endAnimSets = endAnimSets;
         return buff;
     }
 }
+

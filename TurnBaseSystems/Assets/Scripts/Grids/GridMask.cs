@@ -8,6 +8,7 @@ public class GridMask :UnityEngine.ScriptableObject {
     public int w, l;
     public BoolArr[] mask;
 
+
     public bool rotateable = false;
 
     public float Range { get { return Mathf.Max(w, l); } }
@@ -118,6 +119,23 @@ public class GridMask :UnityEngine.ScriptableObject {
         return false;
     }
 
+    internal Unit[] GetUnits(Vector3 start) {
+        start = GridManager.SnapPoint(start) - (Vector3)HalfDiagonal;
+        List<Unit> pos = new List<Unit>();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                Vector3 p = new Vector3(i * GridManager.m.itemDimensions.x,
+                        j * GridManager.m.itemDimensions.y)
+                        + start;
+                Unit u = GridAccess.GetUnitAtPos(p);
+                if (mask[i].col[j] && u) {
+                    pos.Add(u);
+                }
+            }
+        }
+        return pos.ToArray();
+    }
+
     /// <summary>
     /// Note: Mask must be marked as rotateable
     /// </summary>
@@ -164,6 +182,24 @@ public class GridMask :UnityEngine.ScriptableObject {
                         j * GridManager.m.itemDimensions.y)
                         + start;
                 if (mask[i].col[j] && !GridAccess.GetUnitAtPos(p)) {
+
+                    pos.Add(p);
+                }
+            }
+        }
+        return pos.ToArray();
+    }
+
+
+    internal Vector3[] GetTakenPositions(Vector3 start) {
+        start = GridManager.SnapPoint(start) - (Vector3)HalfDiagonal;
+        List<Vector3> pos = new List<Vector3>();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < l; j++) {
+                Vector3 p = new Vector3(i * GridManager.m.itemDimensions.x,
+                        j * GridManager.m.itemDimensions.y)
+                        + start;
+                if (mask[i].col[j] && GridAccess.GetUnitAtPos(p)) {
 
                     pos.Add(p);
                 }

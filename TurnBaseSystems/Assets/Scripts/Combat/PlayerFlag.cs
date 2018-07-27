@@ -112,8 +112,8 @@ public class PlayerFlag : FlagController {
 
                         //ResetColorForUnit(selectedPlayerUnit, curFilter);
                         //ResetColorForUnit(selectedPlayerUnit, curAoeFilter);
-                        selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
-                        OnUnitExectutesAction();
+                        CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
+                        OnPlayerUnitExectutesAction();
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
 
                         GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
@@ -188,12 +188,11 @@ public class PlayerFlag : FlagController {
             GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
         }
     }
-    private void OnUnitExectutesAction() {
+    private void OnPlayerUnitExectutesAction() {
         DisplayGrid();
 
         ShowUI();// update with buttons are enabled
 
-        CombatManager.m.UnitNullCheck();
     }
 
     private void ShowUI() {
