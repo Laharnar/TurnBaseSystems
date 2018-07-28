@@ -40,7 +40,6 @@ public class CombatStats {
     public void Reduce(AttackDataType buffSource, CombatStatType type, int amount) {
         for (int i = 0; i < powers.Count; i++) {
             if (powers[i].dataSource == buffSource) {
-                Debug.Log("Found match removing " + amount);
                 if (powers[i].Consume(type, ref amount)) {
                     powers.RemoveAt(i);
                     i--;

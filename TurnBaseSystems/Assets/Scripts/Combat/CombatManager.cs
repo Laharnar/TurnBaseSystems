@@ -84,13 +84,13 @@ public class CombatManager : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
-    private void OnTurnStart(int allianceId) {
+    public void OnTurnStart(int allianceId) {
         for (int i = 0; i < units.Count; i++) {
             for (int j = 0; j < units[i].abilities.additionalAbilities2.Count; j++) {
                 EmpowerAlliesData aura = units[i].abilities.additionalAbilities2[j].aura;
                 if (units[i].abilities.additionalAbilities2[j].aura.used) {
-                    aura.DeEffectArea(units[i].snapPos);
-                    aura.EffectArea(units[i].snapPos);
+                    aura.DeEffectArea(units[i].snapPos, units[i], true);
+                    aura.EffectArea(units[i].snapPos, units[i]);
                 }
             }
         }  
@@ -117,21 +117,34 @@ public class CombatManager : MonoBehaviour {
 
     public static void OnUnitExecutesMoveAction(Vector3 oldPos, Vector3 newPos, Unit unit) {
         // on enter - on exit.
-        
-        // has to get all auras in old pos, and all auras in new pos, then apply new effect and lose old
-        // for unit pos get all auras - all units - all abilities - in mask check - save m*n
+        // deapply and reapply auras from this all unit to all others
+        Vector3 unit1Snap = GridManager.SnapPoint(unit.transform.position);
+        foreach (var ability in unit.abilities.additionalAbilities2) {
+            if (ability.aura.used) {
+                bool inOld = ability.aura.auraRange.IsPosInMask(unit1Snap, oldPos);
+                bool inNew = ability.aura.auraRange.IsPosInMask(unit1Snap, newPos);
+                ability.aura.DeEffectArea(oldPos, unit, true);
+                ability.aura.EffectArea(newPos, unit);
+                Debug.Log("effect defect");
+            }
+        }
+
+        // find auras that affected this unit at old pos, and add at new pos
         foreach (var combatUnit in m.units) {
             Vector3 snap = GridManager.SnapPoint(combatUnit.transform.position);
-            foreach (var ability in combatUnit.abilities.additionalAbilities2) {
-                if (ability.aura.used) {
-                    bool inOld = ability.aura.auraRange.IsPosInMask(snap, oldPos);
-                    bool inNew = ability.aura.auraRange.IsPosInMask(snap, newPos);
-                    bool changedAura=oldPos!=newPos;
-                    if (inOld && !inNew) {
-                        ability.aura.LoseEffect(unit);
-                    }
-                    if (!inOld && inNew) {
-                        ability.aura.Effect(unit);
+            if (combatUnit != unit) {
+                foreach (var ability in combatUnit.abilities.additionalAbilities2) {
+                    if (ability.aura.used) {
+                        bool inOld = ability.aura.auraRange.IsPosInMask(snap, oldPos);
+                        bool inNew = ability.aura.auraRange.IsPosInMask(snap, newPos);
+                        if (inOld && !inNew) {
+                            ability.aura.LoseEffect(unit);
+                            Debug.Log("Lose effect");
+                        }
+                        if (!inOld && inNew) {
+                            ability.aura.Effect(unit);
+                            Debug.Log("Add effect");
+                        }
                     }
                 }
             }

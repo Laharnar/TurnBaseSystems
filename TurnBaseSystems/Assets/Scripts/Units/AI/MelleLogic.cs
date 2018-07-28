@@ -31,8 +31,8 @@ public class MelleLogic : AiLogic {
         }
         if (targetMovePos != selfPos)
         {
-            Debug.Log("Moving to " + targetMovePos);
-            CombatManager.CombatAction(unit, enemyPos, unit.abilities.move2);
+            Debug.Log("Moving to " + targetMovePos, unit);
+            CombatManager.CombatAction(unit, targetMovePos, unit.abilities.move2);
             //unit.MoveAction(targetMovePos);
             while (unit.moving) {
                 yield return null;

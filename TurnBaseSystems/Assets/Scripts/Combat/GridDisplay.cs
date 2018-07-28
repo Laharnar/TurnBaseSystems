@@ -41,7 +41,7 @@ public class GridDisplay {
 
     public static void HideGrid(Unit unit, params GridMask[] mask) {
         if (unit == null) {
-            Debug.Log("Null unit.");
+            Debug.Log("Hide grid/ Null unit.");
             return;
         }
         for (int i = 0; i < allGrids.Count; i++) {

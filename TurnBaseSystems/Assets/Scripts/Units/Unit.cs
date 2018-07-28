@@ -186,7 +186,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
         if (atk == abilities.move2) {
-            if (!u) {
+            if (u == null) {
                 Debug.Log("Executing move action");
                 MoveAction(attackedSlot);
                 return 1;

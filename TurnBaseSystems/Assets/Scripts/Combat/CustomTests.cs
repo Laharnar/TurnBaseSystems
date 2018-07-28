@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 public class CustomTests: MonoBehaviour {
     static CustomTests m;
     int i=4;
@@ -96,7 +98,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks3d", comstat.GetSum(CombatStatType.Hp), 3);
 
             }
-            if (true) {
+            if (false) {
                 GameObject witchObj = GameObject.Find("UNIT _ consumer _ Infested Witch(Clone)");
                 // empower test
                 Unit witch = witchObj.GetComponent<Unit>();
@@ -113,10 +115,85 @@ public class CustomTests: MonoBehaviour {
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
 
             }
+            if (false) {
+                GameObject witchObj = GameObject.Find("UNIT _ consumer _ Infested Witch(Clone)");
+                // empower test
+                Unit witch = witchObj.GetComponent<Unit>();
+                AttackData2 atk = witch.abilities.additionalAbilities2[1];
+                CombatStats comstat = witch.stats;
+                int x = 3;
+                witch.OnTurnStart();
+                witch.AddShield(atk.buff, atk.buff.armorAmt);
+                Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
+                BuffManager.Register(witch, atk.buff);
+                BuffManager.ConsumeBuffs(1);
+                //witch.AddShield(atk.buff, -atk.buff.armorAmt);
+                Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
+                //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
+
+            }
+            StartCoroutine(SlowTests());
+            
         }
         i--;
         
     }
+
+    private IEnumerator SlowTests() {
+        if (false) {
+            GameObject dekuriongo = GameObject.Find("DEKURIONMelleUNIT");
+            GameObject mellego = GameObject.Find("MelleUNIT (7)");
+            Unit dekurion = dekuriongo.GetComponent<Unit>();
+            Unit melee = mellego.GetComponent<Unit>();
+            CombatStats comstat1 = dekurion.stats;
+            CombatStats comstat2 = melee.stats;
+            dekuriongo.transform.position = new Vector3(0, 1,0);
+            mellego.transform.position = new Vector3(1, 0, 0);
+            CombatManager.m.OnTurnStart(1);
+            Test("Auras1a", comstat1.GetSum(CombatStatType.Armor), 1);
+            Test("Auras1b", comstat2.GetSum(CombatStatType.Armor), 1);
+            yield return new WaitForSeconds(2);
+            dekurion.abilities.additionalAbilities2[1].aura.EffectArea(dekurion.transform.position, dekurion);
+            dekurion.abilities.additionalAbilities2[1].aura.EffectArea(dekurion.transform.position, dekurion);
+            dekurion.abilities.additionalAbilities2[1].aura.EffectArea(dekurion.transform.position, dekurion);
+            Test("Auras6a", comstat1.GetSum(CombatStatType.Armor), 4);
+            yield return new WaitForSeconds(2);
+
+            dekurion.abilities.additionalAbilities2[1].aura.DeEffectArea(dekurion.transform.position, dekurion,true);
+            dekurion.abilities.additionalAbilities2[1].aura.DeEffectArea(dekurion.transform.position, dekurion,true);
+            dekurion.abilities.additionalAbilities2[1].aura.DeEffectArea(dekurion.transform.position, dekurion,true);
+            Test("Auras6b", comstat1.GetSum(CombatStatType.Armor), 1);
+
+            yield return new WaitForSeconds(2);
+
+            EmpowerAlliesData aura1 = dekurion.abilities.additionalAbilities2[1].aura;
+            dekurion.transform.position = new Vector3(-10, 1, 0);
+            CombatManager.OnUnitExecutesMoveAction(new Vector3(), new Vector3(-10, 1, 0), dekurion);
+            Test("AurasSourceMoveOut2a", comstat1.GetSum(CombatStatType.Armor), 1);
+            Test("AurasSourceMoveOut2b", comstat2.GetSum(CombatStatType.Armor), 0);
+            yield return new WaitForSeconds(2);
+
+            melee.transform.position = new Vector3(-9, 0, 0);
+            CombatManager.OnUnitExecutesMoveAction(new Vector3(1, 0, 0), new Vector3(-9, 0, 0), melee);
+            Test("NonAuraMoveINAura3a", comstat1.GetSum(CombatStatType.Armor), 1);
+            Test("NonAuraMoveINAura3b", comstat2.GetSum(CombatStatType.Armor), 1);
+            yield return new WaitForSeconds(2);
+
+            melee.transform.position = new Vector3(0, 0, 0);
+            CombatManager.OnUnitExecutesMoveAction(new Vector3(-9,0,0), new Vector3(0, 0, 0), melee);
+            Test("NonAuraMoveOut4a", comstat1.GetSum(CombatStatType.Armor), 1);
+            Test("NonAuraMoveOut4b", comstat2.GetSum(CombatStatType.Armor), 0);
+            yield return new WaitForSeconds(2);
+
+            dekurion.transform.position = new Vector3(-1, 1, 0);
+            CombatManager.OnUnitExecutesMoveAction(new Vector3(-10, 1, 0), new Vector3(-1, 1, 0), dekurion);
+            Test("AuraMoveIn3a", comstat1.GetSum(CombatStatType.Armor), 1);
+            Test("AuraMoveIn3b", comstat2.GetSum(CombatStatType.Armor), 1);
+            yield return new WaitForSeconds(2);
+        }
+        yield return null;
+    }
+
     private static void Print(string context, bool data) {
         Debug.Log(context+" "+data);
     }
@@ -139,6 +216,11 @@ public class CustomTests: MonoBehaviour {
             }
         }
         
+    }
+    private static void Test(string context, bool result, bool expected) {
+        if (result != expected) {
+            Debug.LogError("Test (" + context + ") failed: expected:" + expected + " r:" + result);
+        }
     }
     private static void Test(string context, Vector3 result, Vector3 expected) {
         if (result != expected) {
