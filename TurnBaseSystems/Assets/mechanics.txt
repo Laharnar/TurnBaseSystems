@@ -509,3 +509,112 @@ and mixed classes
 enemies could use civilians.
 *********************
 dark blood abilities and shiny cute ones.
+
+
+29.07.2018
+Playtesting level 4 - cityCenter
+movement je boring, and too long - cut it? simplify it rpg-like
+
+but combat isn't - this is good
+
+z magi vse lahko clearaš - MR, prediction
+
+uniti imajo samo 1 kombinacijo
+včasih imaš občutek da bi hotel še 1 attack več, npr move+attack+invis
+but not attack attack invis
+the go in and out is good, you figure out the restrictions... but it feels like
+assasin should be able to move and attack and then disengage
+
+maybe add a dash. but the fact is that it can be solved with planning. that's the
+kind of char it is. high risk, low options.
+or cutthroat instakill passive, to take full effect of invisibility + prediction
+but only twice per mission
+replaced by backstab or dash after
+
+mages higher range
+
+
+there is only 1 possible playstyle per character formation.
+and it's completly dependent on their skills.
+
+option 1: passive
+
+option 2: flip mode - a different casting mode
+this would give them a different set of skills, specialized for different situation
+essentially give a different playstyle, different character in mission.
+
+this would mean we need to design differnt situations.
+
+how about always have the same core identity for the character, but different skills.
+
+each character can be used for 2 playstyles, primary, 
+is the identity, secondary, is specialization
+
+and it was immersive... you could see each character's role in the team. 
+It was visible playing in the head, how the interactions should go
+but you wish it could be more. that it could do a little more. 
+that you could use it a bit differently.
+that's good.
+i could give that through quest.
+or just provide it.
+the fact is however, this team, provides this style.
+pick a different team if you want different style.
+it's slightly simplistic.
+****
+make the enemies like a puzzle? dodging could achieve that.
+certain slots, dodge in certain direction, when seeing the prediction shot.
+field of vision.
+
+
+******************
+normal playstyle
+instant attack
+
+prediction playstyle
+reaction shot - predict the enemy move
+snipe
+
+nuke playstyle
+aoe
+
+tank playstyle
+block
+parry
+
+non-agressive playstyle
+talk
+charm aura
+
+surviviability playstyle
+heal
+parry
+
+support playstyle
+aura
+buff
+
+assasinate playstyle
+cutthroat
+
+delayed playstyle
+charge attack
+
+life and death playstyle
+
+movement playstyle
+dash
+phase
+
+******************
+
+tank+predictor = use shield to predict how attacks will come. 
+correctly predicted chain will be blocked. after mistakes you still get some damage.
+
+****
+i think i should add prediction shots
+it will be really interesting to know how to bait the enemy, into assasin backstab...
+and it will add the complexity to learn their behaviour over repeating.
+you will notice the pattern.
+
+instead of increasing range, you could make it an optionally casting shot
+when not casted, just a simple cleanup shot

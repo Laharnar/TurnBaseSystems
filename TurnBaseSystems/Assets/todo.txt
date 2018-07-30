@@ -287,3 +287,18 @@ map missions get enabled 1 by 1, like levels
 combat: 
 spells are enabled only if you have enough energy
 also next unit button that jumps to next free unit or ends turn, shows how many units are still avliable
+
+30.7.2018 experimental
+wave spawner
+spawn area with spawn points
+it's tiring to work on all this...
+too much work for just me.
+
+
+let's change to epibf formula
+spawn in waves
+after each level is cleared
+
+the turn based part is good.
+
+

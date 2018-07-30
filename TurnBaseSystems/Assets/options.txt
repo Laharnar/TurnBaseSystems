@@ -34,3 +34,15 @@ save rewards into file
 have a mission xml template(description, scene name, mission reward)
 
 checkpoint rewards are set per house type and size
+
+units turn towards target
+
+assasin - dash
+assasin - passive backstab
+
+well this will give them full arsenal-move, 3 abilities, and passive
+
+core identity invis, strong basic, safety/offensive dash, assasination passive
+
+i feel like enemies are kinda simplistic
+dodging would improve that

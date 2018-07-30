@@ -19,6 +19,8 @@ public class CharacterLibrary:MonoBehaviour {
     }
 
     internal static Transform[] CreateInstances(int[] team) {
+        if (!m)
+            return new Transform[0];
         Transform[] instances = new Transform[team.Length];
         for (int i = 0; i < team.Length; i++) {
             Transform t = m.GetInstance(team[i]);
@@ -28,6 +30,8 @@ public class CharacterLibrary:MonoBehaviour {
     }
 
     internal static Transform[] CreateInstances(Character[] team) {
+        if (!m)
+            return new Transform[0];
         Transform[] instances = new Transform[team.Length];
         for (int i = 0; i < team.Length; i++) {
             Transform t = m.GetInstance(team[i]);

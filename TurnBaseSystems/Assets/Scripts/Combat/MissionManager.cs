@@ -11,7 +11,7 @@ public class MissionManager:MonoBehaviour {
     public Transform missionEndScreen_child;
     public Text missionEndScreenText;
 
-    private void Awake() {
+    private void Start() {
         m = this;
 
         if (GameRun.current == null)

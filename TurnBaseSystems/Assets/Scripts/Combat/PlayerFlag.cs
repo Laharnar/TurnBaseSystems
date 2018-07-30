@@ -53,9 +53,39 @@ public class PlayerFlag : FlagController {
     public override IEnumerator FlagUpdate() {
         m = this;
         NullifyUnits();
-
+        bool walkMode = false;
         while (true) {
             if (Input.GetKeyDown(KeyCode.Return)) break;
+
+            // Swap between combat and walk
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                if (!PlayerDetected())
+                    walkMode = !walkMode;
+                if (!walkMode) {
+                    for (int i = 0; i < units.Count; i++) {
+                        units[i].transform.position = GridManager.SnapPoint(units[i].transform.position);
+                    }
+                }
+            }
+            // Walk mode
+            if (walkMode) {
+                Vector2 moveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+                for (int i = 0; i < units.Count; i++) {
+                    units[i].transform.Translate(moveDir);
+                }
+                if (PlayerDetected()) {
+                    walkMode = false;
+                    for (int i = 0; i < units.Count; i++) {
+                        units[i].transform.position = GridManager.SnapPoint(units[i].transform.position);
+                    }
+                    yield return new WaitForSeconds(1);
+                } else {
+                    yield return null;
+                    continue;
+                }
+            }
+
+
             GridDisplay.TmpHideGrid(hoveredSlot, GridMask.One);
 
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
@@ -163,6 +193,10 @@ public class PlayerFlag : FlagController {
             }
         }
         yield return null;
+    }
+
+    private bool PlayerDetected() {
+        return FlagManager.flags[1].DetectedSomeone;
     }
 
     private void RecalcFulters() {
