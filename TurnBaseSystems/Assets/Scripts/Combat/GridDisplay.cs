@@ -4,26 +4,26 @@ using UnityEngine;
 public class GridDisplay {
     static List<Grid> allGrids = new List<Grid>();
     static List<Unit> allUnits = new List<Unit>();
-    static Vector3 tmpGridPos;
-    static Grid tmpGrid;
+    static Vector3[] tmpGridPos = new Vector3[3];
+    static Grid[] tmpGrid = new Grid[3];
 
-    internal static void TmpDisplayGrid(Vector3 vector3, int v, GridMask mask) {
+    internal static void TmpDisplayGrid(int id, Vector3 vector3, int v, GridMask mask) {
         Vector3 position = GridManager.SnapPoint(vector3, true);
-        tmpGridPos = position;
-        if (tmpGrid != null)
-            TmpHideGrid(vector3, mask);
+        tmpGridPos[id] = position;
+        if (tmpGrid[id] != null)
+            TmpHideGrid(id , vector3, mask);
         if (mask != null) {
             Grid g = GridManager.NewGridInstance(position, mask);
             g.ShowColor(v);
-            tmpGrid = g;
+            tmpGrid[id] = g;
         }
     }
 
-    internal static void TmpHideGrid(Vector3 vector3, GridMask mask) {
+    internal static void TmpHideGrid(int id, Vector3 vector3, GridMask mask) {
         //Vector3 position = GridManager.SnapPoint(vector3);
-        if (tmpGrid != null) {
-            tmpGrid.HalfRemove(null);
-            tmpGrid = null;
+        if (tmpGrid[id] != null) {
+            tmpGrid[id].HalfRemove(null);
+            tmpGrid[id] = null;
         }
     }
 
@@ -54,12 +54,6 @@ public class GridDisplay {
                 }
             }
         }
-        /*Debug.Log("visuals disabled 1");
-        return;
-        for (int i = 0; i < mask.Length; i++) {
-            if (grids.ContainsKey(unit) && grids[unit] != null)
-                grids[unit].ShowColor(0);
-        }*/
     }
 }
 

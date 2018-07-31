@@ -167,36 +167,22 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             }
         }
     }
-
-    public void EquipAction(Weapon wep) {
-        Equip(wep);
-    }
-
-    public void PassWeapon(Weapon wep, Unit otherUnit) {
-        //equippedWeapon = null;
-        wep.dropped = false;
-        wep.transform.position = otherUnit.transform.position;
-        wep.transform.parent = otherUnit.transform;
-        //otherUnit.equippedWeapon = wep;
-
-        PlayerFlag.m.activeAbility = abilities.move2;
-    }
-
+    
     internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
         if (atk == abilities.move2) {
             if (u == null) {
                 Debug.Log("Executing move action");
-                MoveAction(attackedSlot);
+                MoveAction(attackedSlot, atk);
                 return 1;
             }
         } else {
-            if ((atk.requiresUnit && u == null) || attacking) {
+            if ((atk.requirements== AttackRequirments.RequiresUnit && u == null) || attacking) {
                 if (attacking) {
                     Debug.Log("Already attacking. action aborted.");
                 }
-                if (atk.requiresUnit && u == null) {
+                if (atk.requirements == AttackRequirments.RequiresUnit && u == null) {
                     Debug.Log("This attack requires unit, no unit there. action aborted.");
                 }
                 return -1;
@@ -211,24 +197,19 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         }
         return -1;
     }
-    public void Equip(Weapon wep) {
-        /*equippedWeapon = wep;
-        equippedWeapon.dropped = false;
-        equippedWeapon.transform.position = transform.position;
-        equippedWeapon.transform.parent = transform;
-        */
-        PlayerFlag.m.activeAbility = abilities.move2;
-    }
-
-    public void MoveAction(Vector3 slot) {
+    public void MoveAction(Vector3 slot, AttackData2 action) {
         if (moving) return;
-        actionsLeft-=abilities.move2.actionCost;
+        CostActions(action);
         Move(slot);
     }
 
-    private void Move(Vector3 slot) {
+    private void CostActions(AttackData2 move2) {
+        actionsLeft -= move2.actionCost;
+    }
+
+    public void Move(Vector3 targetPos) {
         if (moving ) return;
-        pathing.GoToCoroutine(this, slot);
+        StartCoroutine(pathing.GoTo(this, targetPos, "Walk"));
     }
 
     void AttackAnimations(AttackData2 attack) {

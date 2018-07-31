@@ -6,25 +6,23 @@ public class PlayerFlag : FlagController {
     
     public static PlayerFlag m;
 
-    Unit selectedPlayerUnit;
-    Unit selectedUnit;
-    Vector3 selectedSlot;
+    public static Unit selectedPlayerUnit;
+    public static Unit selectedUnit;
+    public static Vector3 selectedAttackSlot;
 
-    Unit hoveredUnit;
-    Unit lastHoveredUnit;
-    Vector3 hoveredSlot;
+    public static Unit hoveredUnit;
+    public static Unit lastHoveredUnit;
+    public static Vector3 hoveredSlot;
 
     int lastAbilityId;
     int activeAbilityId;
     //public AttackData activeAbility;
-    public AttackData2 activeAbility;
-    private GridMask curFilter;
+    public static AttackData2 activeAbility;
 
     /// <summary>
     /// Don't edit outside this script.
     /// </summary>
     public int mouseDirection = 0;
-    private GridMask curAoeFilter;
 
     bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
 
@@ -35,8 +33,6 @@ public class PlayerFlag : FlagController {
         lastHoveredUnit = null;
         lastAbilityId = 0;
         activeAbilityId = 0;
-        curFilter = null;
-        curAoeFilter = null;
     }
 
     public Unit[] VisibleUnits {
@@ -58,6 +54,7 @@ public class PlayerFlag : FlagController {
             if (Input.GetKeyDown(KeyCode.Return)) break;
 
             // Swap between combat and walk
+            #region Walk mode
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!PlayerDetected())
                     walkMode = !walkMode;
@@ -83,25 +80,34 @@ public class PlayerFlag : FlagController {
                     yield return null;
                     continue;
                 }
-            }
+            } 
+            #endregion
 
 
-            GridDisplay.TmpHideGrid(hoveredSlot, GridMask.One);
+            GridDisplay.TmpHideGrid(0, hoveredSlot, GridMask.One);
+            Vector3 lastHoveredSlot = hoveredSlot;
 
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
-            if (!selectedPlayerUnit || hoveredSlot != selectedSlot)
-                GridDisplay.TmpDisplayGrid(hoveredSlot, 5, GridMask.One);
+            if (hoveredSlot != lastHoveredSlot)
+                CombatUI.OnMouseMoved();
+            // show yellow slot
+            if (!selectedPlayerUnit || hoveredSlot != selectedAttackSlot) {
+                CombatUI.OnMouseShow(hoveredSlot);
+            }
             if (MouseWheelRotate) {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
                 mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
 
                 if (selectedPlayerUnit) {
-                    GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+                    CombatUI.OnMouseScrolled();
+                    //AttackData2.HideGrid(selectedPlayerUnit, hoveredSlot, activeAbility);
+                    //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
 
-                    RecalcFulters();
-                    GridDisplay.DisplayGrid(selectedUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
-                    GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
+                    //RecalcFulters();
+                    //AttackData2.ShowGrid(selectedPlayerUnit, hoveredSlot, activeAbility);
+                    //GridDisplay.DisplayGrid(selectedUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
+                    //GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
                 }
             }
             WaitUnitSelection();
@@ -109,15 +115,17 @@ public class PlayerFlag : FlagController {
             // load avaliable filter for current ability
             if (selectedPlayerUnit) {
                 if ((selectedPlayerUnit.abilities.newVersion && activeAbility != null) || activeAbility != null) {
-                    RecalcFulters();
+                    //RecalcFulters();
                 }
             }
             if (Input.GetMouseButtonDown(1)) {
-                selectedSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
+                selectedAttackSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
             }
             // show abilities
             if (selectedUnit) {
-                GridDisplay.DisplayGrid(selectedUnit, selectedUnit.IsPlayer? 3: 2, GridMask.One);
+                //if (activeAbility!= null && curAoeFilter != null)
+                    //GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
+                //GridDisplay.DisplayGrid(selectedUnit, selectedUnit.IsPlayer? 3: 2, GridMask.One);
             }
             if (lastAbilityId != activeAbilityId) {
                /* GridDisplay.HideGrid(selectedUnit, curFilter, curAoeFilter);
@@ -127,26 +135,23 @@ public class PlayerFlag : FlagController {
                 GridDisplay.DisplayGrid(selectedUnit, 5, curAoeFilter);*/
             }
 
-            OnHover(hoveredUnit);
+            CombatUI.OnHover(hoveredUnit);
 
-            if (selectedSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
+            if (selectedAttackSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
                 if (selectedPlayerUnit.abilities.newVersion) {
                     if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
                         Debug.Log("NOT enough actions. Can't attack.");
                     }
                     if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
-                        && hoveredSlot != null && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, curFilter))
-                        { 
+                        && hoveredSlot != null 
+                        && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, GetMask(0)))
+                        {
                         //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
-                        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
-
-                        //ResetColorForUnit(selectedPlayerUnit, curFilter);
-                        //ResetColorForUnit(selectedPlayerUnit, curAoeFilter);
+                        CombatUI.OnBeginAttack();
+                        //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
                         CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
-                        OnPlayerUnitExectutesAction();
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
-
-                        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+                        CombatUI.OnPlayerUnitExectutesAction();
 
                         while (selectedPlayerUnit.moving) {
                             yield return null;
@@ -154,11 +159,8 @@ public class PlayerFlag : FlagController {
                         while (selectedPlayerUnit.attacking) {
                             yield return null;
                         }
-                        if (selectedPlayerUnit.ActionsLeft >= activeAbility.actionCost) {
-                            RecalcFulters();
-                            GridDisplay.DisplayGrid(selectedPlayerUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
-                            GridDisplay.DisplayGrid(selectedPlayerUnit, 4, curAoeFilter);
-                        }
+                        CombatUI.OnUnitFinishesAction(selectedPlayerUnit);
+                        
                         yield return null;
                     }
                 }
@@ -167,7 +169,8 @@ public class PlayerFlag : FlagController {
             // map decolor when unit run out of actions.
             if (selectedUnit) {
                 if (selectedUnit.NoActions || !selectedUnit.CanDoAnyAction) {
-                    GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+                    CombatUI.OnUnitRunsOutOfActions();
+                    //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
                     //ShowUI();
                 }
             }
@@ -179,9 +182,9 @@ public class PlayerFlag : FlagController {
             yield return null;
 
         }
-        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
         Reset();
-        ShowUI();
+        CombatUI.OnTurnComplete();
+        
         
         // Wait until all actions are complete
         for (int i = 0; i < units.Count; i++) {
@@ -199,41 +202,27 @@ public class PlayerFlag : FlagController {
         return FlagManager.flags[1].DetectedSomeone;
     }
 
-    private void RecalcFulters() {
+    GridMask GetMask(int i) {
         if (activeAbility == null)
-            return;
-        if (activeAbility.standard.used) {
-            curFilter = GridMask.RotateMask(activeAbility.AttackMask, mouseDirection);
-        } else {
-            curFilter = null;
+            return null;
+        if (i == 0) {
+            if (activeAbility.standard.used) {
+                return GridMask.RotateMask(activeAbility.AttackMask, mouseDirection);
+            } else if (activeAbility.move.used) {
+                return GridMask.RotateMask(activeAbility.move.range, mouseDirection);
+            } else {
+                return null;
+            }
         }
-        if (activeAbility.aoe.used) {
-            curAoeFilter = GridMask.RotateMask(activeAbility.aoe.aoeMask, mouseDirection);
-        } else {
-            curAoeFilter = null;
+        if (i == 1) {
+            if (activeAbility.aoe.used) {
+                return GridMask.RotateMask(activeAbility.aoe.aoeMask, mouseDirection);
+            } else {
+                return null;
+            }
         }
+        return null;
     }
-    void DisplayGrid() {
-        GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
-
-        if (selectedPlayerUnit.ActionsLeft >= activeAbility.actionCost) {
-            RecalcFulters();
-            GridDisplay.DisplayGrid(selectedUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
-            GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
-        }
-    }
-    private void OnPlayerUnitExectutesAction() {
-        DisplayGrid();
-
-        ShowUI();// update with buttons are enabled
-
-    }
-
-    private void ShowUI() {
-        UIManager.PlayerStandardUi(!selectedPlayerUnit && !selectedUnit);
-        UIManager.PlayerSelectAllyUnitUi(selectedPlayerUnit!= null && selectedUnit!= null, selectedPlayerUnit);
-    }
-
     
     private void WaitUnitSelection() {
         hoveredUnit = SelectionManager.GetUnitUnderMouse(hoveredSlot);
@@ -247,41 +236,26 @@ public class PlayerFlag : FlagController {
                 lastAbilityId = activeAbilityId;
                 activeAbilityId = 0;
 
-                ShowUI();
                 SetActiveAbility(selectedPlayerUnit, 0);
+
             }
+            CombatUI.OnSelectDifferentUnit();
+
         }
     }
-    
 
     internal void SetActiveAbility(Unit unitSource, int atkId) {
-        Debug.Log("Setting active ability "+ atkId);
+        Debug.Log("Setting active ability " + atkId);
         lastAbilityId = activeAbilityId;
         activeAbilityId = atkId;
         activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
 
-        DisplayGrid();
-    }
-
-    void OnHover(Unit unitSource) {
-
-        if (lastHoveredUnit && lastHoveredUnit != hoveredUnit && lastHoveredUnit != selectedPlayerUnit) {
-            GridDisplay.HideGrid(lastHoveredUnit);
-            // Color currently hovered unit depending on alliance
-            if (hoveredUnit && hoveredUnit != selectedPlayerUnit) {
-                if (hoveredUnit.flag.allianceId == 0) { // player, can select
-                    GridDisplay.DisplayGrid(hoveredUnit, 3, GridMask.One);
-                } else if (hoveredUnit.flag.allianceId != 0) { // enemy, maybe can attack
-                    GridDisplay.DisplayGrid(hoveredUnit, 2, GridMask.One);
-                }
-            }
-        }
-        lastHoveredUnit = hoveredUnit;
+        CombatUI.OnActiveAbilityChange();
     }
 
     private void DeselectUnit() {
         if (selectedUnit) {
-            GridDisplay.HideGrid(selectedUnit, curFilter, curAoeFilter);
+            CombatUI.OnUnitDeseleted();
             selectedUnit = null;
             selectedPlayerUnit = null;
             activeAbility = null;
@@ -300,3 +274,113 @@ public class PlayerFlag : FlagController {
     }
 }
 
+class CombatUI {
+
+    public static Unit lastHoveredUnit { get { return PlayerFlag.lastHoveredUnit; } set { PlayerFlag.lastHoveredUnit = value; } }
+    public static Unit hoveredUnit { get { return PlayerFlag.hoveredUnit; } }
+    public static Unit curPlayerUnit { get { return PlayerFlag.selectedPlayerUnit; } }
+    public static Unit curUnit { get { return PlayerFlag.selectedUnit; } }
+    public static AttackData2 activeAbility { get { return PlayerFlag.activeAbility; } }
+    public static Vector3 hoveredSlot { get { return PlayerFlag.hoveredSlot; } }
+
+    internal static void OnActiveAbilityChange() {
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+
+        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+    }
+
+    public static void OnSelectDifferentUnit() {
+        ShowUI(curPlayerUnit, curUnit);
+        if (hoveredUnit.IsPlayer) {
+            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        }
+    }
+
+    public static void OnHover(Unit unitSource) {
+        if (lastHoveredUnit && lastHoveredUnit != hoveredUnit && lastHoveredUnit != curPlayerUnit) {
+            GridDisplay.HideGrid(lastHoveredUnit);
+            // Color currently hovered unit depending on alliance
+            if (hoveredUnit && hoveredUnit != curPlayerUnit) {
+                if (hoveredUnit.flag.allianceId == 0) { // player, can select
+                    GridDisplay.DisplayGrid(hoveredUnit, 3, GridMask.One);
+                } else if (hoveredUnit.flag.allianceId != 0) { // enemy, maybe can attack
+                    GridDisplay.DisplayGrid(hoveredUnit, 2, GridMask.One);
+                }
+            }
+        }
+        lastHoveredUnit = hoveredUnit;
+    }
+
+    internal static void OnPlayerUnitExectutesAction() {
+
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+
+        if (curPlayerUnit.ActionsLeft >= activeAbility.actionCost) {
+            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        }
+
+        ShowUI(curPlayerUnit, curUnit);// update with buttons are enabled
+    }
+
+    internal static void OnUnitDeseleted() {
+        GridDisplay.HideGrid(curUnit);
+        GridDisplay.HideGrid(curPlayerUnit);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pUnit"></param>
+    /// <param name="unit"></param>
+    private static void ShowUI(Unit pUnit, Unit unit) {
+        bool showPlayerUI = pUnit && unit;
+        bool showButtonAbilities = pUnit != null && unit != null;
+        UIManager.ShowPlayerUI(showPlayerUI);
+        UIManager.ShowAbilities(showButtonAbilities, pUnit);
+    }
+    /// <summary>
+    /// pass false and null, to hide
+    /// </summary>
+    /// <param name="v"></param>
+    /// <param name="u"></param>
+    private static void ShowUI(bool v,Unit u) {
+        UIManager.ShowPlayerUI(v);
+        UIManager.ShowAbilities(v, u);
+    }
+
+    internal static void OnMouseShow(Vector3 hoveredSlot) {
+        GridDisplay.TmpDisplayGrid(0, hoveredSlot, 5, GridMask.One);
+
+    }
+
+    internal static void OnUnitFinishesAction(Unit unit) {
+        if (unit.ActionsLeft >= activeAbility.actionCost) {
+            AttackData2.ShowGrid(unit, hoveredSlot, activeAbility);
+        }
+    }
+
+    internal static void OnUnitRunsOutOfActions() {
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        ShowUI(false, null);
+    }
+
+    internal static void OnTurnComplete() {
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        ShowUI(curPlayerUnit, curUnit);
+    }
+
+    internal static void OnMouseScrolled() {
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+    }
+    internal static void OnBeginAttack() {
+        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+    }
+
+    internal static void OnMouseMoved() {
+        if (curPlayerUnit!= null && activeAbility!=null) {
+            AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        }
+    }
+}

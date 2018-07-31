@@ -1,17 +1,22 @@
 ﻿using System;
 using UnityEngine;
 
-
+public enum AttackRequirments {
+    Any,
+    RequiresUnit,
+    RequiresEmpty
+}
 [System.Serializable]
 public sealed class AttackData2 : StdAttackData {
     public string o_attackName;
     public string detailedDescription;
     public int actionCost = 1;
-    public bool requiresUnit = true;
+    public AttackRequirments requirements = AttackRequirments.Any;
     public StandardAttackData standard;
     public AOEAttackData aoe;
     public BUFFAttackData buff;
     public EmpowerAlliesData aura;
+    public MoveAttackData move;
 
     public GridMask AttackMask {
         get {
@@ -22,21 +27,51 @@ public sealed class AttackData2 : StdAttackData {
         }
     }
 
-    public AttackDataType[] GetAttacks() {
-        AttackDataType[] attacks = new AttackDataType[3];
-        if (standard.priority > -1) {
-            if (standard.used)
-                attacks[standard.priority] = standard;
+    public static void ShowGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
+        Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
+        if (data.standard.used) {
+            GridDisplay.DisplayGrid(source, 2, data.standard.attackRangeMask);
         }
-        if (aoe.priority > -1) {
-            if (aoe.used)
-                attacks[aoe.priority] = aoe;
+        if (data.move.used) {
+            GridDisplay.DisplayGrid(source, 1, data.move.range);
+            if (data.move.onStartApplyAOE && data.aoe.used) {
+                GridDisplay.TmpDisplayGrid(0,curSlot, 4, data.aoe.aoeMask);
+            }
+            if (data.move.onEndApplyAOE && data.aoe.used) {
+                GridDisplay.TmpDisplayGrid(1,attackedSlot, 4, data.aoe.aoeMask);
+            }
+        }else if (data.aoe.used) {
+            GridDisplay.TmpDisplayGrid(2,attackedSlot, 4, data.aoe.aoeMask);
         }
-        if (buff.priority > -1) {
-            if (buff.used)
-                attacks[buff.priority] = buff;
+        if (data.buff.used) {
         }
-        return attacks;
+        if (data.aura.used) {
+
+        }
+        
+    }
+    public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
+        Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
+        if (data.standard.used) {
+            GridDisplay.HideGrid(source, data.standard.attackRangeMask);
+        }
+        if (data.move.used) {
+            GridDisplay.HideGrid(source, data.move.range);
+            if (data.move.onStartApplyAOE && data.aoe.used) {
+                GridDisplay.TmpHideGrid(0,curSlot, data.aoe.aoeMask);
+            }
+            if (data.move.onEndApplyAOE && data.aoe.used) {
+                GridDisplay.TmpHideGrid(1,attackedSlot, data.aoe.aoeMask);
+            }
+        } else if (data.aoe.used) {
+            GridDisplay.TmpHideGrid(2,attackedSlot, data.aoe.aoeMask);
+        }
+        if (data.buff.used) {
+        }
+        if (data.aura.used) {
+
+        }
+
     }
 
     /// <summary>
@@ -56,33 +91,36 @@ public sealed class AttackData2 : StdAttackData {
             " "+data.standard.used+" "+data.aoe.used+" "+ data.buff.used);
         //AttackDataType[] attacks = data.GetAttacks();
 
-
+        CurrentActionData actionData = new CurrentActionData() {
+            attackedSlot = attackedSlot,
+            attackStartedAt = source.snapPos,
+            sourceExecutingUnit = source };
         // standard
         if (data.standard.used) {
             Unit u = GridAccess.GetUnitAtPos(attackedSlot);
             if (u) {
                 u.GetDamaged(data.standard.damage);
             }
+            if (data.standard.setStatus!= CombatStatus.SameAsBefore)
             source.combatStatus = data.standard.setStatus;
         }
         // aoe
         if (data.aoe.used) {
-            GridMask mask = GridMask.RotateMask(data.aoe.aoeMask, PlayerFlag.m.mouseDirection);
-            Vector3[] vec = mask.GetPositions(attackedSlot);
-            for (int i = 0; i < vec.Length; i++) {
-                Unit u = GridAccess.GetUnitAtPos(vec[i]);
-                if (u)
-                    u.GetDamaged(data.aoe.damage);
-            }
-            source.combatStatus = data.aoe.setStatus;
+            data.aoe.Execute(actionData, data);
         }
         // buff
         if (data.buff.used) {
             ActivateBuff(source, data.buff);
 
             BuffManager.Register(source, data.buff);
+            if (data.buff.setStatus!= CombatStatus.SameAsBefore)
             source.combatStatus = data.buff.setStatus;
-            Debug.Log(source.combatStatus);
+        }
+        if (data.move.used) {
+            source.MoveAction(attackedSlot, data);
+
+            if (data.move.setStatus != CombatStatus.SameAsBefore)
+                source.combatStatus = data.move.setStatus;
         }
     }
 
@@ -109,6 +147,7 @@ public sealed class AttackData2 : StdAttackData {
         if (attack.standard.used) maxLen = maxLen < f1 ? f1 : maxLen;
         if (attack.aoe.used) maxLen = maxLen < f2 ? f2 : maxLen;
         if (attack.buff.used) maxLen = maxLen < f3 ? f3 : maxLen;
+        // todo: for dash
         return maxLen;
     }
 }
