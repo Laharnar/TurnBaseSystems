@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Stores stats. Stats can be summed. It's like a list of current buffs.
+/// </summary>
 [System.Serializable]
 public class CombatStats {
     public List<CombatStatItem> powers = new List<CombatStatItem>();

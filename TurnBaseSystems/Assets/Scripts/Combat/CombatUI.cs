@@ -94,7 +94,7 @@ public class CombatUI {
     }
 
     internal static void OnTurnComplete() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        GridDisplay.ClearAll(); 
         ShowUI(curPlayerUnit, curUnit);
         GridDisplay.RemakeGrid();
     }
