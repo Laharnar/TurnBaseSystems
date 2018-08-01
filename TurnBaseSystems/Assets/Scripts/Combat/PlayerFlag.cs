@@ -13,6 +13,7 @@ public class PlayerFlag : FlagController {
     public static Unit hoveredUnit;
     public static Unit lastHoveredUnit;
     public static Vector3 hoveredSlot;
+    public static Vector3 lastHoveredSlot;
 
     int lastAbilityId;
     int activeAbilityId;
@@ -84,16 +85,13 @@ public class PlayerFlag : FlagController {
             #endregion
 
 
-            GridDisplay.TmpHideGrid(0, hoveredSlot, GridMask.One);
-            Vector3 lastHoveredSlot = hoveredSlot;
+            lastHoveredSlot = hoveredSlot;
 
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
             if (hoveredSlot != lastHoveredSlot)
                 CombatUI.OnMouseMoved();
             // show yellow slot
-            if (!selectedPlayerUnit || hoveredSlot != selectedAttackSlot) {
-                CombatUI.OnMouseShow(hoveredSlot);
-            }
+            CombatUI.OnMouseHoverEmpty(hoveredSlot, lastHoveredSlot);
             if (MouseWheelRotate) {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
@@ -111,31 +109,12 @@ public class PlayerFlag : FlagController {
                 }
             }
             WaitUnitSelection();
-
-            // load avaliable filter for current ability
-            if (selectedPlayerUnit) {
-                if ((selectedPlayerUnit.abilities.newVersion && activeAbility != null) || activeAbility != null) {
-                    //RecalcFulters();
-                }
-            }
+            
             if (Input.GetMouseButtonDown(1)) {
                 selectedAttackSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
             }
-            // show abilities
-            if (selectedUnit) {
-                //if (activeAbility!= null && curAoeFilter != null)
-                    //GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
-                //GridDisplay.DisplayGrid(selectedUnit, selectedUnit.IsPlayer? 3: 2, GridMask.One);
-            }
-            if (lastAbilityId != activeAbilityId) {
-               /* GridDisplay.HideGrid(selectedUnit, curFilter, curAoeFilter);
-                lastAbilityId = activeAbilityId;
-                RecalcFulters();
-                GridDisplay.DisplayGrid(selectedUnit, 2, curFilter);
-                GridDisplay.DisplayGrid(selectedUnit, 5, curAoeFilter);*/
-            }
 
-            CombatUI.OnHover(hoveredUnit);
+            CombatUI.OnHover();
 
             if (selectedAttackSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
                 if (selectedPlayerUnit.abilities.newVersion) {
@@ -151,7 +130,6 @@ public class PlayerFlag : FlagController {
                         //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
                         CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
-                        CombatUI.OnPlayerUnitExectutesAction();
 
                         while (selectedPlayerUnit.moving) {
                             yield return null;
@@ -167,8 +145,8 @@ public class PlayerFlag : FlagController {
             }
 
             // map decolor when unit run out of actions.
-            if (selectedUnit) {
-                if (selectedUnit.NoActions || !selectedUnit.CanDoAnyAction) {
+            if (selectedPlayerUnit) {
+                if (selectedPlayerUnit.NoActions || !selectedPlayerUnit.CanDoAnyAction) {
                     CombatUI.OnUnitRunsOutOfActions();
                     //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
                     //ShowUI();
@@ -248,9 +226,10 @@ public class PlayerFlag : FlagController {
         Debug.Log("Setting active ability " + atkId);
         lastAbilityId = activeAbilityId;
         activeAbilityId = atkId;
+        AttackData2 lastAbility = activeAbility;
         activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
 
-        CombatUI.OnActiveAbilityChange();
+        CombatUI.OnActiveAbilityChange(lastAbility, activeAbility);
     }
 
     private void DeselectUnit() {
@@ -271,116 +250,5 @@ public class PlayerFlag : FlagController {
             }
         }
         return true;
-    }
-}
-
-class CombatUI {
-
-    public static Unit lastHoveredUnit { get { return PlayerFlag.lastHoveredUnit; } set { PlayerFlag.lastHoveredUnit = value; } }
-    public static Unit hoveredUnit { get { return PlayerFlag.hoveredUnit; } }
-    public static Unit curPlayerUnit { get { return PlayerFlag.selectedPlayerUnit; } }
-    public static Unit curUnit { get { return PlayerFlag.selectedUnit; } }
-    public static AttackData2 activeAbility { get { return PlayerFlag.activeAbility; } }
-    public static Vector3 hoveredSlot { get { return PlayerFlag.hoveredSlot; } }
-
-    internal static void OnActiveAbilityChange() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-
-        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-    }
-
-    public static void OnSelectDifferentUnit() {
-        ShowUI(curPlayerUnit, curUnit);
-        if (hoveredUnit.IsPlayer) {
-            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        }
-    }
-
-    public static void OnHover(Unit unitSource) {
-        if (lastHoveredUnit && lastHoveredUnit != hoveredUnit && lastHoveredUnit != curPlayerUnit) {
-            GridDisplay.HideGrid(lastHoveredUnit);
-            // Color currently hovered unit depending on alliance
-            if (hoveredUnit && hoveredUnit != curPlayerUnit) {
-                if (hoveredUnit.flag.allianceId == 0) { // player, can select
-                    GridDisplay.DisplayGrid(hoveredUnit, 3, GridMask.One);
-                } else if (hoveredUnit.flag.allianceId != 0) { // enemy, maybe can attack
-                    GridDisplay.DisplayGrid(hoveredUnit, 2, GridMask.One);
-                }
-            }
-        }
-        lastHoveredUnit = hoveredUnit;
-    }
-
-    internal static void OnPlayerUnitExectutesAction() {
-
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-
-        if (curPlayerUnit.ActionsLeft >= activeAbility.actionCost) {
-            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        }
-
-        ShowUI(curPlayerUnit, curUnit);// update with buttons are enabled
-    }
-
-    internal static void OnUnitDeseleted() {
-        GridDisplay.HideGrid(curUnit);
-        GridDisplay.HideGrid(curPlayerUnit);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="pUnit"></param>
-    /// <param name="unit"></param>
-    private static void ShowUI(Unit pUnit, Unit unit) {
-        bool showPlayerUI = pUnit && unit;
-        bool showButtonAbilities = pUnit != null && unit != null;
-        UIManager.ShowPlayerUI(showPlayerUI);
-        UIManager.ShowAbilities(showButtonAbilities, pUnit);
-    }
-    /// <summary>
-    /// pass false and null, to hide
-    /// </summary>
-    /// <param name="v"></param>
-    /// <param name="u"></param>
-    private static void ShowUI(bool v,Unit u) {
-        UIManager.ShowPlayerUI(v);
-        UIManager.ShowAbilities(v, u);
-    }
-
-    internal static void OnMouseShow(Vector3 hoveredSlot) {
-        GridDisplay.TmpDisplayGrid(0, hoveredSlot, 5, GridMask.One);
-
-    }
-
-    internal static void OnUnitFinishesAction(Unit unit) {
-        if (unit.ActionsLeft >= activeAbility.actionCost) {
-            AttackData2.ShowGrid(unit, hoveredSlot, activeAbility);
-        }
-    }
-
-    internal static void OnUnitRunsOutOfActions() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        ShowUI(false, null);
-    }
-
-    internal static void OnTurnComplete() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        ShowUI(curPlayerUnit, curUnit);
-    }
-
-    internal static void OnMouseScrolled() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-    }
-    internal static void OnBeginAttack() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-    }
-
-    internal static void OnMouseMoved() {
-        if (curPlayerUnit!= null && activeAbility!=null) {
-            AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        }
     }
 }

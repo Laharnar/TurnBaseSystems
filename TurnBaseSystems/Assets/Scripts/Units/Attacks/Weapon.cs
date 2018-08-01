@@ -24,14 +24,14 @@ public class Weapon:MonoBehaviour,IInteractible {
     private void Awake() {
         weapons.Add(this);
     }
-
+    /*
     public void ApplyDamage(Unit source, GridItem attackedSlot) {
         if (UnityEngine.Random.Range(0f, 1f) <= accuracy) {
             if (attackedSlot.filledBy) {
                 attackedSlot.filledBy.GetDamaged(damage);
             }
         }
-    }
+    }*/
 
     /*public static GridItem BelongsTo(Weapon wep) {
         return GridManager.SnapToGrid(wep.transform.position);

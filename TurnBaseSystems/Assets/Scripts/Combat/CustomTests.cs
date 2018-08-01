@@ -191,6 +191,38 @@ public class CustomTests: MonoBehaviour {
             Test("AuraMoveIn3b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
         }
+
+        if (true) {
+            GridDisplay.ClearAll();
+
+            GridDisplay.RemakeGrid();
+            //Test("Grids", GridDisplay.layers[1].items.Count, 0);
+            GridDisplay.SetUpGrid(new Vector3(), 0, 1, GridManager.m.maskTemplates[2]);
+            GridDisplay.RemakeGrid();
+            Test("Grids1", GridDisplay.layers[0].items.Count, 24);
+            Test("Grids1", GridDisplay.flattened.Count, 24);
+            GridDisplay.HideGrid(new Vector3(), 0, GridManager.m.maskTemplates[2]);
+            Test("Grids1", GridDisplay.layers[0].items.Count, 0);
+            GridDisplay.RemakeGrid();
+            Test("Grids1", GridDisplay.flattened.Count, 0);
+
+            //Test("Grids", GridDisplay.layers[1].items.Count, 0);
+
+            GridDisplay.SetUpGrid(new Vector3(), 0, 1, GridManager.m.maskTemplates[2]);
+            GridDisplay.SetUpGrid(new Vector3(2,0,0), 1, 4, GridManager.m.maskTemplates[0]);
+            GridDisplay.RemakeGrid();
+            Test("Grids2a", GridDisplay.layers[0].items.Count, 24);
+            Test("Grids2b", GridDisplay.layers[1].items.Count, 4);
+            Test("Grids2c", GridDisplay.flattened.Count, 24);
+            yield return new WaitForSeconds(3);
+            GridDisplay.HideGrid(new Vector3(), 0, GridManager.m.maskTemplates[2]);
+            Test("Grids2d", GridDisplay.layers[0].items.Count, 0);
+            //Test("Grids2e", GridDisplay.layers[1].items.Count, 4);
+            GridDisplay.MoveGrid(new Vector3(2,0,0), new Vector3(-2, 0, 0), 1, 4, GridManager.m.maskTemplates[0]);
+            GridDisplay.RemakeGrid();
+            //Test("Grids2f", GridDisplay.flattened.Count, 4);
+
+        }
         yield return null;
     }
 

@@ -17,6 +17,7 @@ public sealed class AttackData2 : StdAttackData {
     public BUFFAttackData buff;
     public EmpowerAlliesData aura;
     public MoveAttackData move;
+    public PassiveData passive;
 
     public GridMask AttackMask {
         get {
@@ -30,18 +31,18 @@ public sealed class AttackData2 : StdAttackData {
     public static void ShowGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.standard.used) {
-            GridDisplay.DisplayGrid(source, 2, data.standard.attackRangeMask);
+            GridDisplay.SetUpGrid(curSlot, 6, 2, data.standard.attackRangeMask);
         }
         if (data.move.used) {
-            GridDisplay.DisplayGrid(source, 1, data.move.range);
+            GridDisplay.SetUpGrid(curSlot, 1, 1, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.TmpDisplayGrid(0,curSlot, 4, data.aoe.aoeMask);
+                GridDisplay.SetUpGrid(curSlot, 7, 4, data.aoe.aoeMask);
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.TmpDisplayGrid(1,attackedSlot, 4, data.aoe.aoeMask);
+                GridDisplay.SetUpGrid(attackedSlot, 8, 4, data.aoe.aoeMask);
             }
         }else if (data.aoe.used) {
-            GridDisplay.TmpDisplayGrid(2,attackedSlot, 4, data.aoe.aoeMask);
+            GridDisplay.SetUpGrid(attackedSlot, 9, 4, data.aoe.aoeMask);
         }
         if (data.buff.used) {
         }
@@ -51,20 +52,22 @@ public sealed class AttackData2 : StdAttackData {
         
     }
     public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
+        if (data == null)
+            return;
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.standard.used) {
-            GridDisplay.HideGrid(source, data.standard.attackRangeMask);
+            GridDisplay.HideGrid(curSlot, 6, data.standard.attackRangeMask);
         }
         if (data.move.used) {
-            GridDisplay.HideGrid(source, data.move.range);
+            GridDisplay.HideGrid(curSlot, 1, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.TmpHideGrid(0,curSlot, data.aoe.aoeMask);
+                GridDisplay.HideGrid(curSlot, 7, data.aoe.aoeMask);
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.TmpHideGrid(1,attackedSlot, data.aoe.aoeMask);
+                GridDisplay.HideGrid(attackedSlot, 8, data.aoe.aoeMask);
             }
         } else if (data.aoe.used) {
-            GridDisplay.TmpHideGrid(2,attackedSlot, data.aoe.aoeMask);
+            GridDisplay.HideGrid(attackedSlot, 9, data.aoe.aoeMask);
         }
         if (data.buff.used) {
         }

@@ -9,15 +9,17 @@ public class CombatManager : MonoBehaviour {
     int activeFlagTurn = 0;
 
     Coroutine gameplayUp;
-
+    public bool initAwake = true;
     bool init;
 
     public List<Unit> units = new List<Unit>();
 
     private void Awake() {
         m = this;
-        Init();
-        StartCombatLoop();
+        if (initAwake) {
+            Init();
+            StartCombatLoop();
+        }
     }
 
     public void Init() {
@@ -98,6 +100,7 @@ public class CombatManager : MonoBehaviour {
 
     private void OnTurnEnd(int j) {
          BuffManager.ConsumeBuffs(j);
+
     }
 
     public static void OnUnitExecutesAction(Unit unit) {

@@ -2,18 +2,18 @@
 using System.Linq;
 using UnityEngine;
 
-public partial class GridManager : MonoBehaviour {
+/// <summary>
+/// Generates grid items.
+/// </summary>
+public class GridManager : MonoBehaviour {
     public static GridManager m { get; private set; }
-
-    public Grid gridSlots;
-
-    public int width, length;
 
     public Vector2 itemDimensions;
     public Transform pref;
     public Transform gridParent;
     public Transform rootLoader;
     public Color defaultColor;
+    public GridMask[] maskTemplates;
 
     internal static Grid NewGridInstance(Vector3 position, GridMask curAoeFilter) {
         position = SnapPoint(position, true);
@@ -32,20 +32,8 @@ public partial class GridManager : MonoBehaviour {
         //Weapon.AssignAllDroppedWeaponsToSlots();
     }
 
-    /*[ContextMenu("Update grid")]
-    public void UpdateGrid () {
-        if (gridSlots == null)
-            gridSlots = new Grid(width, length);
-        gridSlots.InitGrid(gridParent.transform.position, itemDimensions, pref, gridParent);
-    }*/
-
     public static Vector3 SnapPoint(Vector3 point){
         return SnapPoint(point, true);
-        Vector3 o = point;
-        //point = point /*- m.gridParent.transform.position*/ + (Vector3)m.itemDimensions / 2;
-        point.x = point.x - point.x % m.itemDimensions.x;
-        point.y = point.y - point.y % m.itemDimensions.y;
-        return point;
     }
 
     internal static Transform NewGridPrefInstance(Vector3 pos) {

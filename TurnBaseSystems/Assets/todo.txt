@@ -301,4 +301,6 @@ after each level is cleared
 
 the turn based part is good.
 
-
+redo the displaying of grids to be easier to use, layer based, color based and dynamic
+displayed grids can be move without destroying them
+they can be removed or added at will, on any layer inside the sprite system.

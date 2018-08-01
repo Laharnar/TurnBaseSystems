@@ -105,6 +105,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
     public void OnTurnEnd() {
         Debug.Log("Applying passives.");
+        for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
+            if (abilities.additionalAbilities2[i].passive.used) {
+                abilities.additionalAbilities2[i].passive.Execute(new CurrentActionData() { attackedSlot = snapPos, attackStartedAt=snapPos, sourceExecutingUnit = this }, abilities.additionalAbilities2[i]);
+            }
+        }
         /*if (equippedWeapon) {
             if (equippedWeapon.enhanceCounter >0) {
                 equippedWeapon.enhanceCounter--;
@@ -178,13 +183,16 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 return 1;
             }
         } else {
-            if ((atk.requirements== AttackRequirments.RequiresUnit && u == null) || attacking) {
-                if (attacking) {
-                    Debug.Log("Already attacking. action aborted.");
-                }
-                if (atk.requirements == AttackRequirments.RequiresUnit && u == null) {
-                    Debug.Log("This attack requires unit, no unit there. action aborted.");
-                }
+            if (attacking) {
+                Debug.Log("Already attacking. action aborted.");
+                return -1;
+            }
+            if (atk.requirements == AttackRequirments.RequiresUnit && u == null) {
+                Debug.Log("This attack requires unit, no unit there. action aborted.");
+                return -1;
+            }
+            if (atk.requirements == AttackRequirments.RequiresEmpty && u != null) {
+                Debug.Log("This attack requires empty, unit is there. action aborted.");
                 return -1;
             }
             Debug.Log("Executing attack " + atk.o_attackName);
