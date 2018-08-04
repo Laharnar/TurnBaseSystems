@@ -8,6 +8,7 @@ public class MissionManager:MonoBehaviour {
 
     public bool fastLoad = false;
     public int[] fastLoadTeam;
+    public int[] fastLoadEnemyTeam;
     public Transform missionEndScreen_child;
     public Text missionEndScreenText;
 
@@ -24,24 +25,15 @@ public class MissionManager:MonoBehaviour {
     /// <summary>
     /// Before they are deparented from loader
     /// </summary>
-    public void LoadTeamIntoStartArea(Transform[] team) {
-        Transform spawnPoints = GameObject.Find("DONTRENAME_Starting point").transform;
+    public void LoadTeamIntoArea(Transform[] team, string spawnPointsName) {
+        Transform spawnPoints = GameObject.Find(spawnPointsName).transform;
         for (int i = 0; i < team.Length && i < spawnPoints.childCount; i++) {
-            team[i].transform.position = spawnPoints.GetChild(i).transform.position;
+            if (team[i])
+                team[i].transform.position = spawnPoints.GetChild(i).transform.position;
+            else {
+                Debug.LogError("Null spawnable unit at "+i);
+            }
         }
-
-        /* GameObject team = GameObject.Find("*loader");
-         if (GameObject.Find("*loader") && GameObject.Find("Starting point")) {
-             Transform spawnPoints = GameObject.Find("Starting point").transform;
-             playerTeam = new Transform[team.transform.childCount];
-             for (int i = 0; i < playerTeam.Length && i < spawnPoints.childCount; i++) {
-                 playerTeam[i] = team.transform.GetChild(i);
-                 playerTeam[i].transform.position = spawnPoints.GetChild(i).transform.position;
-
-                 playerTeam[i].gameObject.SetActive(true);
-                 playerTeam[i].SetParent(null, true);
-             }
-         }*/
     }
 
     internal static void OnReachMissionGoal() {
@@ -50,7 +42,7 @@ public class MissionManager:MonoBehaviour {
 
     internal void Init(Transform[] teamInsts) {
 
-        LoadTeamIntoStartArea(teamInsts);
+        LoadTeamIntoArea(teamInsts, "DONTRENAME_Starting point");
         if (missionEndScreen_child)
             missionEndScreen_child.gameObject.SetActive(false);
 
@@ -58,7 +50,13 @@ public class MissionManager:MonoBehaviour {
         for (int i = 0; i < teamInsts.Length; i++) {
             teamInsts[i].GetComponent<Unit>().Init();
         }
+        
         CombatManager.m.StartCombatLoop();
+    }
+
+    public void InitEnemies() {
+        LoadTeamIntoArea(CharacterLibrary.CreateInstances(fastLoadEnemyTeam), "DONTRENAME_Starting point (1)");
+
     }
 
     public void OnLoadLevelEndScreen() {

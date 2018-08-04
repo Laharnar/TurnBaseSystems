@@ -50,14 +50,10 @@ public class CombatManager : MonoBehaviour {
                 activeFlagTurn = j;
 
                 OnTurnStart(j);
-                for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
-                    FlagManager.flags[j].units[i].OnTurnStart();
-                }
+                
                 yield return StartCoroutine(FlagManager.flags[j].FlagUpdate());
 
-                for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
-                    FlagManager.flags[j].units[i].OnTurnEnd();
-                }
+                
                 OnTurnEnd(j);
 
                 Debug.Log("Flag done - " + (j + 1));
@@ -95,12 +91,20 @@ public class CombatManager : MonoBehaviour {
                     aura.EffectArea(units[i].snapPos, units[i]);
                 }
             }
-        }  
+        }
+
+        for (int i = 0; i < FlagManager.flags[allianceId].units.Count; i++) {
+            FlagManager.flags[allianceId].units[i].OnTurnStart();
+        }
     }
 
     private void OnTurnEnd(int j) {
-         BuffManager.ConsumeBuffs(j);
+        for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
+            FlagManager.flags[j].units[i].OnTurnEnd();
+        }
 
+        BuffManager.ConsumeBuffs(j);
+        
     }
 
     public static void OnUnitExecutesAction(Unit unit) {
@@ -111,6 +115,7 @@ public class CombatManager : MonoBehaviour {
     }
 
     public static void CombatAction(Unit selectedPlayerUnit, Vector3 hoveredSlot, AttackData2 activeAbility) {
+        CombatInfo.attackingUnit = selectedPlayerUnit;
         Vector3 curPos = GridManager.SnapPoint(selectedPlayerUnit.transform.position);
         int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
         if (action == 1) {// move
@@ -121,32 +126,21 @@ public class CombatManager : MonoBehaviour {
     public static void OnUnitExecutesMoveAction(Vector3 oldPos, Vector3 newPos, Unit unit) {
         // on enter - on exit.
         // deapply and reapply auras from this all unit to all others
-        Vector3 unit1Snap = GridManager.SnapPoint(unit.transform.position);
-        foreach (var ability in unit.abilities.additionalAbilities2) {
-            if (ability.aura.used) {
-                bool inOld = ability.aura.auraRange.IsPosInMask(unit1Snap, oldPos);
-                bool inNew = ability.aura.auraRange.IsPosInMask(unit1Snap, newPos);
-                ability.aura.DeEffectArea(oldPos, unit, true);
-                ability.aura.EffectArea(newPos, unit);
-                Debug.Log("effect defect");
-            }
-        }
+        EmpowerAlliesData.DeffectEffect(oldPos, newPos, unit, AuraTrigger.OnUnitEntersExits);
 
         // find auras that affected this unit at old pos, and add at new pos
         foreach (var combatUnit in m.units) {
             Vector3 snap = GridManager.SnapPoint(combatUnit.transform.position);
             if (combatUnit != unit) {
                 foreach (var ability in combatUnit.abilities.additionalAbilities2) {
-                    if (ability.aura.used) {
+                    if (ability.aura.used && ability.aura.trigger == AuraTrigger.OnUnitEntersExits) {
                         bool inOld = ability.aura.auraRange.IsPosInMask(snap, oldPos);
                         bool inNew = ability.aura.auraRange.IsPosInMask(snap, newPos);
                         if (inOld && !inNew) {
                             ability.aura.LoseEffect(unit);
-                            Debug.Log("Lose effect");
                         }
                         if (!inOld && inNew) {
-                            ability.aura.Effect(unit);
-                            Debug.Log("Add effect");
+                            ability.aura.Effect(unit, combatUnit);
                         }
                     }
                 }

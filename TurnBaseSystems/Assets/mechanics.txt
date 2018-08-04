@@ -618,3 +618,47 @@ you will notice the pattern.
 
 instead of increasing range, you could make it an optionally casting shot
 when not casted, just a simple cleanup shot
+
+
+
+epibf
+attack, defend - heal per char, character skills, 
+attack and def buffs and debuffs
+psyhical or magic attack for enemies
+diversity - additional elemental skills and resistances
+
+select menu . skill.target
+
+my game
+
+ui: hp, mp + bar for both
+
+enemies 1, 2, 3, boss, 3x, shop, 3x, final
+
+single target or all targets skills
+
+debuffs - poison
+then some stuff to make it more fun...
+
+retarded stupid animtions
+
+diversity in effectiveness of attacks
+and in hp up/down, mana up/down, buff/attack
+
+balance healing attacking and buffing
+50&50
+my game
+diversity in move range
+diversity in attack area shape
+single target/aoe/pierce/chain
+attack/end turn/move/perma/buffs
+hp for long term
+energy for tactical
+
+1 or 2 attack on enemies, random choice
+different tactics
+resistances - physical, magic and range, melee
+
+balance running, tanking, healing, defend, and attacking
+1 per turn, optional, optional defensive, 
+

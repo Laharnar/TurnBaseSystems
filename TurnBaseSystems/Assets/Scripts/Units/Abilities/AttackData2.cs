@@ -18,6 +18,7 @@ public sealed class AttackData2 : StdAttackData {
     public EmpowerAlliesData aura;
     public MoveAttackData move;
     public PassiveData passive;
+    public PierceAtkData pierce;
 
     public GridMask AttackMask {
         get {
@@ -49,7 +50,10 @@ public sealed class AttackData2 : StdAttackData {
         if (data.aura.used) {
 
         }
-        
+        Unit attacked = GridAccess.GetUnitAtPos(attackedSlot);
+        if (data.pierce.used && attacked!= null) {
+            data.pierce.Draw(attacked);
+        }
     }
     public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
         if (data == null)
@@ -74,7 +78,10 @@ public sealed class AttackData2 : StdAttackData {
         if (data.aura.used) {
 
         }
-
+        Unit attacked = GridAccess.GetUnitAtPos(attackedSlot);
+        if (data.pierce.used && attacked != null) {
+            data.pierce.Hide(attacked);
+        }
     }
 
     /// <summary>
@@ -98,14 +105,11 @@ public sealed class AttackData2 : StdAttackData {
             attackedSlot = attackedSlot,
             attackStartedAt = source.snapPos,
             sourceExecutingUnit = source };
+        CombatInfo.currentActionData = actionData;
+        CombatInfo.activeAbility = data;
         // standard
         if (data.standard.used) {
-            Unit u = GridAccess.GetUnitAtPos(attackedSlot);
-            if (u) {
-                u.GetDamaged(data.standard.damage);
-            }
-            if (data.standard.setStatus!= CombatStatus.SameAsBefore)
-            source.combatStatus = data.standard.setStatus;
+            data.standard.Execute(actionData);
         }
         // aoe
         if (data.aoe.used) {
@@ -124,6 +128,9 @@ public sealed class AttackData2 : StdAttackData {
 
             if (data.move.setStatus != CombatStatus.SameAsBefore)
                 source.combatStatus = data.move.setStatus;
+        }
+        if (data.pierce.used) {
+            data.pierce.Execute(attackedSlot);
         }
     }
 

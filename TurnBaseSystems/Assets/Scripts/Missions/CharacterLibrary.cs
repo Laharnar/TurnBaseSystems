@@ -46,6 +46,7 @@ public class CharacterLibrary:MonoBehaviour {
                 return Instantiate(characterPrefs[i]);
             }
         }
+        Debug.Log("No character in library with name ."+character.name);
         return null;
     }
 

@@ -192,7 +192,7 @@ public class CustomTests: MonoBehaviour {
             yield return new WaitForSeconds(2);
         }
 
-        if (true) {
+        if (false) {
             GridDisplay.ClearAll();
 
             GridDisplay.RemakeGrid();
@@ -223,6 +223,50 @@ public class CustomTests: MonoBehaviour {
             //Test("Grids2f", GridDisplay.flattened.Count, 4);
 
         }
+        if (false) {
+            Test("calc 1", Mathf.CeilToInt(4f * (1-0.9f)), 1);
+            
+        }
+        if (true) {
+            GameObject nukergo = GameObject.Find("UNIT _ consumer _ NukeMage");
+            GameObject mellego = GameObject.Find("MelleUNIT (7)");
+            GameObject mellego1 = GameObject.Find("MelleUNIT (6)");
+            Unit nuker = nukergo.GetComponent<Unit>();
+            Unit melee = mellego.GetComponent<Unit>();
+            Unit melee1 = mellego1.GetComponent<Unit>();
+            CombatStats comstat1 = nuker.stats;
+            CombatStats comstat2 = melee.stats;
+            CombatStats comstat3 = melee1.stats;
+            nukergo.transform.position = new Vector3(0, 5, 0);
+            mellego.transform.position = new Vector3(0, 0, 0);
+            mellego1.transform.position = new Vector3(0, -3, 0);
+            nuker.GetDamaged(3);
+            nuker.AddCharges(null, 1);
+            Test("get pierced1a", nuker.charges, 2);
+            CombatManager.m.OnTurnStart(0);
+            CurrentActionData actionData = new CurrentActionData() {
+                attackedSlot = new Vector3(0, 0, 0),
+                attackStartedAt = nuker.snapPos,
+                sourceExecutingUnit = nuker
+            };
+            PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
+            CombatInfo.attackingUnit = nuker;
+            CombatInfo.currentActionData = actionData;
+            CombatInfo.activeAbility = nuker.abilities.additionalAbilities2[1];
+
+
+            Unit[] units = atkD.GetUnitsPierced(melee);
+
+            CombatManager.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            CombatManager.m.OnTurnStart(0);
+            CombatManager.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            Test("get pierced1a", melee.dead, true);
+            Test("get pierced1b", !melee1.dead, true);
+            Test("get pierced1b", nuker.hp==2, true);
+            yield return new WaitForSeconds(2);
+
+        }
+
         yield return null;
     }
 
@@ -252,11 +296,19 @@ public class CustomTests: MonoBehaviour {
     private static void Test(string context, bool result, bool expected) {
         if (result != expected) {
             Debug.LogError("Test (" + context + ") failed: expected:" + expected + " r:" + result);
+        } else {
+            if (m && m.showPassed) {
+                Debug.Log("Test (" + context + ") passed.");
+            }
         }
     }
     private static void Test(string context, Vector3 result, Vector3 expected) {
         if (result != expected) {
             Debug.LogError("Test ("+context+") failed: expected:"+expected+" r:"+result);
+        } else {
+            if (m && m.showPassed) {
+                Debug.Log("Test (" + context + ") passed.");
+            }
         }
     }
     private static void Test(string context, int result, int expected) {

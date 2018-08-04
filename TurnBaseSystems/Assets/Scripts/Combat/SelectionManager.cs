@@ -1,4 +1,5 @@
 ﻿ using System;
+using System.Collections.Generic;
 using UnityEngine;
 public static class SelectionManager {
 
@@ -47,6 +48,14 @@ public static class SelectionManager {
         RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0);
         if (hit) {
             return hit.transform;
+        }
+        return null;
+    }
+
+    public static RaycastHit2D[] GetAllSelectionInDir(Vector2 pos, Vector2 dir, float dist) {
+        RaycastHit2D[] hit = Physics2D.RaycastAll(pos, dir, dist);
+        if (hit.Length > 0) {
+            return hit;
         }
         return null;
     }
@@ -105,5 +114,20 @@ public static class SelectionManager {
         if (cur == null) // maybe hovering over unit's head, which is in other slot.
             cur = SelectionManager.GetMouseAsUnit2D();
         return cur;
+    }
+
+    internal static Unit[] GetAllUnitsFromDirection(Vector3 snapPos, Vector3 vector3, float range) {
+        RaycastHit2D[] hits = GetAllSelectionInDir(snapPos, vector3, range);
+        List<Unit> units = new List<Unit>();
+        if (hits != null) {
+            foreach (var item in hits) {
+                Unit slot = item.transform.GetComponentInParent<Unit>();
+                if (slot != null) {
+                    units.Add(slot);
+                }
+            }
+        }
+        Debug.Log("Raycacst :"+hits.Length + " Units: "+units.Count);
+        return units.ToArray();
     }
 }

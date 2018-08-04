@@ -14,7 +14,7 @@ public class Character {
 
     public Character(Unit unit) {
         name = unit.codename;
-        faction =  GameRun.current.currentMap.factions[unit.factionId].name;
+        faction = "Player";// GameRun.current.currentMap.factions[unit.factionId].name;
         loyaltyEarned = unit.loyalty;
         unlocked = unit.flag.allianceId == 0;
     }

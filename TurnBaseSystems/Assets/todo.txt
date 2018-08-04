@@ -304,3 +304,24 @@ the turn based part is good.
 redo the displaying of grids to be easier to use, layer based, color based and dynamic
 displayed grids can be move without destroying them
 they can be removed or added at will, on any layer inside the sprite system.
+
+2.8.2018 abilities for priest
+-
+collected attack, use aoe to consume charges, use source-target - ok
+aoe / randomization pattern, link to moves made?
+standard, 90% dmg cur hp - ok
+when attacking save direction to source(attackdata2/attackstartedat) - ok
+repeated extended attack by direction from source - ok
+require Charges, use: number, max possible - ok, for piercing attacks and aoe
+aura, end turn/every time/attacked - ok, affected cap - untested, only enemies/allies/all-ok
+passive . restore charges, up to max.-ok
+
+projectiles
+show hit areas
+extended range piercing shot - on hit modifier
+chain attack - on hit modifier
+spawn, fly projectiles, avoid targets
+-
+aoe based on charges
+pierce based on charges
+large aoe based on hp

@@ -55,7 +55,7 @@ public class PlayerFlag : FlagController {
             if (Input.GetKeyDown(KeyCode.Return)) break;
 
             // Swap between combat and walk
-            #region Walk mode
+            #region Walk mode on space
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!PlayerDetected())
                     walkMode = !walkMode;
@@ -127,6 +127,7 @@ public class PlayerFlag : FlagController {
                         {
                         //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
                         CombatUI.OnBeginAttack();
+                        
                         //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
                         CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
                         CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
@@ -215,7 +216,6 @@ public class PlayerFlag : FlagController {
                 activeAbilityId = 0;
 
                 SetActiveAbility(selectedPlayerUnit, 0);
-
             }
             CombatUI.OnSelectDifferentUnit();
 

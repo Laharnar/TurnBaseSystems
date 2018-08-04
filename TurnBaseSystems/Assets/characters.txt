@@ -102,3 +102,52 @@ range
 long range shot
 closer shot
 
+dolls
+dolls room. controlled by magic. detoriates over time.
+
+
+-----------------------------
+the charging aoe caster
+identity - max 1 attack per turn with possible aoe effect, high damage, preparation and timing - reinforces idea of a strong backline caster, an inner consumer
+
+instead of randomization, use stack based
+rain attack - explosive - random in area, by number of charges
+laser attack - send and return - charges allow piercing and range, killed units heal 1 and return charges
+
+self destruct
+randomized attack area(10) - risky last resort option, no charges, a bunch of functions
+required, lose 90% current hp, 10 random shots
+charge passive - random 1-2, or moved/not moved, max 5, auto return damage when attacked by melle, and has charges
+
+-rain attack
+high dmg
+collected attack, use aoe to consume charges
+
+energy = 6
+aoe
+range 1 self
+randomization pattern
+
+-laser attack
+low dmg
+collected attack, charges = all
+source-target directional shot
+extended range piercing shot
+
+shot in direction, like projectile... then pierce by number of shots, return kills
+press slot, on hit, repeatedly extend shot range in direction from source, up to 
+number of charges
+e = 6
+collected attack, charges = all
+
+-self destruct
+e=10
+collected attack, charges = all
+standard, 90% dmg cur hp
+aoe, randomization pattern
+
+-passive, charge, 
+add 1 or 2 charges, random, capped at 5
+aura - dmg enemies in melle range
+or parry - return dmg to enemies if has charges
+----------------------------

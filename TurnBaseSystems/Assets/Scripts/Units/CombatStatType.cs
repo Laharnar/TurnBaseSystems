@@ -4,4 +4,5 @@
     StdRange,
     StdDmg,
     AoeDmg,
+    Charges,
 }

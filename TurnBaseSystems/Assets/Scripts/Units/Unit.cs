@@ -18,24 +18,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
 
     public bool NoActions { get { return actionsLeft <= 0; } }
-
-    public bool CanMove { get { return actionsLeft >=1; } }
-
-    public bool HasActions { get { return !NoActions; } }
-
+    
     public int ActionsLeft { get { return actionsLeft; } }
 
     public Character AsCharacterData { get { return new Character(this);  } }
 
-    public bool CanDoAnyAction { get {
-            foreach (var item in abilities.GetNormalAbilities()) {
-                if (item.actionCost <= ActionsLeft) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 
     public int maxHp = 5;
     public int logHp;
@@ -43,11 +30,12 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public int maxActions = 2;
     int actionsLeft = 2;
+    public int maxCharges = 0;
 
-    bool dead = false;
+    public bool dead = false;
 
-    public int maxAP = 0;
-    int ap = 0;
+    public int charges { get { return stats.GetSum(CombatStatType.Charges); } } //set { stats.Set(CombatStatType.Hp, value); logHp = value; } }
+
     internal UnitAbilities abilities;
     public AiLogic ai;
 
@@ -68,18 +56,20 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     bool init = false;
     public int factionId;
     internal int loyalty;
+    public Resistances resistances;
 
     private void Start() {
         Init();
     }
+
     public void Init() {
         if (init) return;
 
-        ap = maxAP;
         ResetActions();
         //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
         if (CombatManager.m) {
             //hp = maxHp;
+            AddCharges(null, 1);
             stats.Increase(null, CombatStatType.Hp, maxHp);
             Vector3 snapPos = GridManager.SnapPoint(transform.position);
             //curSlot = slot;
@@ -110,21 +100,13 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 abilities.additionalAbilities2[i].passive.Execute(new CurrentActionData() { attackedSlot = snapPos, attackStartedAt=snapPos, sourceExecutingUnit = this }, abilities.additionalAbilities2[i]);
             }
         }
-        /*if (equippedWeapon) {
-            if (equippedWeapon.enhanceCounter >0) {
-                equippedWeapon.enhanceCounter--;
-            }
-            if (equippedWeapon.enhanceCounter == 0) {
-                if (equippedWeapon.enhanced)
-                    equippedWeapon.enhanced.OnDeEquipEffect(equippedWeapon);
-            }
-        }*/
-        /*if ((abilities as IEndTurnAbilities) != null) {
-            AttackData[] passives = (abilities as IEndTurnAbilities).GetPassive();
-            for (int i = 0; i < passives.Length; i++) {
-                passives[i].ApplyDamage(this, null);
-            }
-        }*/
+        EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
+    }
+
+    public void AddCharges(AttackDataType abilitySource, int amt) {
+        amt = Mathf.Clamp(stats.GetSum(abilitySource, CombatStatType.Charges) + amt, 0, maxCharges);
+        if (amt > 0)
+            stats.Set(abilitySource, CombatStatType.Charges, amt);
     }
 
     public void OnTurnStart() {
@@ -138,6 +120,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     }*/
 
+    /// <summary>
+    /// Pass negative value, to reduce
+    /// </summary>
+    /// <param name="abilitySource"></param>
+    /// <param name="armorAmount"></param>
     public void AddShield(AttackDataType abilitySource, int armorAmount) {
         stats.Set(abilitySource, CombatStatType.Armor, temporaryArmor + armorAmount);
         
@@ -146,33 +133,25 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         hpUI.ShowHpWithGrey(hp, temporaryArmor);
 
     }
-
-    /*internal void RemoveShield() {
-        temporaryArmor = 0;
-        hpUI.ShowHpWithGrey(hp, temporaryArmor);
-    }*/
-    /*private void ResetGreyHp() {
-        temporaryArmor = 0;
-        if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
-    }*/
-
+    
     public void ResetActions(int val=-1) {
         if (val == -1)
             actionsLeft = maxActions;
         else actionsLeft = val;
     }
 
-    public void RestoreAP(int amount) {
-        if (abilities.GetType() == typeof(Collector)) {
-            Debug.Log("[Collector]Restoring "+amount+" AP", this);
-            // (abilities as Collector).RestoreAP(restoresAp);
-            ap += amount;
-            if (ap > maxAP) {
-                ap = maxAP;
+
+    public bool CanDoAnyAction {
+        get {
+            foreach (var item in abilities.GetNormalAbilities()) {
+                if (item.actionCost <= ActionsLeft) {
+                    return true;
+                }
             }
+            return false;
         }
     }
-    
+
     internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
@@ -237,15 +216,19 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         attacking = false;
     }
 
+    public void Heal(int amt, AttackDataType atk) {
+        stats.Set(null, CombatStatType.Hp, Mathf.Clamp(hp + amt, 0, maxHp));
+        if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
+    }
     public void GetDamaged(int realDmg) {
         if (dead) return;
+        realDmg = resistances.ApplyResistance(realDmg, AttackDataType.curDmg);
         int dmgToHp = realDmg;
 
         if (realDmg > 0) {
             dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);
             //int armorLeft = Mathf.Clamp(temporaryArmor - realDmg, 0, temporaryArmor);
             stats.Reduce(CombatStatType.Armor, realDmg);
-            Debug.Log(temporaryArmor);
             //temporaryArmor = armorLeft;
         }
 
@@ -254,15 +237,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
         if (hp <= 0) {
+            dead = true;
             StartCoroutine(Death());
         }
     }
 
     private IEnumerator Death() {
-        dead = true;
         yield return null;
         FlagManager.DeRegisterUnit(this);
-        Destroy(gameObject);
+        Destroy(gameObject); 
     }
 
 }

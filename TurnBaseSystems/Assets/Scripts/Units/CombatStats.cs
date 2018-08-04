@@ -19,14 +19,12 @@ public class CombatStats {
     /// <param name="type"></param>
     /// <param name="amount"></param>
     public void Reduce(CombatStatType type, int amount) {
-        Debug.Log("amount "+amount);
         for (int i = 0; i < powers.Count; i++) {
             if (powers[i].Consume(type, ref amount)) {
-                Debug.Log("Power consumed");
                 powers.RemoveAt(i);
                 i--;
             }
-            Debug.Log("amount "+i+" "+amount);
+            //Debug.Log("amount "+i+" "+amount);
             if (amount == 0) {
                 break;
             }
@@ -56,6 +54,16 @@ public class CombatStats {
 
     internal void Increase(AttackDataType empowerAlliesData, CombatStatType type, int amount) {
         powers.Add(new CombatStatItem() { dataSource=empowerAlliesData,  statType = type, value = amount });
+    }
+
+    internal int GetStatCountOfType<T>(CombatStatType statType) {
+        int count = 0;
+        for (int i = 0; i < powers.Count; i++) {
+            if (powers[i].statType == statType && powers[i].dataSource.GetType() == typeof(T)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public int GetSum(CombatStatType type) {

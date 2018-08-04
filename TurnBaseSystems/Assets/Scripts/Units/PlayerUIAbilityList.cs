@@ -61,7 +61,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
             
             m.instances[i].GetComponent<ButtonInteraction>().interaction 
                 = ScriptableObject.CreateInstance<TwoStepAttack>().Init(unit, i);
-            m.instances[i].GetChild(0).GetComponent<Text>().text += " " + abilitis[i].o_attackName
+            m.instances[i].GetChild(0).GetComponent<Text>().text = abilitis[i].o_attackName
                 + (!abilitis[i].passive.used ? " (" +abilitis[i].actionCost+")" : "(Passive)");
             m.instances[i].GetComponent<Button>().interactable =  unit.ActionsLeft >= abilitis[i].actionCost && !abilitis[i].passive.used;
             

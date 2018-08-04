@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TeamManager:MonoBehaviour {
-    static Queue<Character> team = new Queue<Character>();
+    public List<Character> team = new List<Character>();
     const int teamSize = 3;
 
     private void Start() {
@@ -31,9 +31,9 @@ public class TeamManager:MonoBehaviour {
                 }
             } else {
                 Debug.Log("Selected unit");
-                team.Enqueue(selected.root.GetComponent<Unit>().AsCharacterData);
+                team.Add(selected.root.GetComponent<Unit>().AsCharacterData);
                 if (team.Count > teamSize) {
-                    team.Dequeue();
+                    team.RemoveAt(0);
                 }
             }
 
@@ -43,8 +43,9 @@ public class TeamManager:MonoBehaviour {
     private void OnPressPlay() {
         Character[] playerPickedTeam = new Character[teamSize];
         for (int i = 0; i < teamSize; i++) {
-            playerPickedTeam[i] = team.Dequeue();
+            playerPickedTeam[i] = team[i]; //team.Dequeue();
         }
+        team.Clear();
         GameRun.current.currentMap.activeTeam = playerPickedTeam;
         LoadingManager.m.OnLoadMission();
     }
