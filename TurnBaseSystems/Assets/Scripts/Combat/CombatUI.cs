@@ -1,4 +1,15 @@
 ﻿using UnityEngine;
+
+/// <summary>
+/// Updates all units in real time for quick scene tuning... save changes.
+/// </summary>
+public class BalanceTunning {
+
+}
+
+/// <summary>
+/// Combat grid display.
+/// </summary>
 public class CombatUI {
 
     public static Unit lastHoveredUnit { get { return PlayerFlag.lastHoveredUnit; } set { PlayerFlag.lastHoveredUnit = value; } }
@@ -31,7 +42,7 @@ public class CombatUI {
         }
 
         // Color currently hovered unit depending on alliance
-        if (hoveredUnit) {
+        if (hoveredUnit && lastHoveredUnit != hoveredUnit) {
             if (hoveredUnit.flag.allianceId == 0) { // player, can select
                 GridDisplay.SetUpGrid(hoveredUnit.snapPos, 5, 3, GridMask.One);
             } else if (hoveredUnit.flag.allianceId != 0) { // enemy, maybe can attack
@@ -80,7 +91,7 @@ public class CombatUI {
     }
 
     internal static void OnUnitFinishesAction(Unit unit) {
-        if (unit.ActionsLeft >= activeAbility.actionCost) {
+        if (!unit.NoActions && unit.CanDoAnyAction) {
             AttackData2.ShowGrid(unit, hoveredSlot, activeAbility);
             GridDisplay.RemakeGrid();
         }
@@ -100,7 +111,7 @@ public class CombatUI {
     }
 
     internal static void OnMouseScrolled() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackData2.HideRotatedGrid(curPlayerUnit, hoveredSlot, activeAbility);
         AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
         GridDisplay.RemakeGrid();
     }

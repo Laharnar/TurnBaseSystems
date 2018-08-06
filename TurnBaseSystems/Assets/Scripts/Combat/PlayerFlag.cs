@@ -14,16 +14,10 @@ public class PlayerFlag : FlagController {
     public static Unit lastHoveredUnit;
     public static Vector3 hoveredSlot;
     public static Vector3 lastHoveredSlot;
-
-    int lastAbilityId;
-    int activeAbilityId;
+    
     //public AttackData activeAbility;
     public static AttackData2 activeAbility;
 
-    /// <summary>
-    /// Don't edit outside this script.
-    /// </summary>
-    public int mouseDirection = 0;
 
     bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
 
@@ -32,8 +26,6 @@ public class PlayerFlag : FlagController {
         selectedUnit = null;
         hoveredUnit = null;
         lastHoveredUnit = null;
-        lastAbilityId = 0;
-        activeAbilityId = 0;
     }
 
     public Unit[] VisibleUnits {
@@ -46,6 +38,8 @@ public class PlayerFlag : FlagController {
             return units1.ToArray();
         }
     }
+
+    public int mouseDirection { get { return CombatManager.m.mouseDirection; } set { CombatManager.m.mouseDirection = value; } }
 
     public override IEnumerator FlagUpdate() {
         m = this;
@@ -95,17 +89,11 @@ public class PlayerFlag : FlagController {
             if (MouseWheelRotate) {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
+                CombatManager.m.lastMouseDirection = mouseDirection;
                 mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
 
                 if (selectedPlayerUnit) {
                     CombatUI.OnMouseScrolled();
-                    //AttackData2.HideGrid(selectedPlayerUnit, hoveredSlot, activeAbility);
-                    //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
-
-                    //RecalcFulters();
-                    //AttackData2.ShowGrid(selectedPlayerUnit, hoveredSlot, activeAbility);
-                    //GridDisplay.DisplayGrid(selectedUnit, activeAbilityId == 0 ? 1 : 2, curFilter);
-                    //GridDisplay.DisplayGrid(selectedUnit, 4, curAoeFilter);
                 }
             }
             WaitUnitSelection();
@@ -116,32 +104,34 @@ public class PlayerFlag : FlagController {
 
             CombatUI.OnHover();
 
-            if (selectedAttackSlot != null && selectedPlayerUnit!= null && Input.GetMouseButtonDown(1)) {
-                if (selectedPlayerUnit.abilities.newVersion) {
-                    if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
-                        Debug.Log("NOT enough actions. Can't attack.");
-                    }
-                    if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
-                        && hoveredSlot != null 
-                        && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, GetMask(0)))
-                        {
-                        //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
-                        CombatUI.OnBeginAttack();
-                        
-                        //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
-                        CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
-                        CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
+            if (selectedAttackSlot != null && selectedPlayerUnit != null && hoveredSlot != null
+                && Input.GetMouseButtonDown(1)) {
+                /*if (activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
+                    Debug.Log("NOT enough actions. Can't attack.");
+                }*/
+                Debug.Log("Trying to attack: "+selectedAttackSlot+" in range: "+
+                    GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, GetMask(0))+" enough actions:"+ (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft));
+                if (activeAbility.actionCost <= selectedPlayerUnit.ActionsLeft
+                    && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, GetMask(0))) {
+                    //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
+                    CombatUI.OnBeginAttack();
 
-                        while (selectedPlayerUnit.moving) {
-                            yield return null;
-                        }
-                        while (selectedPlayerUnit.attacking) {
-                            yield return null;
-                        }
-                        CombatUI.OnUnitFinishesAction(selectedPlayerUnit);
-                        
+                    //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
+                    CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
+                    CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
+
+                    while (selectedPlayerUnit.moving) {
                         yield return null;
                     }
+                    while (selectedPlayerUnit.attacking) {
+                        yield return null;
+                    }
+                    SwapToValidAbility();
+                    
+
+                    CombatUI.OnUnitFinishesAction(selectedPlayerUnit);
+
+                    yield return null;
                 }
             }
 
@@ -177,6 +167,21 @@ public class PlayerFlag : FlagController {
         yield return null;
     }
 
+    private void SwapToValidAbility() {
+        AttackData2 lastAbility;
+        SetActiveAbility(selectedPlayerUnit, 0);
+        lastAbility = activeAbility;
+        if (selectedPlayerUnit.CanDoAnyAction && activeAbility.actionCost > selectedPlayerUnit.ActionsLeft) {
+            foreach (var item in selectedPlayerUnit.abilities.GetNormalAbilities()) {
+                if (item.actionCost <= selectedPlayerUnit.ActionsLeft) {
+                    activeAbility = item;
+                    break;
+                }
+            }
+        }
+        CombatUI.OnActiveAbilityChange(lastAbility, activeAbility);
+    }
+
     private bool PlayerDetected() {
         return FlagManager.flags[1].DetectedSomeone;
     }
@@ -185,18 +190,20 @@ public class PlayerFlag : FlagController {
         if (activeAbility == null)
             return null;
         if (i == 0) {
-            if (activeAbility.standard.used) {
-                return GridMask.RotateMask(activeAbility.AttackMask, mouseDirection);
-            } else if (activeAbility.move.used) {
+            if (activeAbility.standard.attackRangeMask != null) {
+                return GridMask.RotateMask(activeAbility.standard.attackRangeMask, mouseDirection);
+            } else if (activeAbility.move.range != null) {
                 return GridMask.RotateMask(activeAbility.move.range, mouseDirection);
             } else {
+                Debug.Log("Get mask fail 1");
                 return null;
             }
         }
         if (i == 1) {
-            if (activeAbility.aoe.used) {
+            if (activeAbility.aoe.aoeMask != null) {
                 return GridMask.RotateMask(activeAbility.aoe.aoeMask, mouseDirection);
             } else {
+                Debug.Log("Get mask fail 2");
                 return null;
             }
         }
@@ -212,10 +219,7 @@ public class PlayerFlag : FlagController {
             if (hoveredUnit.IsPlayer) {
                 selectedPlayerUnit = hoveredUnit;
 
-                lastAbilityId = activeAbilityId;
-                activeAbilityId = 0;
-
-                SetActiveAbility(selectedPlayerUnit, 0);
+                SwapToValidAbility();
             }
             CombatUI.OnSelectDifferentUnit();
 
@@ -223,9 +227,8 @@ public class PlayerFlag : FlagController {
     }
 
     internal void SetActiveAbility(Unit unitSource, int atkId) {
+
         Debug.Log("Setting active ability " + atkId);
-        lastAbilityId = activeAbilityId;
-        activeAbilityId = atkId;
         AttackData2 lastAbility = activeAbility;
         activeAbility = unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
 
@@ -238,8 +241,6 @@ public class PlayerFlag : FlagController {
             selectedUnit = null;
             selectedPlayerUnit = null;
             activeAbility = null;
-            lastAbilityId = activeAbilityId;
-            activeAbilityId = 0;
         }
     }
 

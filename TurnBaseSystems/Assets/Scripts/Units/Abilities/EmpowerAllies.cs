@@ -97,7 +97,6 @@ public class EmpowerAlliesData : AttackDataType {
         buff.animSets = animSets;
         buff.aoeDmgUp= aoeDmgUp;
         buff.auraRange = auraRange;
-        buff.priority = priority;
         buff.setStatus = setStatus;
         buff.shieldUp = shieldUp;
         buff.stdDmgUp = stdDmgUp;

@@ -6,7 +6,7 @@ using UnityEngine;
 /// Allows calculations and damage for pierce attack, after some source.
 /// </summary>
 [System.Serializable]
-public class PierceAtkData:AttackDataType {
+public class PierceAtkData: DamageBasedAttackData {
     public float bounceDamageReduction = 0f;
 
     public AuraTarget targetFilter;
@@ -31,18 +31,22 @@ public class PierceAtkData:AttackDataType {
                 Debug.Log("No combat info");
                 continue;
             }
-
-            if (useChargesCountToRepeatPiercing) {
-                if (CombatInfo.attackingUnit.charges == 0)
-                    break;
-                CombatInfo.attackingUnit.AddCharges(this, -1);
-            }
-            CombatInfo.activeAbility.standard.Execute(new CurrentActionData() {
-            attackedSlot = unit[i].snapPos, attackStartedAt = CombatInfo.currentActionData.attackStartedAt, sourceExecutingUnit = CombatInfo.attackingUnit });
-            // restore on killing units
-            if (useChargesCountToRepeatPiercing 
-                && restoreChargesUsedOnKills && unit[i] == null) {
-                CombatInfo.attackingUnit.AddCharges(this, 1);
+            if (EmpowerAlliesData.ValidTarget(targetFilter, unit[i].flag.allianceId, CombatInfo.attackingUnit)) {
+                if (useChargesCountToRepeatPiercing) {
+                    if (CombatInfo.attackingUnit.charges == 0)
+                        break;
+                    CombatInfo.attackingUnit.AddCharges(null, -1);
+                }
+                CombatInfo.activeAbility.standard.Execute(new CurrentActionData() {
+                    attackedSlot = unit[i].snapPos,
+                    attackStartedAt = CombatInfo.currentActionData.attackStartedAt,
+                    sourceExecutingUnit = CombatInfo.attackingUnit
+                });
+                // restore on killing units
+                if (useChargesCountToRepeatPiercing
+                    && restoreChargesUsedOnKills && unit[i] == null) {
+                    CombatInfo.attackingUnit.AddCharges(null, 1);
+                }
             }
             StandardAttackData.dmgReduction += bounceDamageReduction;
         }
@@ -51,7 +55,7 @@ public class PierceAtkData:AttackDataType {
     public void Draw(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.SetUpGrid(unit[i].snapPos, 1, 2, GridMask.One);
+            GridDisplay.SetUpGrid(unit[i].snapPos, 5, 4, GridMask.One);
         }
     }
 
@@ -66,9 +70,13 @@ public class PierceAtkData:AttackDataType {
             Unit[] units = SelectionManager.GetAllUnitsFromDirection(lastPierce.snapPos, CombatInfo.currentActionData.directionOfAttack.normalized, pierceRange);
             bool noNewUnits = true;
             for (int j = 0; j < units.Length; j++) {
-                if (EmpowerAlliesData.ValidTarget(targetFilter, units[i].flag.allianceId, CombatInfo.attackingUnit)
-                    && !foundUnits.ContainsKey(units[i])) {
-                    foundUnits.Add(units[i], units[i]);
+                if (units[j] == null) {
+                    Debug.LogError("Null unit for some reason.");
+                    continue;
+                }
+                if (EmpowerAlliesData.ValidTarget(targetFilter, units[j].flag.allianceId, CombatInfo.attackingUnit)
+                    && !foundUnits.ContainsKey(units[j])) {
+                    foundUnits.Add(units[j], units[j]);
                     noNewUnits = false;
                     break;
                 }
@@ -89,7 +97,7 @@ public class PierceAtkData:AttackDataType {
     internal void Hide(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.HideGrid(unit[i].snapPos, 2, GridMask.One);
+            GridDisplay.HideGrid(unit[i].snapPos, 5, GridMask.One);
         }
     }
 }

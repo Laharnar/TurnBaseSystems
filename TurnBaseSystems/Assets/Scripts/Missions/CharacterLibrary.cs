@@ -55,4 +55,15 @@ public class CharacterLibrary:MonoBehaviour {
             return Instantiate(characterPrefs[characteri]);
         return null;
     }
+
+    internal static Transform[] CreateEnemiesInstances(int[] team) {
+        if (!m)
+            return new Transform[0];
+        Transform[] instances = new Transform[team.Length];
+        for (int i = 0; i < team.Length; i++) {
+            Transform t = m.GetInstance(team[i]);
+            instances[i] = t;
+        }
+        return instances;
+    }
 }

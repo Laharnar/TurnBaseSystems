@@ -19,11 +19,7 @@ public enum DamageAttribute {
 public class AttackDataType {
     internal static DamageInfo curDmg;
     public bool used = false;
-    public int priority = -1;
     public int[] animSets;
     public CombatStatus setStatus = CombatStatus.Normal;
 
-    public DamageType damageType;
-    public EnergyType energyType;
-    public DamageAttribute atributteType;
 }

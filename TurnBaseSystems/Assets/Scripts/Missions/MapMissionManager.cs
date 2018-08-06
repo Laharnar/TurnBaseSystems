@@ -27,7 +27,14 @@ public class MapMissionManager : MonoBehaviour {
             MissionTarget mt = selected.GetComponent<MissionTarget>();
             activeMission = mt.targetMissionId;
             if (activeMission != lastChoice) {
-                missionText.SetText(GetQuestDataById(activeMission).GetDescription());
+                if (missionText == null)
+                    Debug.Log("Missing mission text");
+                else {
+                    QuestData quest = GetQuestDataById(activeMission);
+                    if (quest != null)
+                        missionText.SetText(quest .GetDescription());
+                    else Debug.Log("No Quest with id "+activeMission);
+                }
             } else {
                 PlayMission(activeMission);
                 activeMission = -1;
@@ -54,6 +61,7 @@ public class MapMissionManager : MonoBehaviour {
                 return missions[i];
             }
         }
+        Debug.Log("Library doesn't contain mission with missionId " + activeMission);
         return null;
     }
 }

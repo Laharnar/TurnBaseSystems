@@ -12,7 +12,13 @@ public class CombatManager : MonoBehaviour {
     public bool initAwake = true;
     bool init;
 
+    /// <summary>
+    /// Don't edit outside this script.
+    /// </summary>
+    public int mouseDirection = 0;
+
     public List<Unit> units = new List<Unit>();
+    internal int lastMouseDirection;
 
     private void Awake() {
         m = this;
@@ -66,9 +72,14 @@ public class CombatManager : MonoBehaviour {
                 }
                 // temp - win condition that enemy dies.
                 if (FlagManager.flags[1].units.Count == 0 || MissionManager.levelCompleted) {
-                    yield return StartCoroutine(WinGame());
-                    done = true;
-                    break;
+                    if (j == 1) {
+                        WaveManager.m.OnWaveCleared();
+                    }
+                    if (WaveManager.m.AllWavesCleared()&& FlagManager.flags[1].units.Count == 0) {
+                        yield return StartCoroutine(WinGame());
+                        done = true;
+                        break;
+                    }
                 }
                 yield return new WaitForSeconds(0.5f);
 

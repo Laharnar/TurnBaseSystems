@@ -26,7 +26,7 @@ public class RangeLogic : AiLogic {
         Vector3 enemyPos = GridManager.SnapPoint(closestUnit.transform.position);
         Vector3 targetMovePos;
 
-        targetMovePos = AiHelper.MaxRangeOnMask(selfPos, closestUnit.transform.position, unit.abilities.move2.standard.attackRangeMask, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
+        targetMovePos = AiHelper.MaxRangeOnMask(selfPos, closestUnit.transform.position, unit.abilities.move2.move.range, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
         Debug.Log(targetMovePos);
 
         yield return unit.StartCoroutine(DebugGrid.BlinkColor(targetMovePos));

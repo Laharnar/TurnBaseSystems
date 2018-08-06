@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class AOEAttackData : AttackDataType {
+public class AOEAttackData : DamageBasedAttackData {
     public int damage=1;
     public GridMask aoeMask;
 
@@ -30,5 +30,9 @@ public class AOEAttackData : AttackDataType {
         }
         if (/*data.aoe.*/setStatus != CombatStatus.SameAsBefore)
             a.sourceExecutingUnit.combatStatus = setStatus;//data.aoe.setStatus;
+    }
+
+    internal GridMask GetMask(int mouseDirection) {
+        return GridMask.RotateMask(aoeMask, mouseDirection);
     }
 }

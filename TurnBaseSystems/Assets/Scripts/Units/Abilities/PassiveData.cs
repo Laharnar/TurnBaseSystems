@@ -1,5 +1,5 @@
 ﻿[System.Serializable]
-public class PassiveData : AttackDataType {
+public class PassiveData : DamageBasedAttackData {
     public bool canHeal = false;
     public int healAmt = 1;
 

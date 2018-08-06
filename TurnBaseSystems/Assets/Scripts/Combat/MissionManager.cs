@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MissionManager:MonoBehaviour {
@@ -19,6 +20,12 @@ public class MissionManager:MonoBehaviour {
             Init(CharacterLibrary.CreateInstances(fastLoadTeam));
         else {
             Init(CharacterLoader.LoadActiveTeam());
+        }
+    }
+
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.R)) {
+            LoadingManager.RestartMission();
         }
     }
 
@@ -52,12 +59,11 @@ public class MissionManager:MonoBehaviour {
         }
         
         CombatManager.m.StartCombatLoop();
+        if (WaveManager.m)
+            WaveManager.m.OnCombatBegins();
+        else Debug.Log("No wave manger in scene");
     }
 
-    public void InitEnemies() {
-        LoadTeamIntoArea(CharacterLibrary.CreateInstances(fastLoadEnemyTeam), "DONTRENAME_Starting point (1)");
-
-    }
 
     public void OnLoadLevelEndScreen() {
         if (MissionManager.m.missionEndScreen_child) {
