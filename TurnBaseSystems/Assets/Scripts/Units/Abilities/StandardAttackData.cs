@@ -15,6 +15,7 @@ public class StandardAttackData : DamageBasedAttackData {
     public GridMask attackRangeMask;
     public int healOnKills = 0;
     public static float dmgReduction = 0;
+    public AuraTarget targets = AuraTarget.All;
 
     public GridMask GetMask(int direction) {
         return GridMask.RotateMask(attackRangeMask, direction);
@@ -24,7 +25,7 @@ public class StandardAttackData : DamageBasedAttackData {
         dmgReduction = Mathf.Clamp(dmgReduction, 0f, 1f);
         AttackData2 data = CombatInfo.activeAbility;
         Unit u = GridAccess.GetUnitAtPos(actionData.attackedSlot);
-        if (u) {
+        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, CombatInfo.attackingUnit )) {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
                     u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));

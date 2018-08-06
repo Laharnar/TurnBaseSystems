@@ -94,19 +94,23 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         }
     }
     public void OnTurnEnd() {
+        CombatInfo.attackingUnit = this;
+        CombatInfo.currentActionData = new CurrentActionData() { attackedSlot = snapPos, attackStartedAt = snapPos, sourceExecutingUnit = this };
         Debug.Log("Applying passives.");
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
+            CombatInfo.activeAbility = abilities.additionalAbilities2[i];
             if (abilities.additionalAbilities2[i].passive.used) {
-                abilities.additionalAbilities2[i].passive.Execute(new CurrentActionData() { attackedSlot = snapPos, attackStartedAt=snapPos, sourceExecutingUnit = this }, abilities.additionalAbilities2[i]);
+                AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
+                AttackAnimations(abilities.additionalAbilities2[i]);
             }
+            
         }
         EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
     }
 
     public void AddCharges(AttackDataType abilitySource, int amt) {
-        amt = Mathf.Clamp(stats.GetSum(abilitySource, CombatStatType.Charges) + amt, 0, maxCharges);
-        if (amt > 0)
-            stats.Set(abilitySource, CombatStatType.Charges, amt);
+        amt = Mathf.Clamp(stats.GetSum(null, CombatStatType.Charges) + amt, 0, maxCharges);
+        stats.Set(null, CombatStatType.Charges, amt);
     }
 
     public void OnTurnStart() {
@@ -155,14 +159,14 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
-        if (atk == abilities.move2) {
+        /*if (atk == abilities.move2) {
             if (u == null) {
                 Debug.Log("Executing move action");
                 MoveAction(attackedSlot, atk);
                 return 1;
             }
-        } else {
-            if (attacking) {
+        } else {*/
+            if (atk == abilities.move2 && moving || atk != abilities.move2 && attacking) {
                 Debug.Log("Already attacking. action aborted.");
                 return -1;
             }
@@ -175,23 +179,26 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 return -1;
             }
             Debug.Log("Executing attack " + atk.o_attackName);
-            actionsLeft -= atk.actionCost;
+
+            CostActions(atk);
+            //actionsLeft -= atk.actionCost;
 
             AttackData2.UseAttack(this, attackedSlot, atk);
 
             AttackAnimations(atk);
             return 2;
-        }
+        //}
         return -1;
     }
+
     public void MoveAction(Vector3 slot, AttackData2 action) {
         if (moving) return;
-        CostActions(action);
+        //CostActions(action);
         Move(slot);
     }
 
-    private void CostActions(AttackData2 move2) {
-        actionsLeft -= move2.actionCost;
+    private void CostActions(AttackData2 atk) {
+        actionsLeft -= atk.actionCost;
     }
 
     public void Move(Vector3 targetPos) {

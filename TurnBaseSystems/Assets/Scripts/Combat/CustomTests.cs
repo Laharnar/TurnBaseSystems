@@ -192,7 +192,8 @@ public class CustomTests: MonoBehaviour {
             yield return new WaitForSeconds(2);
         }
 
-        if (false) {
+        // grid draw test
+        /*if (false) {
             GridDisplay.ClearAll();
 
             GridDisplay.RemakeGrid();
@@ -218,11 +219,11 @@ public class CustomTests: MonoBehaviour {
             GridDisplay.HideGrid(new Vector3(), 0, GridManager.m.maskTemplates[2]);
             Test("Grids2d", GridDisplay.layers[0].items.Count, 0);
             //Test("Grids2e", GridDisplay.layers[1].items.Count, 4);
-            GridDisplay.MoveGrid(new Vector3(2,0,0), new Vector3(-2, 0, 0), 1, 4, GridManager.m.maskTemplates[0]);
+            GridDisplay.MoveGrid(new Vector3(2,0,0), new Vector3(-2, 0, 0), GridDisplayLayer.GreenMovement, 4, GridManager.m.maskTemplates[0]);
             GridDisplay.RemakeGrid();
             //Test("Grids2f", GridDisplay.flattened.Count, 4);
 
-        }
+        }*/
         if (false) {
             Test("calc 1", Mathf.CeilToInt(4f * (1-0.9f)), 1);
             

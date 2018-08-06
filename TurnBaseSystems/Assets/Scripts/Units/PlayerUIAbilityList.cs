@@ -47,7 +47,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
         m.instances.Clear();
     }
 
-    internal static void LoadAbilitiesOnUI(Unit unit) {
+    internal static void LoadAbilitiesOnUI(Unit unit, bool allowInteraction) {
         if (unit == null) {
             Debug.Log("No unit");
         }
@@ -58,13 +58,16 @@ public class PlayerUIAbilityList : MonoBehaviour {
         AttackData2[] abilitis = unit.abilities.GetNormalAbilities() as AttackData2[];
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
-            
+            if (abilitis[i].active == false)
+                continue;
             m.instances[i].GetComponent<ButtonInteraction>().interaction 
                 = ScriptableObject.CreateInstance<TwoStepAttack>().Init(unit, i);
             m.instances[i].GetChild(0).GetComponent<Text>().text = abilitis[i].o_attackName
                 + (!abilitis[i].passive.used ? " (" +abilitis[i].actionCost+")" : "(Passive)");
-            m.instances[i].GetComponent<Button>().interactable =  unit.ActionsLeft >= abilitis[i].actionCost && !abilitis[i].passive.used;
+            m.instances[i].GetComponent<Button>().interactable = allowInteraction&& unit.ActionsLeft >= abilitis[i].actionCost && !abilitis[i].passive.used;
             
         }
     }
+
+
 }

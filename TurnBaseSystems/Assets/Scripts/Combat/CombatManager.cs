@@ -109,6 +109,13 @@ public class CombatManager : MonoBehaviour {
         }
     }
 
+    internal static void SkipWave() {
+        for (int i = 0; i < FlagManager.flags[1].units.Count; i++) {
+            Destroy(FlagManager.flags[1].units[i].gameObject);
+        }
+        FlagManager.flags[1].units.Clear();
+    }
+
     private void OnTurnEnd(int j) {
         for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
             FlagManager.flags[j].units[i].OnTurnEnd();
@@ -148,7 +155,7 @@ public class CombatManager : MonoBehaviour {
                         bool inOld = ability.aura.auraRange.IsPosInMask(snap, oldPos);
                         bool inNew = ability.aura.auraRange.IsPosInMask(snap, newPos);
                         if (inOld && !inNew) {
-                            ability.aura.LoseEffect(unit);
+                            ability.aura.LoseEffect(unit, combatUnit);
                         }
                         if (!inOld && inNew) {
                             ability.aura.Effect(unit, combatUnit);

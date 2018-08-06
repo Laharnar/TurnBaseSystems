@@ -75,15 +75,19 @@ public class PlayerFlag : FlagController {
                     yield return null;
                     continue;
                 }
-            } 
+            }
             #endregion
+
+            if (Input.GetKeyDown(KeyCode.Alpha0)) {
+                CombatManager.SkipWave();
+            }
 
 
             lastHoveredSlot = hoveredSlot;
 
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
             if (hoveredSlot != lastHoveredSlot)
-                CombatUI.OnMouseMoved();
+                CombatUI.OnMouseMovedToDfSlot();
             // show yellow slot
             CombatUI.OnMouseHoverEmpty(hoveredSlot, lastHoveredSlot);
             if (MouseWheelRotate) {

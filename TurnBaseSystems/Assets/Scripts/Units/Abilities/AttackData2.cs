@@ -8,6 +8,7 @@ public enum AttackRequirments {
 }
 [System.Serializable]
 public sealed class AttackData2 : StdAttackData {
+    public bool active = true;
 
     public string o_attackName;
     public string detailedDescription;
@@ -25,23 +26,21 @@ public sealed class AttackData2 : StdAttackData {
     public static void ShowGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.SetUpGrid(curSlot, 6, 2, data.range.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.standard.used) {
-            GridDisplay.SetUpGrid(curSlot, 6, 2, data.standard.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.move.used) {
-            GridDisplay.SetUpGrid(curSlot, 1, 1, data.move.range);
+            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.SetUpGrid(curSlot, 7, 4, data.aoe.GetMask(CombatManager.m.mouseDirection));
+                GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.SetUpGrid(attackedSlot, 8, 4, data.aoe.GetMask(CombatManager.m.mouseDirection));
+                GridDisplay.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
             }
         } else if (data.aoe.used) {
-            GridDisplay.SetUpGrid(attackedSlot, 9, 4, data.aoe.GetMask(CombatManager.m.mouseDirection));
-        } else if (data.range.used) {
-            GridDisplay.SetUpGrid(curSlot, 6, 2, data.range.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.buff.used) {
         }
@@ -58,21 +57,21 @@ public sealed class AttackData2 : StdAttackData {
             return;
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.HideGrid(curSlot, 6, data.range.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.standard.used) {
-            GridDisplay.HideGrid(curSlot, 6, data.standard.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.move.used) {
-            GridDisplay.HideGrid(curSlot, 1, data.move.range);
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(curSlot, 7, data.aoe.GetMask(CombatManager.m.mouseDirection));
+                GridDisplay.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(attackedSlot, 8, data.aoe.GetMask(CombatManager.m.mouseDirection));
+                GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
             }
         } else if (data.aoe.used) {
-            GridDisplay.HideGrid(attackedSlot, 9, data.aoe.GetMask(CombatManager.m.mouseDirection));
+            GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
         }
         if (data.buff.used) {
         }
@@ -89,21 +88,21 @@ public sealed class AttackData2 : StdAttackData {
             return;
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.HideGrid(curSlot, 6, data.range.GetMask(CombatManager.m.lastMouseDirection));
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.lastMouseDirection));
         }
         if (data.standard.used) {
-            GridDisplay.HideGrid(curSlot, 6, data.standard.GetMask(CombatManager.m.lastMouseDirection));
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.lastMouseDirection));
         }
         if (data.move.used) {
-            GridDisplay.HideGrid(curSlot, 1, data.move.range);
+            GridDisplay.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(curSlot, 7, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
+                GridDisplay.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(attackedSlot, 8, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
+                GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
             }
         } else if (data.aoe.used) {
-            GridDisplay.HideGrid(attackedSlot, 9, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
+            GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
         }
         if (data.buff.used) {
         }
@@ -126,6 +125,10 @@ public sealed class AttackData2 : StdAttackData {
     public static void UseAttack(Unit source, Vector3 attackedSlot, AttackData2 data) {
         if (source == null || data==null) {
             Debug.Log("Error. source:" + (source == null) + " slot:" + attackedSlot + " data:"+(data == null));
+        }
+        if (data.active == false) {
+            Debug.Log("Error, activating disabled ability. source:" + (source == null) + " slot:" + attackedSlot + " data:" + (data == null));
+            return;
         }
 
         Debug.Log("Using attack "+data.o_attackName +" unit: "+source+
@@ -155,13 +158,17 @@ public sealed class AttackData2 : StdAttackData {
             source.combatStatus = data.buff.setStatus;
         }
         if (data.move.used) {
-            source.MoveAction(attackedSlot, data);
+            data.move.Execute(actionData, data);
+            //source.MoveAction(attackedSlot, data);
 
             if (data.move.setStatus != CombatStatus.SameAsBefore)
                 source.combatStatus = data.move.setStatus;
         }
         if (data.pierce.used) {
             data.pierce.Execute(attackedSlot);
+        }
+        if (data.passive.used) {
+            data.passive.Execute(new CurrentActionData() { attackedSlot = attackedSlot, attackStartedAt = attackedSlot, sourceExecutingUnit = source }, data);
         }
     }
 

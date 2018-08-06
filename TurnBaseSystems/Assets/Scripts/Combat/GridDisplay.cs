@@ -1,12 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum GridDisplayLayer {
+    GreenMovement,
+    RedAttackArea,
+    Aura,
+    BlueSelectionArea,
+    RedSelectionArea,
+    SelfActivate,
+    OrangeAOEAttack,
+    OrangePierce,
+    AIAction,
+}
 public class GridDisplay {
     public static List<GridLayer> layers = new List<GridLayer>();
     public static Vector3 center;
     public static List<GridDisplayItem> flattened = new List<GridDisplayItem>();
 
     public static List<Transform> instances = new List<Transform>();
+
+    static Color GetColorCode(GridDisplayLayer layer) {
+        switch (layer) {
+            case GridDisplayLayer.GreenMovement:
+                return Color.green;
+            case GridDisplayLayer.RedAttackArea:
+                return Color.red;
+            case GridDisplayLayer.Aura:
+                return Color.yellow;
+            case GridDisplayLayer.BlueSelectionArea:
+                return Color.blue;
+            case GridDisplayLayer.RedSelectionArea:
+                return Color.red;
+            case GridDisplayLayer.SelfActivate:
+                return Color.yellow;
+            case GridDisplayLayer.OrangeAOEAttack:
+                return new Color(1, 0.6f, 0, 2);//orange;
+            case GridDisplayLayer.OrangePierce:
+                return new Color(1, 0.6f, 0, 2);//orange;
+            case GridDisplayLayer.AIAction:
+                return Color.yellow;
+            default:
+                Debug.Log("Unhandled color, empty color.");
+                return GridManager.m.defaultColor;
+        }
+    }
 
     public static void RemakeGrid() {
         FlattenLayers();
@@ -15,27 +53,13 @@ public class GridDisplay {
         // create if not enough
         for (int i = instances.Count; i < flattened.Count; i++) {
             Transform t = GridManager.NewGridPrefInstance(flattened[i].pos);
-            int code = flattened[i].color;
-            t.GetComponentInChildren<SpriteRenderer>().color =
-                code == 0 ? GridManager.m.defaultColor :
-                code == 1 ? Color.green :
-                code == 2 ? Color.red :
-                code == 3 ? Color.blue :
-                code == 4 ? new Color(1, 0.6f, 0, 2) ://orange
-                    Color.yellow;
+            t.GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
             instances.Add(t);
         }
         // recolor and reposition
         for (int i = 0; i < instances.Count && i < flattened.Count; i++) {
             instances[i].transform.position = flattened[i].pos;
-            int code = flattened[i].color;
-            instances[i].GetComponentInChildren<SpriteRenderer>().color =
-                code == 0 ? GridManager.m.defaultColor :
-                code == 1 ? Color.green :
-                code == 2 ? Color.red :
-                code == 3 ? Color.blue :
-                code == 4 ? new Color(1, 0.6f, 0, 2) ://orange
-                    Color.yellow;
+            instances[i].GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
         }
         // remove if it's too much
         while (instances.Count > flattened.Count) {
@@ -44,24 +68,24 @@ public class GridDisplay {
         }
     }
 
-    public static void SetUpGrid(Vector3 pos, int layer, int col, GridMask mask) {
-        while (layers.Count <= layer && layer > -1) {
+    public static void SetUpGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
+        while (layers.Count <= (int)layer && (int)layer > -1) {
             layers.Add(new GridLayer());
         }
         Vector3[] positions = mask.GetPositions(pos);
         for (int i = 0; i < positions.Length; i++) {
-            layers[layer].items.Add(new GridDisplayItem() { color = col, pos = positions[i] });
+            layers[(int)layer].items.Add(new GridDisplayItem() { color = layer, pos = positions[i] });
         }
     }
 
-    public static void HideGrid(Vector3 pos, int layer, GridMask mask) {
-        while (layers.Count <= layer && layer > -1) {
+    public static void HideGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
+        while (layers.Count <= (int)layer && (int)layer > -1) {
             layers.Add(new GridLayer());
         }
         Vector3[] positions = mask.GetPositions(pos);
-        for (int i = 0; i < layers[layer].items.Count; i++) {
-            if (mask.IsPosInMask(pos, layers[layer].items[i].pos)) {
-                layers[layer].items.RemoveAt(i);
+        for (int i = 0; i < layers[(int)layer].items.Count; i++) {
+            if (mask.IsPosInMask(pos, layers[(int)layer].items[i].pos)) {
+                layers[(int)layer].items.RemoveAt(i);
                 i--;
             }
         }
@@ -121,15 +145,16 @@ public class GridDisplay {
         
     }
 
-    internal static void MoveGrid(Vector3 opos, Vector3 npos, int layer, int col, GridMask mask) {
+    internal static void MoveGrid(Vector3 opos, Vector3 npos, GridDisplayLayer layer, GridMask mask) {
         HideGrid(opos, layer, mask);
-        SetUpGrid(npos, layer, col, mask);
+        SetUpGrid(npos, layer, mask);
     }
+    
 }
 public class GridLayer {
     public List<GridDisplayItem> items = new List<GridDisplayItem>();
 }
 public class GridDisplayItem {
     public Vector3 pos;
-    public int color;
+    public GridDisplayLayer color;
 }

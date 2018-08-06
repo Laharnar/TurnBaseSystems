@@ -9,12 +9,12 @@ public class UIManager : MonoBehaviour {
         m = this;
     }
 
-    public static void ShowAbilities(bool v, Unit unit) {
+    public static void ShowAbilities(bool v, Unit unit, bool allowInteraction) {
         if (m.pSelectAlly)
             m.pSelectAlly.gameObject.SetActive(v);
         PlayerUIAbilityList.ClearInstanceList();
         if (unit)
-            PlayerUIAbilityList.LoadAbilitiesOnUI(unit);
+            PlayerUIAbilityList.LoadAbilitiesOnUI(unit, allowInteraction);
     }
 
     internal static void ShowPlayerUI(bool v) {

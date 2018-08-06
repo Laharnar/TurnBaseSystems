@@ -23,7 +23,9 @@ public class LoadingManager : MonoBehaviour {
         m.activeLoadingScreen = 1;
         SceneManager.LoadScene("teamSelection");
     }
-
+    public static void RestartMission() {
+        SceneManager.LoadScene(GameRun.current.activeQuest.sceneName);
+    }
 
     public void OnLoadMission() {
         if (MissionManager.m && MissionManager.m.missionEndScreen_child)

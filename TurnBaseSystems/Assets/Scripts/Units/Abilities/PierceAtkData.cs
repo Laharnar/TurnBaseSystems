@@ -9,6 +9,7 @@ using UnityEngine;
 public class PierceAtkData: DamageBasedAttackData {
     public float bounceDamageReduction = 0f;
 
+    [Header("Who to dmg, allies still extend range")]
     public AuraTarget targetFilter;
 
     public float pierceRange=3f;
@@ -44,7 +45,7 @@ public class PierceAtkData: DamageBasedAttackData {
                 });
                 // restore on killing units
                 if (useChargesCountToRepeatPiercing
-                    && restoreChargesUsedOnKills && unit[i] == null) {
+                    && restoreChargesUsedOnKills && (unit[i]==null || unit[i].dead)) {
                     CombatInfo.attackingUnit.AddCharges(null, 1);
                 }
             }
@@ -55,7 +56,7 @@ public class PierceAtkData: DamageBasedAttackData {
     public void Draw(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.SetUpGrid(unit[i].snapPos, 5, 4, GridMask.One);
+            GridDisplay.SetUpGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
         }
     }
 
@@ -64,7 +65,7 @@ public class PierceAtkData: DamageBasedAttackData {
         if (!CombatInfo.attackingUnit) { UnityEngine.Debug.Log("No Attacking unit assigned to combat info"); return new Unit[0]; }
         int pierceCount = useChargesCountToRepeatPiercing ?
             CombatInfo.attackingUnit.charges : maxCount;
-        UnityEngine.Debug.Log("Pierce attack with max pierce count "+pierceCount + " Pierce range "+pierceRange);
+        UnityEngine.Debug.Log("Pierce attack with max pierce count "+pierceCount + " using charges "+ useChargesCountToRepeatPiercing + " Pierce range "+pierceRange);
         Unit lastPierce = firstHitUnit;
         for (int i = 0; i < pierceCount; i++) {
             Unit[] units = SelectionManager.GetAllUnitsFromDirection(lastPierce.snapPos, CombatInfo.currentActionData.directionOfAttack.normalized, pierceRange);
@@ -97,7 +98,7 @@ public class PierceAtkData: DamageBasedAttackData {
     internal void Hide(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.HideGrid(unit[i].snapPos, 5, GridMask.One);
+            GridDisplay.HideGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
         }
     }
 }

@@ -53,14 +53,14 @@ public class EmpowerAlliesData : AttackDataType {
             Unit u = GridAccess.GetUnitAtPos(unitsPos[i]);
             int unitAlliance = u.flag.allianceId;
             if (ValidTarget(target, unitAlliance, source)) {
-                LoseEffect(u);
+                LoseEffect(u, source);
                 if (u==source) {
                     sourceDeEffected = true;
                 }
             }
         }
         if (alwaysDeEffectUnit && !sourceDeEffected) {
-            LoseEffect(source);
+            LoseEffect(source, source);
         }
     }
 
@@ -77,10 +77,12 @@ public class EmpowerAlliesData : AttackDataType {
         }
     }
 
-    public void LoseEffect(Unit u) {
-        if (stdDmgUp != 0) u.stats.Reduce(this, CombatStatType.StdDmg, stdDmgUp);
-        if (aoeDmgUp != 0) u.stats.Reduce(this, CombatStatType.AoeDmg, aoeDmgUp);
-        if (shieldUp != 0) u.AddShield(this, -shieldUp);
+    public void LoseEffect(Unit u, Unit source) {
+        if (ValidTarget(target, source.flag.allianceId, source)) {
+            if (stdDmgUp != 0) u.stats.Reduce(this, CombatStatType.StdDmg, stdDmgUp);
+            if (aoeDmgUp != 0) u.stats.Reduce(this, CombatStatType.AoeDmg, aoeDmgUp);
+            if (shieldUp != 0) u.AddShield(this, -shieldUp);
+        }
     }
 
     public void BeforePosChange() {
