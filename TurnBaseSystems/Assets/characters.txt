@@ -151,3 +151,4 @@ add 1 or 2 charges, random, capped at 5
 aura - dmg enemies in melle range
 or parry - return dmg to enemies if has charges
 ----------------------------
+
