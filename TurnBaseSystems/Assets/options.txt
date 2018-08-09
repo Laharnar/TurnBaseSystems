@@ -2,14 +2,6 @@
 When you have no goals, pick something from here.
 ----------------------------------------------------------
 
-Simpler approach to attacks on units. 
-Class with list of avaliable attacks instead of hardcoded.
-Or class with all possible attacks.
-
-Skills consume both AP and actions
-
-Actions left are visible on UI.
-
 Talking abilities!
 
 Factions. story based, let's say 5. 
@@ -23,8 +15,6 @@ entering combat loses you points, talking your way in, increases in some cases, 
 
 city map with events
 
-remove attack type and requires slot, with enum. then add a can attack slot check
-
 two step channeling abilities - or substep combo abilities(lightly connected)
 
 conditional skills
@@ -35,14 +25,5 @@ have a mission xml template(description, scene name, mission reward)
 
 checkpoint rewards are set per house type and size
 
-units turn towards target
-
-assasin - dash
-assasin - passive backstab
-
-well this will give them full arsenal-move, 3 abilities, and passive
-
-core identity invis, strong basic, safety/offensive dash, assasination passive
-
-i feel like enemies are kinda simplistic
-dodging would improve that
+stun status
+more statuses

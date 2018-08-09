@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [System.Serializable]
-public class MoveAttackData : AttackDataType{
+public class MoveAttackData : AbilityEffect{
     public GridMask range;
 
     public bool onStartApplyAOE, onEndApplyAOE;
@@ -18,19 +18,28 @@ public class MoveAttackData : AttackDataType{
         return move;
     }
 
-    public void Execute(CurrentActionData a, AttackData2 ability) {
-        if (onStartApplyAOE) {
-            ability.aoe.Execute(a, ability);
-        }
+    internal override void AtkBehaviourExecute() {
+        Execute();
+    }
 
-        a.sourceExecutingUnit.MoveAction(a.attackedSlot, ability);
+    public void Execute() {
+        if (onStartApplyAOE) {
+            CI.activeAbility.aoe.Execute();
+        }
+        Unit existing = GridAccess.GetUnitAtPos(CI.attackedSlot);
+        
+        CI.sourceExecutingUnit.MoveAction(CI.attackedSlot);
 
         if (onEndApplyAOE) {
-            ability.aoe.Execute(a, ability);
+            CI.activeAbility.aoe.Execute();
+        }
+
+        if (existing) {
+            existing.abilities.ActivateOnSteppedOn(existing, CI.sourceExecutingUnit);
         }
 
         if (setStatus != CombatStatus.SameAsBefore)
-            a.sourceExecutingUnit.combatStatus = setStatus;
+            CI.sourceExecutingUnit.combatStatus = setStatus;
     }
 }
 

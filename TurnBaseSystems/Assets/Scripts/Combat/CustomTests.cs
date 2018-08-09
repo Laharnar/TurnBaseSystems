@@ -23,7 +23,7 @@ public class CustomTests: MonoBehaviour {
                 float[] distsToTarget = new float[] { 3, 4, 5, 4, 1, 2, 3, 4, 5, 4, 3, 2 };
                 Test("AiHelper.IndexOfClosestToTarget", AiHelper.IndexOfClosestToTarget(distsToTarget, distsToSource), 4);
             }
-            if (false) {
+            if (true) {
                 EmpowerAlliesData d1 = new EmpowerAlliesData() { shieldUp = 2 };
                 EmpowerAlliesData d2 = new EmpowerAlliesData() { shieldUp = 5 };
                 CombatStats comstat = new CombatStats();
@@ -98,7 +98,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks3d", comstat.GetSum(CombatStatType.Hp), 3);
 
             }
-            if (false) {
+            if (true) {
                 GameObject witchObj = GameObject.Find("UNIT _ consumer _ Infested Witch(Clone)");
                 // empower test
                 Unit witch = witchObj.GetComponent<Unit>();
@@ -108,7 +108,7 @@ public class CustomTests: MonoBehaviour {
                 witch.OnTurnStart();
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
-                BuffManager.Register(witch, atk.buff);
+                BuffManager.Register(witch, witch, atk.buff);
                 BuffManager.ConsumeBuffs(1);
                 //-witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
@@ -125,7 +125,7 @@ public class CustomTests: MonoBehaviour {
                 witch.OnTurnStart();
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
-                BuffManager.Register(witch, atk.buff);
+                BuffManager.Register(witch, witch, atk.buff);
                 BuffManager.ConsumeBuffs(1);
                 //witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
@@ -149,7 +149,7 @@ public class CustomTests: MonoBehaviour {
             CombatStats comstat2 = melee.stats;
             dekuriongo.transform.position = new Vector3(0, 1,0);
             mellego.transform.position = new Vector3(1, 0, 0);
-            CombatManager.m.OnTurnStart(1);
+            CombatEvents.OnTurnStart(1);
             Test("Auras1a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("Auras1b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
@@ -168,25 +168,25 @@ public class CustomTests: MonoBehaviour {
 
             EmpowerAlliesData aura1 = dekurion.abilities.additionalAbilities2[1].aura;
             dekurion.transform.position = new Vector3(-10, 1, 0);
-            CombatManager.OnUnitExecutesMoveAction(new Vector3(), new Vector3(-10, 1, 0), dekurion);
+            CombatEvents.OnUnitExecutesMoveAction(new Vector3(), new Vector3(-10, 1, 0), dekurion);
             Test("AurasSourceMoveOut2a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("AurasSourceMoveOut2b", comstat2.GetSum(CombatStatType.Armor), 0);
             yield return new WaitForSeconds(2);
 
             melee.transform.position = new Vector3(-9, 0, 0);
-            CombatManager.OnUnitExecutesMoveAction(new Vector3(1, 0, 0), new Vector3(-9, 0, 0), melee);
+            CombatEvents.OnUnitExecutesMoveAction(new Vector3(1, 0, 0), new Vector3(-9, 0, 0), melee);
             Test("NonAuraMoveINAura3a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("NonAuraMoveINAura3b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
 
             melee.transform.position = new Vector3(0, 0, 0);
-            CombatManager.OnUnitExecutesMoveAction(new Vector3(-9,0,0), new Vector3(0, 0, 0), melee);
+            CombatEvents.OnUnitExecutesMoveAction(new Vector3(-9,0,0), new Vector3(0, 0, 0), melee);
             Test("NonAuraMoveOut4a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("NonAuraMoveOut4b", comstat2.GetSum(CombatStatType.Armor), 0);
             yield return new WaitForSeconds(2);
 
             dekurion.transform.position = new Vector3(-1, 1, 0);
-            CombatManager.OnUnitExecutesMoveAction(new Vector3(-10, 1, 0), new Vector3(-1, 1, 0), dekurion);
+            CombatEvents.OnUnitExecutesMoveAction(new Vector3(-10, 1, 0), new Vector3(-1, 1, 0), dekurion);
             Test("AuraMoveIn3a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("AuraMoveIn3b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
@@ -228,7 +228,7 @@ public class CustomTests: MonoBehaviour {
             Test("calc 1", Mathf.CeilToInt(4f * (1-0.9f)), 1);
             
         }
-        if (true) {
+        if (false) {
             GameObject nukergo = GameObject.Find("UNIT _ consumer _ NukeMage");
             GameObject mellego = GameObject.Find("MelleUNIT (7)");
             GameObject mellego1 = GameObject.Find("MelleUNIT (6)");
@@ -244,23 +244,19 @@ public class CustomTests: MonoBehaviour {
             nuker.GetDamaged(3);
             nuker.AddCharges(null, 1);
             Test("get pierced1a", nuker.charges, 2);
-            CombatManager.m.OnTurnStart(0);
-            CurrentActionData actionData = new CurrentActionData() {
-                attackedSlot = new Vector3(0, 0, 0),
-                attackStartedAt = nuker.snapPos,
-                sourceExecutingUnit = nuker
-            };
+            CombatEvents.OnTurnStart(0);
             PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
-            CombatInfo.attackingUnit = nuker;
-            CombatInfo.currentActionData = actionData;
-            CombatInfo.activeAbility = nuker.abilities.additionalAbilities2[1];
+            CI.sourceExecutingUnit = nuker;
+            CI.attackedSlot = new Vector3(0, 0, 0);
+            CI.attackStartedAt = nuker.snapPos;
+            CI.activeAbility = nuker.abilities.additionalAbilities2[1];
 
 
             Unit[] units = atkD.GetUnitsPierced(melee);
 
-            CombatManager.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
-            CombatManager.m.OnTurnStart(0);
-            CombatManager.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            CombatEvents.OnTurnStart(0);
+            CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             Test("get pierced1a", melee.dead, true);
             Test("get pierced1b", !melee1.dead, true);
             Test("get pierced1b", nuker.hp==2, true);

@@ -1,19 +1,18 @@
 ﻿using System;
 using UnityEngine;
-
-public enum AttackRequirments {
-    Any,
-    RequiresUnit,
-    RequiresEmpty
-}
 [System.Serializable]
 public sealed class AttackData2 : StdAttackData {
-    public bool active = true;
 
     public string o_attackName;
+    public bool active = true;
     public string detailedDescription;
     public int actionCost = 1;
     public AttackRequirments requirements = AttackRequirments.Any;
+
+    // activators activate the effect from combat manager
+    public CombatEventMask[] activators;
+    public AbilityEffectTarget[] effects;
+
     public AttackRangeData range;
     public StandardAttackData standard;
     public AOEAttackData aoe;
@@ -22,98 +21,8 @@ public sealed class AttackData2 : StdAttackData {
     public MoveAttackData move;
     public PassiveData passive;
     public PierceAtkData pierce;
+    public SpawnAttackData spawn;
     
-    public static void ShowGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
-        Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
-        if (data.range.used) {
-            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.standard.used) {
-            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.move.used) {
-            GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
-            if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-            }
-            if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-            }
-        } else if (data.aoe.used) {
-            GridDisplay.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.buff.used) {
-        }
-        if (data.aura.used) {
-
-        }
-        Unit attacked = GridAccess.GetUnitAtPos(attackedSlot);
-        if (data.pierce.used && attacked!= null) {
-            data.pierce.Draw(attacked);
-        }
-    }
-    public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
-        if (data == null)
-            return;
-        Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
-        if (data.range.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.standard.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.move.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
-            if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-            }
-            if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-            }
-        } else if (data.aoe.used) {
-            GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.mouseDirection));
-        }
-        if (data.buff.used) {
-        }
-        if (data.aura.used) {
-
-        }
-        Unit attacked = GridAccess.GetUnitAtPos(attackedSlot);
-        if (data.pierce.used && attacked != null) {
-            data.pierce.Hide(attacked);
-        }
-    }
-    public static void HideRotatedGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
-        if (data == null)
-            return;
-        Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
-        if (data.range.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(CombatManager.m.lastMouseDirection));
-        }
-        if (data.standard.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(CombatManager.m.lastMouseDirection));
-        }
-        if (data.move.used) {
-            GridDisplay.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
-            if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
-            }
-            if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
-            }
-        } else if (data.aoe.used) {
-            GridDisplay.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(CombatManager.m.lastMouseDirection));
-        }
-        if (data.buff.used) {
-        }
-        if (data.aura.used) {
-
-        }
-        Unit attacked = GridAccess.GetUnitAtPos(attackedSlot);
-        if (data.pierce.used && attacked != null) {
-            data.pierce.Hide(attacked);
-        }
-    }
     /// <summary>
     /// Executes attack data.
     /// Included all types of attacks(normal, aoe, buff...)
@@ -133,50 +42,42 @@ public sealed class AttackData2 : StdAttackData {
 
         Debug.Log("Using attack "+data.o_attackName +" unit: "+source+
             " "+data.standard.used+" "+data.aoe.used+" "+ data.buff.used);
-        //AttackDataType[] attacks = data.GetAttacks();
+        //AbilityEffect[] attacks = data.GetAttacks();
 
-        CurrentActionData actionData = new CurrentActionData() {
-            attackedSlot = attackedSlot,
-            attackStartedAt = source.snapPos,
-            sourceExecutingUnit = source };
-        CombatInfo.currentActionData = actionData;
-        CombatInfo.activeAbility = data;
+        CI.activeAbility = data;
+        CI.sourceExecutingUnit = source;
+        CI.attackedSlot = attackedSlot;
+        CI.attackStartedAt = source.snapPos;
         // standard
         if (data.standard.used) {
-            data.standard.Execute(actionData);
+            data.standard.Execute();
         }
         // aoe
         if (data.aoe.used) {
-            data.aoe.Execute(actionData, data);
+            data.aoe.Execute();
         }
         // buff
         if (data.buff.used) {
-            ActivateBuff(source, data.buff);
-
-            BuffManager.Register(source, data.buff);
-            if (data.buff.setStatus!= CombatStatus.SameAsBefore)
-            source.combatStatus = data.buff.setStatus;
+            if (GridAccess.GetUnitAtPos(attackedSlot)) {
+                data.buff.Register(source, GridAccess.GetUnitAtPos(attackedSlot));
+            }
         }
         if (data.move.used) {
-            data.move.Execute(actionData, data);
-            //source.MoveAction(attackedSlot, data);
-
-            if (data.move.setStatus != CombatStatus.SameAsBefore)
-                source.combatStatus = data.move.setStatus;
+            data.move.Execute();
         }
         if (data.pierce.used) {
-            data.pierce.Execute(attackedSlot);
+            data.pierce.Execute();
         }
         if (data.passive.used) {
-            data.passive.Execute(new CurrentActionData() { attackedSlot = attackedSlot, attackStartedAt = attackedSlot, sourceExecutingUnit = source }, data);
+            CI.attackStartedAt = attackedSlot;
+            data.passive.Execute();
         }
+        if (data.spawn.used) {
+            data.spawn.Execute();
+        }
+        
     }
 
-    private static void ActivateBuff(Unit source, BUFFAttackData buff) {
-        if (buff.buffType == BuffType.Shielded) {
-            source.AddShield(buff, buff.armorAmt);
-        }
-    }
 
     /// <summary>
     /// Activates triggers and bools in anim controller.

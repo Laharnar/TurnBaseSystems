@@ -16,10 +16,21 @@ public enum DamageAttribute {
     Shockwave,
 }
 [System.Serializable]
-public class AttackDataType {
+public class AbilityEffect{
     internal static DamageInfo curDmg;
     public bool used = false;
     public int[] animSets;
     public CombatStatus setStatus = CombatStatus.Normal;
 
+    internal virtual void AtkBehaviourExecute() {
+        
+    }
+
+    internal virtual void Draw() {
+        
+    }
+
+    internal virtual void Hide() {
+
+    }
 }

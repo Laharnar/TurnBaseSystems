@@ -121,8 +121,8 @@ public class PlayerFlag : FlagController {
                     CombatUI.OnBeginAttack();
 
                     //GridDisplay.HideGrid(selectedPlayerUnit, curFilter, curAoeFilter);
-                    CombatManager.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
-                    CombatManager.OnUnitExecutesAction(selectedPlayerUnit);
+                    CombatEvents.CombatAction(selectedPlayerUnit, hoveredSlot, activeAbility);
+                    CombatEvents.OnUnitActivatesAbility(selectedPlayerUnit);
 
                     while (selectedPlayerUnit.moving) {
                         yield return null;
@@ -194,9 +194,13 @@ public class PlayerFlag : FlagController {
         if (activeAbility == null)
             return null;
         if (i == 0) {
+            if (activeAbility.range.attackRange != null) {
+                return GridMask.RotateMask(activeAbility.range.attackRange, mouseDirection);
+            }else 
             if (activeAbility.standard.attackRangeMask != null) {
                 return GridMask.RotateMask(activeAbility.standard.attackRangeMask, mouseDirection);
-            } else if (activeAbility.move.range != null) {
+            }
+            else if (activeAbility.move.range != null) {
                 return GridMask.RotateMask(activeAbility.move.range, mouseDirection);
             } else {
                 Debug.Log("Get mask fail 1");

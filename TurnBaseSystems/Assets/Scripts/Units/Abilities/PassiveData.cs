@@ -12,16 +12,20 @@ public class PassiveData : DamageBasedAttackData {
     public int backstabDmg = 1;
     public int maxBackstabCount = -1;
 
-    public void Execute(CurrentActionData a, AttackData2 ability) {
+    internal override void AtkBehaviourExecute() {
+        Execute();
+    }
+
+    public void Execute() {
         if (giveCharges) {
-            a.sourceExecutingUnit.AddCharges(this, UnityEngine.Random.Range(chargesAmtMin, chargesAmtMax));
+            CI.sourceExecutingUnit.AddCharges(this, UnityEngine.Random.Range(chargesAmtMin, chargesAmtMax));
         }
         if (canBackstab) {
-            Unit[] units= ability.passive.backstabRange.GetUnits(a.attackStartedAt);
+            Unit[] units= backstabRange.GetUnits(CI.attackStartedAt);
             // backstab 1 unit
             int c = maxBackstabCount;
             for (int i = 0; i < units.Length; i++) {
-                if (units[i].flag.allianceId!=a.sourceExecutingUnit.flag.allianceId) {
+                if (units[i].flag.allianceId!= CI.sourceExecutingUnit.flag.allianceId) {
                     units[i].GetDamaged(backstabDmg);
                     if (c == 0)
                         break;

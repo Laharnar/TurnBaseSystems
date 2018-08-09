@@ -129,13 +129,21 @@ public static class GridAccess {
 
 
     internal static Unit GetUnitAtPos(Vector3 attackedSlot) {
+        return GetUnitAtPosByType(attackedSlot, UnitType.Normal);
+    }
+
+    internal static Unit GetUnitAtPosByType(Vector3 slot, UnitType type) {
         CombatManager.m.UnitNullCheck();
         for (int i = 0; i < CombatManager.m.units.Count; i++) {
-            if (GridManager.SnapPoint(CombatManager.m.units[i].transform.position)
-                == attackedSlot) {
+            if (CombatManager.m.units[i].snapPos== slot 
+                && CombatManager.m.units[i].unitType == type) {
                 return CombatManager.m.units[i];
             }
         }
         return null;
+    }
+    internal static ISlotItem[] GetItemsAtPos(Vector3 pos) {
+        Unit u = GetUnitAtPos(pos);
+        return u != null ? new ISlotItem[] { u } : null;
     }
 }

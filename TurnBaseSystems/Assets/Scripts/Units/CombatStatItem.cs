@@ -2,7 +2,7 @@
 public class CombatStatItem {
     public CombatStatType statType;
     public int value;
-    public AttackDataType dataSource;
+    public AbilityEffect dataSource;
     /// <summary>
     /// Consumes as much of value as possible.
     /// Returns true if this item is completly emptied.

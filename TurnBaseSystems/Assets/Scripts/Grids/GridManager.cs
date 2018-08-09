@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Generates grid items.
@@ -19,6 +17,22 @@ public class GridManager : MonoBehaviour {
         position = SnapPoint(position, true);
         Grid g = new Grid(curAoeFilter).InitGridCenter(position, curAoeFilter);
         return g;
+    }
+
+    internal static bool ValidSlot(Vector3 attackedSlot, SlotContent requirments) {
+        ISlotItem[] items = GridAccess.GetItemsAtPos(attackedSlot);
+        switch (requirments) {
+            case SlotContent.Empty:
+                return  items == null;
+            case SlotContent.StandardUnit:
+                return GridAccess.GetUnitAtPos(attackedSlot);
+            case SlotContent.EmptyOrUnit:// only unit, for no unit it's empty
+                return (GridAccess.GetUnitAtPos(attackedSlot) 
+                    && items.Length == 1) || items == null;
+            default:
+                Debug.Log("Unhandled state "+requirments);
+                return false;
+        }
     }
 
     private void Awake() {

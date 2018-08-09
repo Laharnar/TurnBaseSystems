@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UnitAbilities),true)]
+//[CustomEditor(typeof(UnitAbilities),true)]
 public class UnitAbilitiesEditor : UnityEditor.Editor {
 
     AttackData data;
@@ -90,7 +90,7 @@ public class UnitAbilitiesEditor : UnityEditor.Editor {
         AttackType last = data.attackType_EditorOnly;
         data.attackType_EditorOnly = (AttackType)EditorGUILayout.EnumPopup(data.attackType_EditorOnly);
         if (last != data.attackType_EditorOnly || data.attackFunction == null) {
-            data.attackFunction = AttackBaseType.GetAttackType(data.attackType_EditorOnly);
+            //data.attackFunction = AttackBaseType.GetAttackType(data.attackType_EditorOnly);
         }
 
         data.animData.useInfo = EditorGUILayout.BeginToggleGroup("Animations", data.animData.useInfo);

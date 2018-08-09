@@ -21,9 +21,9 @@ public class CombatUI {
     public static Vector3 lastHoveredSlot { get { return PlayerFlag.lastHoveredSlot; } }
 
     internal static void OnActiveAbilityChange(AttackData2 lastactiveAbility, AttackData2 activeAbility) {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, lastactiveAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, lastactiveAbility);
 
-        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
         GridDisplay.RemakeGrid();
     }
 
@@ -31,7 +31,7 @@ public class CombatUI {
         GridDisplay.ClearAll();
         ShowUI(curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
-            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
         }
         GridDisplay.RemakeGrid();
     }
@@ -93,14 +93,14 @@ public class CombatUI {
 
     internal static void OnUnitFinishesAction(Unit unit) {
         if (!unit.NoActions && unit.CanDoAnyAction) {
-            AttackData2.ShowGrid(unit, hoveredSlot, activeAbility);
+            AttackDisplay.ShowGrid(unit, hoveredSlot, activeAbility);
             GridDisplay.RemakeGrid();
         }
         ShowUI(curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
 
     internal static void OnUnitRunsOutOfActions() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
         ShowUI(false, null, false);
         GridDisplay.RemakeGrid();
     }
@@ -112,12 +112,12 @@ public class CombatUI {
     }
 
     internal static void OnMouseScrolled() {
-        AttackData2.HideRotatedGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
         GridDisplay.RemakeGrid();
     }
     internal static void OnBeginAttack() {
-        AttackData2.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
         GridDisplay.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
         GridDisplay.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
@@ -128,8 +128,8 @@ public class CombatUI {
     internal static void OnMouseMovedToDfSlot() {
         if (curPlayerUnit!= null && activeAbility!=null) {
 
-            AttackData2.HideGrid(curPlayerUnit, lastHoveredSlot, activeAbility);
-            AttackData2.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
+            AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, activeAbility);
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
             GridDisplay.RemakeGrid();
         }
     }

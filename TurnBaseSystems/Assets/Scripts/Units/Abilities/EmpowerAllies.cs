@@ -13,7 +13,7 @@ public enum AuraTrigger {
     OnAttacked,
 }
 [System.Serializable]
-public class EmpowerAlliesData : AttackDataType {
+public class EmpowerAlliesData : AbilityEffect {
     public GridMask auraRange;
 
     public int stdDmgUp;
@@ -22,6 +22,11 @@ public class EmpowerAlliesData : AttackDataType {
     public AuraTarget target;
     public AuraTrigger trigger;
     public int maxAuraStacks = 1;
+
+    internal override void AtkBehaviourExecute() {
+        DeEffectArea(CI.sourceExecutingUnit.snapPos, CI.sourceExecutingUnit, true);
+        EffectArea(CI.sourceExecutingUnit.snapPos, CI.sourceExecutingUnit);
+    }
 
     public static bool ValidTarget(AuraTarget target, int flag, Unit source) {
         switch (target) {
@@ -127,10 +132,4 @@ public class EmpowerAlliesData : AttackDataType {
             }
         }
     }
-}
-
-public static class CombatInfo {
-    public static Unit attackingUnit;
-    public static CurrentActionData currentActionData;
-    public static AttackData2 activeAbility;
 }

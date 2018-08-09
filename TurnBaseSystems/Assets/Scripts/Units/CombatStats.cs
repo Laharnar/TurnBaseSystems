@@ -38,7 +38,7 @@ public class CombatStats {
     /// <param name="empowerAlliesData"></param>
     /// <param name="type"></param>
     /// <param name="amount"></param>
-    public void Reduce(AttackDataType buffSource, CombatStatType type, int amount) {
+    public void Reduce(AbilityEffect buffSource, CombatStatType type, int amount) {
         for (int i = 0; i < powers.Count; i++) {
             if (powers[i].dataSource == buffSource) {
                 if (powers[i].Consume(type, ref amount)) {
@@ -52,7 +52,7 @@ public class CombatStats {
         }
     }
 
-    internal void Increase(AttackDataType empowerAlliesData, CombatStatType type, int amount) {
+    internal void Increase(AbilityEffect empowerAlliesData, CombatStatType type, int amount) {
         powers.Add(new CombatStatItem() { dataSource=empowerAlliesData,  statType = type, value = amount });
     }
 
@@ -75,7 +75,7 @@ public class CombatStats {
         }
         return r;
     }
-    internal int GetSum(AttackDataType d1, CombatStatType type) {
+    internal int GetSum(AbilityEffect d1, CombatStatType type) {
         int r = 0;
         for (int i = 0; i < powers.Count; i++) {
             if (powers[i].statType == type && powers[i].dataSource == d1) {
@@ -84,7 +84,7 @@ public class CombatStats {
         }
         return r;
     }
-    internal int GetSum(AttackDataType d1, int repetitiveIndex, CombatStatType type) {
+    internal int GetSum(AbilityEffect d1, int repetitiveIndex, CombatStatType type) {
         int r = 0;
         int repeat = 0;
         for (int i = 0; i < powers.Count; i++) {
@@ -113,12 +113,14 @@ public class CombatStats {
     /// <param name="abilitySource"></param>
     /// <param name="type"></param>
     /// <param name="nvalue"></param>
-    internal void Set(AttackDataType originalSource, CombatStatType type, int nvalue) {
+    internal void Set(AbilityEffect originalSource, CombatStatType type, int nvalue) {
         int v = GetSum(type);
         if (v < nvalue) { // new value is bigger
+            //Debug.Log("inc "+originalSource);
             Increase(originalSource, type, nvalue - v);
         } else if (v > nvalue) {
             //Debug.Log("Reducing " +v + " "+nvalue + " to "+(v - nvalue));
+            //Debug.Log("dec" + originalSource +" "+ nvalue + " "+(v-nvalue));
             Reduce(originalSource, type, v - nvalue);
         }
     }

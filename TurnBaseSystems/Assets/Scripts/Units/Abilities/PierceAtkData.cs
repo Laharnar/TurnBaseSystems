@@ -18,8 +18,12 @@ public class PierceAtkData: DamageBasedAttackData {
     public bool useChargesCountToRepeatPiercing = false;
     public bool restoreChargesUsedOnKills = false;
 
-    public void Execute(Vector3 attackedSlot) {
-        Unit firstHitUnit = GridAccess.GetUnitAtPos(attackedSlot);
+    internal override void AtkBehaviourExecute() {
+        Execute();
+    }
+
+    public void Execute() {
+        Unit firstHitUnit = GridAccess.GetUnitAtPos(CI.attackedSlot);
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         UnityEngine.Debug.Log("Found piercing units "+unit.Length);
         float reduction = bounceDamageReduction;
@@ -28,25 +32,18 @@ public class PierceAtkData: DamageBasedAttackData {
                 Debug.Log("Null unit for some reason.");
                 continue;
             }
-            if (CombatInfo.currentActionData == null) {
-                Debug.Log("No combat info");
-                continue;
-            }
-            if (EmpowerAlliesData.ValidTarget(targetFilter, unit[i].flag.allianceId, CombatInfo.attackingUnit)) {
+            if (EmpowerAlliesData.ValidTarget(targetFilter, unit[i].flag.allianceId, CI.sourceExecutingUnit)) {
                 if (useChargesCountToRepeatPiercing) {
-                    if (CombatInfo.attackingUnit.charges == 0)
+                    if (CI.sourceExecutingUnit.charges == 0)
                         break;
-                    CombatInfo.attackingUnit.AddCharges(null, -1);
+                    CI.sourceExecutingUnit.AddCharges(null, -1);
                 }
-                CombatInfo.activeAbility.standard.Execute(new CurrentActionData() {
-                    attackedSlot = unit[i].snapPos,
-                    attackStartedAt = CombatInfo.currentActionData.attackStartedAt,
-                    sourceExecutingUnit = CombatInfo.attackingUnit
-                });
+
+                CI.activeAbility.standard.Execute();
                 // restore on killing units
                 if (useChargesCountToRepeatPiercing
                     && restoreChargesUsedOnKills && (unit[i]==null || unit[i].dead)) {
-                    CombatInfo.attackingUnit.AddCharges(null, 1);
+                    CI.sourceExecutingUnit.AddCharges(null, 1);
                 }
             }
             StandardAttackData.dmgReduction += bounceDamageReduction;
@@ -62,20 +59,20 @@ public class PierceAtkData: DamageBasedAttackData {
 
     public Unit[] GetUnitsPierced(Unit firstHitUnit) {
         Dictionary<Unit, Unit> foundUnits = new Dictionary<Unit, Unit>();
-        if (!CombatInfo.attackingUnit) { UnityEngine.Debug.Log("No Attacking unit assigned to combat info"); return new Unit[0]; }
+        if (!CI.sourceExecutingUnit) { UnityEngine.Debug.Log("No Attacking unit assigned to combat info"); return new Unit[0]; }
         int pierceCount = useChargesCountToRepeatPiercing ?
-            CombatInfo.attackingUnit.charges : maxCount;
+            CI.sourceExecutingUnit.charges : maxCount;
         UnityEngine.Debug.Log("Pierce attack with max pierce count "+pierceCount + " using charges "+ useChargesCountToRepeatPiercing + " Pierce range "+pierceRange);
         Unit lastPierce = firstHitUnit;
         for (int i = 0; i < pierceCount; i++) {
-            Unit[] units = SelectionManager.GetAllUnitsFromDirection(lastPierce.snapPos, CombatInfo.currentActionData.directionOfAttack.normalized, pierceRange);
+            Unit[] units = SelectionManager.GetAllUnitsFromDirection(lastPierce.snapPos, CI.directionOfAttack.normalized, pierceRange);
             bool noNewUnits = true;
             for (int j = 0; j < units.Length; j++) {
                 if (units[j] == null) {
                     Debug.LogError("Null unit for some reason.");
                     continue;
                 }
-                if (EmpowerAlliesData.ValidTarget(targetFilter, units[j].flag.allianceId, CombatInfo.attackingUnit)
+                if (EmpowerAlliesData.ValidTarget(targetFilter, units[j].flag.allianceId, CI.sourceExecutingUnit)
                     && !foundUnits.ContainsKey(units[j])) {
                     foundUnits.Add(units[j], units[j]);
                     noNewUnits = false;
