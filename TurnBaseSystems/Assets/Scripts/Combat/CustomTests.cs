@@ -98,7 +98,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks3d", comstat.GetSum(CombatStatType.Hp), 3);
 
             }
-            if (true) {
+            if (false) {
                 GameObject witchObj = GameObject.Find("UNIT _ consumer _ Infested Witch(Clone)");
                 // empower test
                 Unit witch = witchObj.GetComponent<Unit>();

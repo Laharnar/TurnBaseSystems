@@ -58,8 +58,10 @@ public class PlayerUIAbilityList : MonoBehaviour {
         AttackData2[] abilitis = unit.abilities.GetNormalAbilities() as AttackData2[];
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
-            if (abilitis[i].active == false)
+            if (abilitis[i].active == false) {
+                m.instances[i].gameObject.SetActive(false);
                 continue;
+            }
             m.instances[i].GetComponent<ButtonInteraction>().interaction 
                 = ScriptableObject.CreateInstance<TwoStepAttack>().Init(unit, i);
             m.instances[i].GetChild(0).GetComponent<Text>().text = abilitis[i].o_attackName

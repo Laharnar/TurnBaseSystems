@@ -116,7 +116,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         Debug.Log("Applying passives.");
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
             CI.activeAbility = abilities.additionalAbilities2[i];
-            if (abilities.additionalAbilities2[i].passive.used) {
+            if (abilities.additionalAbilities2[i].active && 
+                abilities.additionalAbilities2[i].passive.used) {
                 AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
                 AttackAnimations(abilities.additionalAbilities2[i]);
             }

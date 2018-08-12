@@ -25,6 +25,11 @@ public class UnitAbilities : MonoBehaviour {
         List<AttackData2> data = new List<AttackData2>();
         data.Add(move2);
         data.AddRange(additionalAbilities2.ToArray());
+        for (int i = 0; i < data.Count; i++) {
+            if (data[i].active == false) {
+                data.RemoveAt(i);
+            }
+        }
         return data.ToArray();
     }
     

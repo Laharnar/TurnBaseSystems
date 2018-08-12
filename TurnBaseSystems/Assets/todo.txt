@@ -325,3 +325,7 @@ spawn, fly projectiles, avoid targets
 aoe based on charges
 pierce based on charges
 large aoe based on hp
+
+prep project to allow fast prototyping
+and testing
+swap complete ability sets
