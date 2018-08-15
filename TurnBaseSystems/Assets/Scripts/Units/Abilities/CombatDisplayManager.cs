@@ -38,7 +38,8 @@ public class CombatDisplayManager:MonoBehaviour {
         while (true) {
             if (calls.Count > 0) {
                 DisplayCallInfo inf = calls.Dequeue();
-                inf.source.Invoke(inf.method, 0);
+                if (inf.method!=null)
+                    inf.source.Invoke(inf.method, 0);
                 Debug.Log("INVOKE: "+inf.method + " wait: "+inf.wait + " ref:"+inf.source + " "+inf.context);
                 yield return new WaitForSeconds(inf.wait);
             } else {

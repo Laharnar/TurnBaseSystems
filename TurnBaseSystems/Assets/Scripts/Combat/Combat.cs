@@ -79,11 +79,34 @@ public class Combat : MonoBehaviour {
     IEnumerator GameplayUpdate() {
         // wait until start
         yield return null;
+        yield return null;
 
+        Debug.Log("Registering");
         // flash the combat ui screen
         UIManager.m.slideScreenContent = "FIGHT!";
-        CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 1f, "Combat/ShowBeginCombatScreen");
-        yield return new WaitForSeconds(1f);
+        CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 4.5f, "Combat/ShowBeginCombatScreen");
+        yield return new WaitForSeconds(4.5f);
+
+        Vector3[] positions = new Vector3[flags[0].info.units.Count];
+        for (int i = 0; i < flags[0].info.units.Count; i++) {
+            positions[i] = flags[0].info.units[i].transform.position;
+        }
+
+        // blinking to player to select the unit.
+        UIManager.m.indicatorPositions = positions;
+        UIManager.m.indicatorTimeout = 2f;
+        CombatDisplayManager.Instance.Register(UIManager.m,
+            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
+
+        CombatDisplayManager.Instance.Register(this, null, 1.1f, "wait");
+        CombatDisplayManager.Instance.Register(UIManager.m,
+            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
+        CombatDisplayManager.Instance.Register(this, null, 1.1f, "wait");
+
+        CombatDisplayManager.Instance.Register(UIManager.m,
+            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
+
+        // start combat
 
         bool done = false;
         Debug.Log("Started main loop");

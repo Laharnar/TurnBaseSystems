@@ -11,6 +11,11 @@ public class UIManager : MonoBehaviour {
     public Animator slideAnim;
     internal string slideScreenContent;
 
+    public Transform selectIndicatorPref;
+    internal Vector3[] indicatorPositions;
+    internal float indicatorTimeout = 1;
+
+
     private void Awake() {
         m = this;
     }
@@ -35,5 +40,16 @@ public class UIManager : MonoBehaviour {
     internal static void ShowPlayerUI(bool v) {
         if (m.playerUI)
         m.playerUI.gameObject.SetActive(v);
+    }
+
+    public void ShowIndicators_evt() {
+        ShowIndicators(indicatorPositions, indicatorTimeout);
+    }
+
+    public void ShowIndicators(Vector3[] pos, float visibilityTime) {
+        for (int i = 0; i < pos.Length; i++) {
+            Destroy(Instantiate(selectIndicatorPref, pos[i], new Quaternion()).gameObject,
+                visibilityTime);
+        }
     }
 }
