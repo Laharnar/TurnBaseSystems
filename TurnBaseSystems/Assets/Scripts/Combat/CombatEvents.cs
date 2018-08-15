@@ -56,7 +56,6 @@ public static class CombatEvents {
         }
 
         //BuffManager.ConsumeBuffs(flag);
-
     }
 
     public static void OnUnitActivatesAbility(Unit unit) {

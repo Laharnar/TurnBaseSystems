@@ -81,7 +81,10 @@ public class Combat : MonoBehaviour {
         yield return null;
         yield return null;
 
-        Debug.Log("Registering");
+        while (CombatDisplayManager.Instance.calls.Count > 0) {
+            yield return null;
+        }
+
         // flash the combat ui screen
         UIManager.m.slideScreenContent = "FIGHT!";
         CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 4.5f, "Combat/ShowBeginCombatScreen");
@@ -112,6 +115,16 @@ public class Combat : MonoBehaviour {
         Debug.Log("Started main loop");
         while (true) {
             for (int j = 0; j < flags.Count; j++) {
+                if (j == 1) {
+                    Debug.Log("slide msg 1");
+                    UIManager.ShowSlideMsg("-- Enemy turn --", 3.5f, "Combat/end player turn");
+                }
+                if (j == 0) {
+                    Debug.Log("slide msg 0");
+                    UIManager.ShowSlideMsg("-- Player turn --", 3.5f, "Combat/end player turn");
+                }
+                yield return new WaitForSeconds(3.5f);
+
                 activeFlagTurn = j;
 
                 CombatEvents.OnTurnStart(flags[j]);
@@ -121,7 +134,7 @@ public class Combat : MonoBehaviour {
 
 
                 CombatEvents.OnTurnEnd(flags[j]);
-
+                
                 Debug.Log("Flag done - " + (j + 1));
                 flags[j].NullifyUnits();
                 if (GetUnits(0).Count == 0) {
@@ -141,6 +154,8 @@ public class Combat : MonoBehaviour {
                         break;
                     }
                 }
+
+                
                 yield return new WaitForSeconds(0.5f);
 
             }

@@ -24,9 +24,9 @@ public class UIManager : MonoBehaviour {
     public void ShowSlideScreen() {
         Debug.Log("Showing slide screen");
         if (slide)
-        slide.text = slideScreenContent;
+            slide.text = slideScreenContent;
         if (slideAnim)
-        slideAnim.Play("Slide in");
+            slideAnim.Play("Slide in");
     }
 
     public static void ShowAbilities(bool v, Unit unit, bool allowInteraction) {
@@ -51,5 +51,10 @@ public class UIManager : MonoBehaviour {
             Destroy(Instantiate(selectIndicatorPref, pos[i], new Quaternion()).gameObject,
                 visibilityTime);
         }
+    }
+
+    internal static void ShowSlideMsg(string text, float time, string msg) {
+        UIManager.m.slideScreenContent = text;
+        CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", time, msg);
     }
 }
