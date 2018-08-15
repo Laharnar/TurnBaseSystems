@@ -5,13 +5,13 @@ using UnityEngine;
 public class MelleLogic : AiLogic {
     public override IEnumerator Execute(Unit unit) {
         // command 1.
-        PlayerFlag pFlag = FlagManager.flags[0] as PlayerFlag;
+        PlayerFlag pFlag = Combat.Instance.flags[0].controller as PlayerFlag;
 
-        if (!unit.detection.detectedSomeone || pFlag.VisibleUnits.Length == 0)
+        if (!unit.detection.detectedSomeone || UnitStates.GetVisibleUnits( Combat.Instance.GetUnits(0)).Length == 0)
             yield break;
 
         // find closest visible enemy
-        Unit[] visibleUnits = pFlag.VisibleUnits;
+        Unit[] visibleUnits = UnitStates.GetVisibleUnits(Combat.Instance.GetUnits(0));
         
         float[] dists = transform.position.GetDistances(visibleUnits);
         int closestUnitIndex = dists.GetIndexOfMin();
@@ -48,7 +48,7 @@ public class MelleLogic : AiLogic {
         while (unit.attacking) {
             yield return null;
         }
-        CombatManager.m.UnitNullCheck();
+        Combat.Instance.UnitNullCheck();
 
         // end unit turn
         yield return null;

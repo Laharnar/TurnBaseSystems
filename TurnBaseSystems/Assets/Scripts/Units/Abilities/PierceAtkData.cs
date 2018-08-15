@@ -53,7 +53,7 @@ public class PierceAtkData: DamageBasedAttackData {
     public void Draw(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.SetUpGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
+            GridDisplay.Instance.SetUpGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
         }
     }
 
@@ -95,7 +95,7 @@ public class PierceAtkData: DamageBasedAttackData {
     internal void Hide(Unit firstHitUnit) {
         Unit[] unit = GetUnitsPierced(firstHitUnit);
         for (int i = 0; i < unit.Length; i++) {
-            GridDisplay.HideGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
+            GridDisplay.Instance.HideGrid(unit[i].snapPos, GridDisplayLayer.OrangePierce, GridMask.One);
         }
     }
 }

@@ -24,17 +24,17 @@ public class StandardAttackData : DamageBasedAttackData {
         return GridMask.RotateMask(attackRangeMask, direction);
     }
     static void DrawGrid(GridMask mask, GridDisplayMask info) {
-        GridDisplay.SetUpGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, CombatManager.m.mouseDirection));
+        GridDisplay.Instance.SetUpGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, Combat.Instance.mouseDirection));
     }
     static void HideGrid(GridMask mask, GridDisplayMask info) {
-        GridDisplay.HideGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, CombatManager.m.mouseDirection));
+        GridDisplay.Instance.HideGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, Combat.Instance.mouseDirection));
     }
     internal override void Draw() {
-        GridDisplay.SetUpGrid(info.GetPos(), info.layer, GetMask(CombatManager.m.mouseDirection));
+        GridDisplay.Instance.SetUpGrid(info.GetPos(), info.layer, GetMask(Combat.Instance.mouseDirection));
     }
 
     internal override void Hide() {
-        GridDisplay.HideGrid(info.GetPos(), info.layer, GetMask(CombatManager.m.mouseDirection));
+        GridDisplay.Instance.HideGrid(info.GetPos(), info.layer, GetMask(Combat.Instance.mouseDirection));
     }
 
     internal override void AtkBehaviourExecute() {

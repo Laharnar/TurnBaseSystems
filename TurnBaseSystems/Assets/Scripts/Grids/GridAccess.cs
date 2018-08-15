@@ -93,9 +93,9 @@ public static class GridAccess {
     }
     */
     public static Unit[] OnlyAlliedUnits(Vector3[] filter, int allianceId) {
-        CombatManager.m.UnitNullCheck();
+        Combat.Instance.UnitNullCheck();
         List<Unit> items = new List<Unit>();
-        Unit[] units = CombatManager.m.units.ToArray();
+        Unit[] units = Combat.Instance.units.ToArray();
         Vector3[] snapped = new Vector3[units.Length];
         for (int i = 0; i < units.Length; i++) {
             snapped[i] = GridManager.SnapPoint(units[i].transform.position);
@@ -112,7 +112,7 @@ public static class GridAccess {
 
     internal static Unit[] OnlyHostileUnits(Vector3[] filter, int skippedAllianceId) {
         List<Unit> items = new List<Unit>();
-        Unit[] units = CombatManager.m.units.ToArray();
+        Unit[] units = Combat.Instance.units.ToArray();
         Vector3[] snapped = new Vector3[units.Length];
         for (int i = 0; i < units.Length; i++) {
             snapped[i] = GridManager.SnapPoint(units[i].transform.position);
@@ -133,11 +133,11 @@ public static class GridAccess {
     }
 
     internal static Unit GetUnitAtPosByType(Vector3 slot, UnitType type) {
-        CombatManager.m.UnitNullCheck();
-        for (int i = 0; i < CombatManager.m.units.Count; i++) {
-            if (CombatManager.m.units[i].snapPos== slot 
-                && CombatManager.m.units[i].unitType == type) {
-                return CombatManager.m.units[i];
+        Combat.Instance.UnitNullCheck();
+        for (int i = 0; i < Combat.Instance.units.Count; i++) {
+            if (Combat.Instance.units[i].snapPos== slot 
+                && Combat.Instance.units[i].unitType == type) {
+                return Combat.Instance.units[i];
             }
         }
         return null;

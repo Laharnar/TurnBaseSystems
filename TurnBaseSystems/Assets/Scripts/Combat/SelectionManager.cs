@@ -25,19 +25,6 @@ public static class SelectionManager {
     internal static GridItem GetMouseAsSlot2D() {
         return GetAsSlot(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
-
-    internal static Structure GetAsStructure2D(Vector3 position) {
-        RaycastHit2D[] hits = GetAllSelection2D(position);
-        if (hits != null) {
-            foreach (var item in hits) {
-                Structure asStructure = item.transform.GetComponent<Structure>();
-                if (asStructure) {
-                    return asStructure;
-                }
-            }
-        }
-        return null;
-    }
     
 
     public static Transform GetMouseSelection2D() {

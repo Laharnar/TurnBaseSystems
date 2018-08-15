@@ -9,6 +9,6 @@
     }
 
     public override void Interact(IInteractible other) {
-        PlayerFlag.m.SetActiveAbility(unitSource, atkId);
+        (Combat.Instance.flags[0].controller as PlayerFlag).SetActiveAbility(unitSource, atkId);
     }
 }

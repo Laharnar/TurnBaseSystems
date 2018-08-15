@@ -12,10 +12,6 @@ public class GridItem {
     //public Vector2 gridPosition;
 
     public Unit filledBy;
-    public Structure fillAsStructure;
-    //public Weapon fillAsPickup;
-    //public int AP = 3;
-    //public LocationMaterial material;
     Color defaultColor;
     public Transform instance;
 

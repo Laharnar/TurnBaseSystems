@@ -34,7 +34,7 @@ public class BuffManager {
         return CopyReferences.sourceCopies[bUFFAttackData];
     }
 
-    public static void ConsumeBuffs(int faction) {
+    public static void ConsumeBuffs(FlagManager faction) {
         
         foreach (var item in CopyReferences.sourceCopies) {
             BUFFAttackData origData = item.Key;
@@ -49,7 +49,7 @@ public class BuffManager {
                 }
                 
                 // type: consume only on enemy faction.
-                if (buffInstances[i].source.flag.allianceId != faction) {
+                if (buffInstances[i].source.flag.allianceId != faction.id) {
                     CI.activeOrigBuff = origData;
                     CI.activeBuffData = buffInstances[i];
 

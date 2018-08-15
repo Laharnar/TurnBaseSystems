@@ -23,7 +23,7 @@ public class GridManager : MonoBehaviour {
         ISlotItem[] items = GridAccess.GetItemsAtPos(attackedSlot);
         switch (requirments) {
             case SlotContent.Empty:
-                return  items == null;
+                return items == null;
             case SlotContent.StandardUnit:
                 return GridAccess.GetUnitAtPos(attackedSlot);
             case SlotContent.EmptyOrUnit:// only unit, for no unit it's empty
@@ -40,10 +40,6 @@ public class GridManager : MonoBehaviour {
         defaultColor = pref.GetComponentInChildren<SpriteRenderer>().color;
         //gridSlots = new Grid(width, length, rootLoader);
         //UpdateGrid();
-    }
-
-    private void Start() {
-        //Weapon.AssignAllDroppedWeaponsToSlots();
     }
 
     public static Vector3 SnapPoint(Vector3 point){
@@ -83,8 +79,5 @@ public class GridManager : MonoBehaviour {
         //it.InitGrid((int)snapped.x, (int)snapped.y);
         return it;
     }
-
-    internal static GridItem NewGridInstanceAtMouse() {
-        return NewGridInstance(SelectionManager.GetMouseAsPoint());
-    }
+    
 }

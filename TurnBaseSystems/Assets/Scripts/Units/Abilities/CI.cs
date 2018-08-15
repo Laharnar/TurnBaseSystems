@@ -9,6 +9,7 @@ public class CI {
     public static Vector3 attackStartedAt;
     public static Vector3 attackedSlot;
     internal static Unit sourceSecondaryExecUnit;
+    internal static int mouseDirection;
 
     public static Vector3 directionOfAttack { get { return attackedSlot - attackStartedAt; } }
 }

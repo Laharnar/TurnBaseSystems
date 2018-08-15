@@ -36,7 +36,7 @@ public class BUFFAttackData : AbilityEffect {
             ExecuteOnStart(CI.sourceExecutingUnit, this);
             BuffManager.Register(CI.sourceExecutingUnit, CI.sourceSecondaryExecUnit, this);
         }
-        if (mask.onAnyBuffTick) {
+        if (mask.onEnemyTurnEnd) {
             // original is now saved in combat info
             if (CI.sourceExecutingUnit.flag.allianceId != CI.sourceSecondaryExecUnit.flag.allianceId) {
                 Consume(CI.activeOrigBuff, CI.activeBuffData);

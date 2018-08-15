@@ -14,11 +14,22 @@ public enum GridDisplayLayer {
     AIAction,
 }
 public class GridDisplay {
-    public static List<GridLayer> layers = new List<GridLayer>();
-    public static Vector3 center;
-    public static List<GridDisplayItem> flattened = new List<GridDisplayItem>();
+    public List<GridLayer> layers = new List<GridLayer>();
+    public Vector3 center;
+    public List<GridDisplayItem> flattened = new List<GridDisplayItem>();
 
-    public static List<Transform> instances = new List<Transform>();
+    public List<Transform> instances = new List<Transform>();
+
+    static GridDisplay instance;
+
+    public static GridDisplay Instance {
+        get {
+            if (instance == null) {
+                instance = new GridDisplay();
+            }
+            return instance;
+        }
+    }
 
     static Color GetColorCode(GridDisplayLayer layer) {
         switch (layer) {
@@ -46,7 +57,7 @@ public class GridDisplay {
         }
     }
 
-    public static void RemakeGrid() {
+    public void RemakeGrid() {
         FlattenLayers();
         if (instances == null) instances = new List<Transform>();
         if (flattened == null) flattened = new List<GridDisplayItem>();
@@ -68,17 +79,17 @@ public class GridDisplay {
         }
     }
 
-    public static void SetUpGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
+    public void SetUpGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
         while (layers.Count <= (int)layer && (int)layer > -1) {
             layers.Add(new GridLayer());
         }
         Vector3[] positions = mask.GetPositions(pos);
         for (int i = 0; i < positions.Length; i++) {
-            layers[(int)layer].items.Add(new GridDisplayItem() { color = layer, pos = positions[i] });
+            layers[(int)layer].items.Add(new GridDisplayItem(positions[i], layer));
         }
     }
 
-    public static void HideGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
+    public void HideGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
         while (layers.Count <= (int)layer && (int)layer > -1) {
             layers.Add(new GridLayer());
         }
@@ -95,7 +106,7 @@ public class GridDisplay {
     /// COSTLY, N^3
     /// </summary>
     /// <returns></returns>
-    public static void FlattenLayers() {
+    public void FlattenLayers() {
         flattened.Clear();
         Vector2 lowerLeft=new Vector3(100000000,100000000,0), topRight=new Vector3(-10000000,-100000000,0);
         // start on front layer - top
@@ -129,13 +140,13 @@ public class GridDisplay {
                         continue;
                     }
                 }
-                flattened.Add(new GridDisplayItem() { color = layers[i].items[j].color, pos = position });
+                flattened.Add(new GridDisplayItem(position, layers[i].items[j].color));
             }
         }
         center = lowerLeft + (topRight - lowerLeft) / 2;
     }
 
-    internal static void ClearAll() {
+    internal void ClearAll() {
         for (int i = 0; i < instances.Count; i++) {
             GameObject.Destroy(instances[i].gameObject);
         }
@@ -145,7 +156,7 @@ public class GridDisplay {
         
     }
 
-    internal static void MoveGrid(Vector3 opos, Vector3 npos, GridDisplayLayer layer, GridMask mask) {
+    internal void MoveGrid(Vector3 opos, Vector3 npos, GridDisplayLayer layer, GridMask mask) {
         HideGrid(opos, layer, mask);
         SetUpGrid(npos, layer, mask);
     }
@@ -156,5 +167,11 @@ public class GridLayer {
 }
 public class GridDisplayItem {
     public Vector3 pos;
+    public Transform pref;
     public GridDisplayLayer color;
+
+    public GridDisplayItem(Vector3 pos, GridDisplayLayer color) {
+        this.pos = pos;
+        this.color = color;
+    }
 }

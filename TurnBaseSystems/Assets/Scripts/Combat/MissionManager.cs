@@ -35,12 +35,32 @@ public class MissionManager:MonoBehaviour {
     public void LoadTeamIntoArea(Transform[] team, string spawnPointsName) {
         Transform spawnPoints = GameObject.Find(spawnPointsName).transform;
         for (int i = 0; i < team.Length && i < spawnPoints.childCount; i++) {
-            if (team[i])
-                team[i].transform.position = spawnPoints.GetChild(i).transform.position;
+            if (team[i]) {
+                team[i].transform.position =spawnPoints.GetChild(i).transform.position;
+
+                
+            }
             else {
-                Debug.LogError("Null spawnable unit at "+i);
+                Debug.LogError("Null spawnable unit at " + i);
             }
         }
+    }
+    public void WalkTeamIn(Transform[] team, string spawnPointsName) {
+        Transform spawnPoints = GameObject.Find(spawnPointsName).transform;
+        int lastI = 0;
+        for (int i = 0; i < team.Length-1 && i < spawnPoints.childCount-1; i++) {
+            // scripted move to sp.
+            lastI = i;
+            team[i].GetComponent<Unit>().scriptedMovePos = spawnPoints.GetChild(i).transform.position;
+            team[i].transform.position = new Vector3(-15, 0, 0) + spawnPoints.GetChild(i).transform.position;
+            CombatDisplayManager.Instance.Register(team[i].GetComponent<Unit>(),
+                "Move", 0.2f, "MissionManager/Walk to start point");
+        }
+        lastI++;
+        team[lastI].GetComponent<Unit>().scriptedMovePos = spawnPoints.GetChild(lastI).transform.position;
+        team[lastI].transform.position = new Vector3(-15, 0, 0) + spawnPoints.GetChild(lastI).transform.position;
+        CombatDisplayManager.Instance.Register(team[lastI].GetComponent<Unit>(),
+            "Move", 2f, "MissionManager/Walk to start point");
     }
 
     internal static void OnReachMissionGoal() {
@@ -50,15 +70,12 @@ public class MissionManager:MonoBehaviour {
     internal void Init(Transform[] teamInsts) {
 
         LoadTeamIntoArea(teamInsts, "DONTRENAME_Starting point");
+        WalkTeamIn(teamInsts, "DONTRENAME_Starting point");
+
         if (missionEndScreen_child)
             missionEndScreen_child.gameObject.SetActive(false);
 
-        CombatManager.m.Init();
-        for (int i = 0; i < teamInsts.Length; i++) {
-            teamInsts[i].GetComponent<Unit>().Init();
-        }
-        
-        CombatManager.m.StartCombatLoop();
+        Combat.Instance.Init(teamInsts);
         if (WaveManager.m)
             WaveManager.m.OnCombatBegins();
         else Debug.Log("No wave manger in scene");

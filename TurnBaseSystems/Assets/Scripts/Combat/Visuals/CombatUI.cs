@@ -24,44 +24,44 @@ public class CombatUI {
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, lastactiveAbility);
 
         AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
 
     public static void OnSelectDifferentUnit() {
-        GridDisplay.ClearAll();
+        GridDisplay.Instance.ClearAll();
         ShowUI(curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
         }
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
 
     public static void OnHover() {
         if (lastHoveredUnit && lastHoveredUnit != hoveredUnit) {
-            GridDisplay.HideGrid(lastHoveredUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
-            GridDisplay.HideGrid(lastHoveredUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
+            GridDisplay.Instance.HideGrid(lastHoveredUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
+            GridDisplay.Instance.HideGrid(lastHoveredUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
         }
 
         // Color currently hovered unit depending on alliance
         if (hoveredUnit && lastHoveredUnit != hoveredUnit) {
             if (hoveredUnit.flag.allianceId == 0) { // player, can select
-                GridDisplay.SetUpGrid(hoveredUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
+                GridDisplay.Instance.SetUpGrid(hoveredUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
             } else if (hoveredUnit.flag.allianceId != 0) { // enemy, maybe can attack
-                GridDisplay.SetUpGrid(hoveredUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
+                GridDisplay.Instance.SetUpGrid(hoveredUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
             }
         }
         if (curPlayerUnit != null) {
-            GridDisplay.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
-            GridDisplay.SetUpGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
+            GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
+            GridDisplay.Instance.SetUpGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
         }
         lastHoveredUnit = hoveredUnit;
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
     
 
     internal static void OnUnitDeseleted() {
-        GridDisplay.ClearAll();
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.ClearAll();
+        GridDisplay.Instance.RemakeGrid();
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class CombatUI {
     internal static void OnUnitFinishesAction(Unit unit) {
         if (!unit.NoActions && unit.CanDoAnyAction) {
             AttackDisplay.ShowGrid(unit, hoveredSlot, activeAbility);
-            GridDisplay.RemakeGrid();
+            GridDisplay.Instance.RemakeGrid();
         }
         ShowUI(curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
@@ -102,26 +102,26 @@ public class CombatUI {
     internal static void OnUnitRunsOutOfActions() {
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
         ShowUI(false, null, false);
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
 
     internal static void OnTurnComplete() {
-        GridDisplay.ClearAll(); 
+        GridDisplay.Instance.ClearAll(); 
         ShowUI(curPlayerUnit, curUnit, false);
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
 
     internal static void OnMouseScrolled() {
         AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, activeAbility);
         AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
     }
     internal static void OnBeginAttack() {
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, activeAbility);
-        GridDisplay.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
-        GridDisplay.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
+        GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
+        GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
-        GridDisplay.RemakeGrid();
+        GridDisplay.Instance.RemakeGrid();
         ShowUI(curPlayerUnit, curUnit, false);
     }
 
@@ -130,7 +130,7 @@ public class CombatUI {
 
             AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, activeAbility);
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, activeAbility);
-            GridDisplay.RemakeGrid();
+            GridDisplay.Instance.RemakeGrid();
         }
     }
 }

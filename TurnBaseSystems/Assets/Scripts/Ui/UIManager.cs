@@ -1,12 +1,27 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
     public static UIManager m;
     public Transform pSelectAlly;
     public Transform playerUI;
+
+    public Text slide;
+    public Animator slideAnim;
+    internal string slideScreenContent;
+
     private void Awake() {
         m = this;
+    }
+
+
+    public void ShowSlideScreen() {
+        Debug.Log("Showing slide screen");
+        if (slide)
+        slide.text = slideScreenContent;
+        if (slideAnim)
+        slideAnim.Play("Slide in");
     }
 
     public static void ShowAbilities(bool v, Unit unit, bool allowInteraction) {

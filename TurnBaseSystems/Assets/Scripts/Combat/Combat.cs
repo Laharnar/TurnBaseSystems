@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatManager : MonoBehaviour {
+public class Combat : MonoBehaviour {
 
-    public static CombatManager m;
+    public static Combat Instance { get { return instance; } }
+    static Combat instance;
+
     int activeFlagTurn = 0;
 
     Coroutine gameplayUp;
@@ -15,30 +17,56 @@ public class CombatManager : MonoBehaviour {
     /// <summary>
     /// Don't edit outside this script.
     /// </summary>
+    [System.Obsolete("don't use, complex")]
     public int mouseDirection = 0;
 
     public List<Unit> units = new List<Unit>();
     internal int lastMouseDirection;
 
+    public List<FlagManager> flags;
+
     private void Awake() {
-        m = this;
+        instance = this;
         if (initAwake) {
-            Init();
-            StartCombatLoop();
+            Init(new Transform[0]);
+            // StartCombatLoop ();
         }
     }
 
-    public void Init() {
+    public void Init(Transform[] teamInsts) {
 
         if (init) return;
         init = true;
 
+        for (int i = 0; i < teamInsts.Length; i++) {
+            teamInsts[i].GetComponent<Unit>().Init();
+        }
+
+        Combat.Instance.StartCombatLoop();
+
         Debug.Log("Initing gameplay manager");
-        FlagManager.flags = new System.Collections.Generic.List<FlagController>();
-        FlagManager.flags.Add(new PlayerFlag());
-        FlagManager.flags.Add(new EnemyFlag());
+        flags = new List<FlagManager>();
+        flags.Add(new FlagManager(new PlayerFlag(), 0));
+        flags.Add(new FlagManager(new EnemyFlag(), 1));
 
         CI.curActivator = new CombatEventMask();
+    }
+
+    public void RegisterUnit(Unit u) {
+        /*if (flags.Count < u.flag.allianceId) {
+            Init();
+        }*/
+        GetUnits(u.flag.allianceId).Add(u);
+        units.Add(u);
+    }
+
+    internal void DeRegisterUnit(Unit u) {
+        GetUnits(u.flag.allianceId).Remove(u);
+        units.Remove(u);
+    }
+
+    public List<Unit> GetUnits(int allianceId) {
+        return flags[allianceId].info.units;
     }
 
     public void StartCombatLoop() {
@@ -49,34 +77,42 @@ public class CombatManager : MonoBehaviour {
     }
 
     IEnumerator GameplayUpdate() {
+        // wait until start
         yield return null;
+
+        // flash the combat ui screen
+        UIManager.m.slideScreenContent = "FIGHT!";
+        CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 1f, "Combat/ShowBeginCombatScreen");
+        yield return new WaitForSeconds(1f);
+
         bool done = false;
         Debug.Log("Started main loop");
         while (true) {
-            for (int j = 0; j < FlagManager.flags.Count; j++) {
+            for (int j = 0; j < flags.Count; j++) {
                 activeFlagTurn = j;
 
-                CombatEvents.OnTurnStart(j);
-                
-                yield return StartCoroutine(FlagManager.flags[j].FlagUpdate());
+                CombatEvents.OnTurnStart(flags[j]);
+
+                flags[j].NullifyUnits();
+                yield return StartCoroutine(flags[j].controller.FlagUpdate(flags[j]));
 
 
-                CombatEvents.OnTurnEnd(j);
+                CombatEvents.OnTurnEnd(flags[j]);
 
                 Debug.Log("Flag done - " + (j + 1));
-                FlagManager.flags[j].NullifyUnits();
-                if (FlagManager.flags[0].units.Count == 0) {
+                flags[j].NullifyUnits();
+                if (GetUnits(0).Count == 0) {
                     yield return StartCoroutine(LoseGame());
                     done = true;
                     break;
 
                 }
                 // temp - win condition that enemy dies.
-                if (FlagManager.flags[1].units.Count == 0 || MissionManager.levelCompleted) {
+                if (GetUnits(1).Count == 0 || MissionManager.levelCompleted) {
                     if (j == 1) {
                         WaveManager.m.OnWaveCleared();
                     }
-                    if (WaveManager.m.AllWavesCleared()&& FlagManager.flags[1].units.Count == 0) {
+                    if (WaveManager.m.AllWavesCleared()&& GetUnits(1).Count == 0) {
                         yield return StartCoroutine(WinGame());
                         done = true;
                         break;
@@ -94,11 +130,11 @@ public class CombatManager : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
-    internal static void SkipWave() {
-        for (int i = 0; i < FlagManager.flags[1].units.Count; i++) {
-            Destroy(FlagManager.flags[1].units[i].gameObject);
+    internal void SkipWave() {
+        for (int i = 0; i < GetUnits(1).Count; i++) {
+            Destroy(GetUnits(1)[i].gameObject);
         }
-        FlagManager.flags[1].units.Clear();
+        GetUnits(1).Clear();
     }
 
     internal static void OnEnterCheckpoint(FactionCheckpoint checkpoint, Unit unit) {

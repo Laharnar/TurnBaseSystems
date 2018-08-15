@@ -4,9 +4,9 @@
 public class CombatEventMask {
     public bool
         never,
-        onAnyBuffTick,
-        onAllyBuffTick,
-        onHostileBuffTick,
+        //onAnyBuffTick,
+        //onAllyBuffTick,
+        //onHostileBuffTick,
         onAnyTurnStart,
         onAnyTurnEnd,
         onEnemyTurnStart,
@@ -27,9 +27,9 @@ public class CombatEventMask {
     public bool[] ToArray() {
         return new bool[]{
             never,
-        onAnyBuffTick,
-        onAllyBuffTick,
-        onHostileBuffTick,
+        //onAnyBuffTick,
+        //onAllyBuffTick,
+        //onHostileBuffTick,
         onAnyTurnStart,
         onAnyTurnEnd,
         onEnemyTurnStart,
@@ -63,9 +63,9 @@ public class CombatEventMask {
     }
 
     internal void Reset() {
-        onAnyBuffTick=
-        onAllyBuffTick=
-        onHostileBuffTick=
+        //onAnyBuffTick=
+        //onAllyBuffTick=
+        //onHostileBuffTick=
         onAnyTurnStart =
         onAnyTurnEnd =
         onEnemyTurnStart =

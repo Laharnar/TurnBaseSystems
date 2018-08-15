@@ -16,7 +16,7 @@ public class AOEAttackData : DamageBasedAttackData {
 
     internal void Execute() {
         curDmg = damageInfo;
-        GridMask mask = GridMask.RotateMask(/*data.aoe.*/aoeMask, PlayerFlag.m.mouseDirection);
+        GridMask mask = GridMask.RotateMask(/*data.aoe.*/aoeMask, 0);
         Unit[] vec = mask.GetUnits(CI.attackedSlot);
         int charges = CI.sourceExecutingUnit.charges;
         Unit source = CI.sourceExecutingUnit;

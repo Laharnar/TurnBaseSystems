@@ -53,7 +53,7 @@ public class FactionCheckpoint : MonoBehaviour {
         alreadyUsed = unit;
         GetComponentInChildren<SpriteRenderer>().transform.localScale *= 3;
 
-        CombatManager.OnEnterCheckpoint(this, unit);
+        Combat.OnEnterCheckpoint(this, unit);
     }
 
     public static bool FactionsMatch(Unit other, MaskFilter checkpointTrigger) {

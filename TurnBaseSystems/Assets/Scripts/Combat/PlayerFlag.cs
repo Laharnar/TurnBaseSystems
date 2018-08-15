@@ -28,30 +28,20 @@ public class PlayerFlag : FlagController {
         lastHoveredUnit = null;
     }
 
-    public Unit[] VisibleUnits {
-        get {
-            List<Unit> units1 = new List<Unit>();
-            for (int i = 0; i < units.Count; i++) {
-                if (units[i].combatStatus == CombatStatus.Normal)
-                    units1.Add(units[i]);
-            }
-            return units1.ToArray();
-        }
-    }
 
-    public int mouseDirection { get { return CombatManager.m.mouseDirection; } set { CombatManager.m.mouseDirection = value; } }
+    public int mouseDirection { get { return Combat.Instance.mouseDirection; } set { Combat.Instance.mouseDirection = value; } }
 
-    public override IEnumerator FlagUpdate() {
+    public override IEnumerator FlagUpdate(FlagManager flag) {
         m = this;
-        NullifyUnits();
         bool walkMode = false;
+        List<Unit> units = flag.info.units;
         while (true) {
             if (Input.GetKeyDown(KeyCode.Return)) break;
 
             // Swap between combat and walk
             #region Walk mode on space
             if (Input.GetKeyDown(KeyCode.Space)) {
-                if (!PlayerDetected())
+                if (!UnitStates.DetectedSomeone(Combat.Instance.GetUnits(1)))
                     walkMode = !walkMode;
                 if (!walkMode) {
                     for (int i = 0; i < units.Count; i++) {
@@ -65,7 +55,7 @@ public class PlayerFlag : FlagController {
                 for (int i = 0; i < units.Count; i++) {
                     units[i].transform.Translate(moveDir);
                 }
-                if (PlayerDetected()) {
+                if (UnitStates.DetectedSomeone(Combat.Instance.GetUnits(1))) {
                     walkMode = false;
                     for (int i = 0; i < units.Count; i++) {
                         units[i].transform.position = GridManager.SnapPoint(units[i].transform.position);
@@ -79,7 +69,7 @@ public class PlayerFlag : FlagController {
             #endregion
 
             if (Input.GetKeyDown(KeyCode.Alpha0)) {
-                CombatManager.SkipWave();
+                Combat.Instance.SkipWave();
             }
 
 
@@ -93,7 +83,7 @@ public class PlayerFlag : FlagController {
             if (MouseWheelRotate) {
                 float f = Input.GetAxis("Mouse ScrollWheel");
                 f = f < 0 ? -1 : f > 0 ? 1 : 0;
-                CombatManager.m.lastMouseDirection = mouseDirection;
+                Combat.Instance.lastMouseDirection = mouseDirection;
                 mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
 
                 if (selectedPlayerUnit) {
@@ -185,10 +175,7 @@ public class PlayerFlag : FlagController {
         }
         CombatUI.OnActiveAbilityChange(lastAbility, activeAbility);
     }
-
-    private bool PlayerDetected() {
-        return FlagManager.flags[1].DetectedSomeone;
-    }
+    
 
     GridMask GetMask(int i) {
         if (activeAbility == null)
@@ -252,7 +239,7 @@ public class PlayerFlag : FlagController {
         }
     }
 
-    private bool NoActionsLeft() {
+    private bool NoActionsLeft(List<Unit> units) {
         for (int i = 0; i < units.Count; i++) {
             if (!units[i].NoActions) {
                 return false;

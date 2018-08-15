@@ -11,8 +11,8 @@ public class CustomTests: MonoBehaviour {
     private void Update() {
         if (i == 0) {
             if (false) {
-                GridMask m = FlagManager.flags[1].units[0].abilities.move2.standard.attackRangeMask;
-                Vector3 r = new Vector3(-FlagManager.flags[1].units[0].abilities.move2.standard.attackRangeMask.w / 2, 0, 0);
+                GridMask m = Combat.Instance.GetUnits(1)[0].abilities.move2.standard.attackRangeMask;
+                Vector3 r = new Vector3(-Combat.Instance.GetUnits(1)[0].abilities.move2.standard.attackRangeMask.w / 2, 0, 0);
 
                 Test("AiHelper.ClosestToTargetOverMask1", AiHelper.ClosestToTargetOverMask(new Vector3(), new Vector3(-100, 0, 0), m), r);
                 Test("AiHelper.ClosestToTarget", AiHelper.ClosestToTarget(new Vector3(), new Vector3(-100, 0, 0), m), r);
@@ -109,7 +109,7 @@ public class CustomTests: MonoBehaviour {
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
                 BuffManager.Register(witch, witch, atk.buff);
-                BuffManager.ConsumeBuffs(1);
+                BuffManager.ConsumeBuffs(Combat.Instance.flags[1]);
                 //-witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
@@ -126,7 +126,7 @@ public class CustomTests: MonoBehaviour {
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
                 BuffManager.Register(witch, witch, atk.buff);
-                BuffManager.ConsumeBuffs(1);
+                BuffManager.ConsumeBuffs(Combat.Instance.flags[1]);
                 //witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
@@ -149,7 +149,7 @@ public class CustomTests: MonoBehaviour {
             CombatStats comstat2 = melee.stats;
             dekuriongo.transform.position = new Vector3(0, 1,0);
             mellego.transform.position = new Vector3(1, 0, 0);
-            CombatEvents.OnTurnStart(1);
+            CombatEvents.OnTurnStart(Combat.Instance.flags[1]);
             Test("Auras1a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("Auras1b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
@@ -244,7 +244,7 @@ public class CustomTests: MonoBehaviour {
             nuker.GetDamaged(3);
             nuker.AddCharges(null, 1);
             Test("get pierced1a", nuker.charges, 2);
-            CombatEvents.OnTurnStart(0);
+            CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
             PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
             CI.sourceExecutingUnit = nuker;
             CI.attackedSlot = new Vector3(0, 0, 0);
@@ -255,7 +255,7 @@ public class CustomTests: MonoBehaviour {
             Unit[] units = atkD.GetUnitsPierced(melee);
 
             CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
-            CombatEvents.OnTurnStart(0);
+            CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
             CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             Test("get pierced1a", melee.dead, true);
             Test("get pierced1b", !melee1.dead, true);

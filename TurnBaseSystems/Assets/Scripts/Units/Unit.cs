@@ -58,6 +58,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal int loyalty;
     public Resistances resistances;
 
+    internal Vector3 scriptedMovePos;
+
     private void Start() {
         Init();
     }
@@ -67,7 +69,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
         ResetActions();
         //GridItem slot = SelectionManager.GetAsSlot(transform.position-Vector3.forward);
-        if (CombatManager.m) {
+        if (Combat.Instance) {
             //hp = maxHp;
             AddCharges(null, 1);
             stats.Increase(null, CombatStatType.Hp, maxHp);
@@ -75,7 +77,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             //curSlot = slot;
             transform.position = snapPos;
             //Move(slot);
-            FlagManager.RegisterUnit(this);
+            Combat.Instance.RegisterUnit(this);
 
             if (!abilities) {
                 abilities = GetComponent<UnitAbilities>();
@@ -235,6 +237,12 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         StartCoroutine(pathing.GoTo(this, slot, "Walk"));
     }
 
+    public void Move() {
+        if (moving) return;
+        //CostActions(action);
+        StartCoroutine(pathing.GoTo(this, scriptedMovePos, "Walk"));
+    }
+
     private void CostActions(AttackData2 atk) {
         actionsLeft -= atk.actionCost;
     }
@@ -284,7 +292,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     private IEnumerator Death() {
         yield return null;
-        FlagManager.DeRegisterUnit(this);
+        Combat.Instance.DeRegisterUnit(this);
         Destroy(gameObject); 
     }
 

@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+public class FlagInfo {
+    public List<Unit> units = new List<Unit>();
+}
 public class FlagManager {
-    public static List<FlagController> flags = new List<FlagController>();
-    
-    public static void RegisterUnit(Unit u) {
-        if (flags.Count < u.flag.allianceId) {
-            CombatManager.m.Init();
+    public FlagInfo info = new FlagInfo();
+    public FlagController controller;
+    public int id;
+
+    public FlagManager(FlagController enemyFlag, int id) {
+        info = new FlagInfo();
+        this.controller = enemyFlag;
+        this.id = id;
+    }
+
+    public void NullifyUnits() {
+        List<Unit> units = info.units;
+        for (int i = 0; i < units.Count; i++) {
+            if (units[i] == null) {
+                units.RemoveAt(i);
+                i--;
+            }
         }
-
-        flags[u.flag.allianceId].units.Add(u);
-
-        CombatManager.m.units.Add(u);
     }
-
-    internal static void DeRegisterUnit(Unit u) {
-        flags[u.flag.allianceId].units.Remove(u);
-    }
-
 }

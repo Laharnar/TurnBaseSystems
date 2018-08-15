@@ -12,8 +12,5 @@ public abstract class Interaction:ScriptableObject {
     public abstract void Interact(IInteractible other);
 
     public string interactionType = "Normal";
-
-    internal bool InteractionMatch(string v) {
-        return interactionType == v;
-    }
+    
 }

@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+
+/// <summary>
+/// Contains logic for all events that can happen in the game
+/// </summary>
 public static class CombatEvents {
     /*never,
         onAnyBuffTick,
@@ -18,70 +22,52 @@ public static class CombatEvents {
         onUnitDies
      * 
      * */
-    public static void ActivateValidAbilities() {
-        for (int i = 0; i < CombatManager.m.units.Count; i++) {
-            CombatManager.m.units[i].RunAllAbilities(CI.curActivator);
+    static void ActivateAbilitiesForCurCombatState() {
+        for (int i = 0; i < Combat.Instance.units.Count; i++) {
+            Combat.Instance.units[i].RunAllAbilities(CI.curActivator);
         }
     }
 
 
-    public static void OnTurnStart(int allianceId) {
+    public static void OnTurnStart(FlagManager flag) {
         CI.curActivator.Reset();
         CI.curActivator.onAnyTurnStart = !CI.curActivator.never;
-        CI.curActivator.onEnemyTurnStart = allianceId == 1 && !CI.curActivator.never;
-        CI.curActivator.onPlayerTurnStart = allianceId == 0 && !CI.curActivator.never;
-        ActivateValidAbilities();
+        CI.curActivator.onEnemyTurnStart = flag.id == 1 && !CI.curActivator.never;
+        CI.curActivator.onPlayerTurnStart = flag.id == 0 && !CI.curActivator.never;
+        ActivateAbilitiesForCurCombatState();
 
-        for (int i = 0; i < FlagManager.flags[allianceId].units.Count; i++) {
-            FlagManager.flags[allianceId].units[i].OnTurnStart();
+        flag.NullifyUnits();
+        foreach (var item in flag.info.units) {
+            item.OnTurnStart();
         }
-
-        /*for (int i = 0; i < units.Count; i++) {
-
-            for (int j = 0; j < units[i].abilities.additionalAbilities2.Count; j++) {
-                EmpowerAlliesData aura = units[i].abilities.additionalAbilities2[j].aura;
-                if (units[i].abilities.additionalAbilities2[j].aura.used) {
-                    aura.AtkBehaviourExecute();
-                    
-                }
-            }
-        }*/
-
     }
 
-    public static void OnTurnEnd(int j) {
+    public static void OnTurnEnd(FlagManager flag) {
         // end
         CI.curActivator.Reset();
         CI.curActivator.onAnyTurnEnd = !CI.curActivator.never;
-        CI.curActivator.onEnemyTurnEnd = j == 1 && !CI.curActivator.never;
-        CI.curActivator.onPlayerTurnEnd = j == 0 && !CI.curActivator.never;
-        ActivateValidAbilities();
+        CI.curActivator.onEnemyTurnEnd = flag.id == 1 && !CI.curActivator.never;
+        CI.curActivator.onPlayerTurnEnd = flag.id == 0 && !CI.curActivator.never;
+        ActivateAbilitiesForCurCombatState();
 
-        FlagManager.flags[j].NullifyUnits();
-        for (int i = 0; i < FlagManager.flags[j].units.Count; i++) {
-            FlagManager.flags[j].units[i].OnTurnEnd();
+        flag.NullifyUnits();
+        foreach (var item in flag.info.units) {
+            item.OnTurnEnd();
         }
 
-        // buffs
-        int faction = j;
-        CI.curActivator.Reset();
-        CI.curActivator.onAnyBuffTick = !CI.curActivator.never;
-        ActivateValidAbilities();
-        Debug.Log("move buff unticking into execute");
-
-        BuffManager.ConsumeBuffs(j);
+        //BuffManager.ConsumeBuffs(flag);
 
     }
 
     public static void OnUnitActivatesAbility(Unit unit) {
         CI.curActivator.Reset();
         CI.curActivator.onDamaged = !CI.curActivator.never;
-        ActivateValidAbilities();
+        ActivateAbilitiesForCurCombatState();
 
         foreach (var items in FactionCheckpoint.checkpointsInLevel) {
             items.CheckpointCheck(unit);
         }
-        CombatManager.m.UnitNullCheck();
+        Combat.Instance.UnitNullCheck();
     }
 
     public static void CombatAction(Unit selectedPlayerUnit, Vector3 hoveredSlot, AttackData2 activeAbility) {
@@ -93,15 +79,15 @@ public static class CombatEvents {
         CI.attackedSlot = hoveredSlot;
         CI.attackStartedAt = selectedPlayerUnit.snapPos;
         CI.activeAbility = activeAbility;
-        ActivateValidAbilities();
+        ActivateAbilitiesForCurCombatState();
 
         CI.curActivator.Reset();
         CI.curActivator.onMove = !CI.curActivator.never;
-        ActivateValidAbilities();
+        ActivateAbilitiesForCurCombatState();
 
         CI.curActivator.Reset();
         CI.curActivator.onDamaged = !CI.curActivator.never;
-        ActivateValidAbilities();
+        ActivateAbilitiesForCurCombatState();
 
         // v2
         int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
@@ -118,7 +104,7 @@ public static class CombatEvents {
         EmpowerAlliesData.DeffectEffect(oldPos, newPos, unit, AuraTrigger.OnUnitEntersExits);
 
         // find auras that affected this unit at old pos, and add at new pos
-        foreach (var combatUnit in CombatManager.m.units) {
+        foreach (var combatUnit in Combat.Instance.units) {
             Vector3 snap = GridManager.SnapPoint(combatUnit.transform.position);
             if (combatUnit != unit) {
                 foreach (var ability in combatUnit.abilities.additionalAbilities2) {
