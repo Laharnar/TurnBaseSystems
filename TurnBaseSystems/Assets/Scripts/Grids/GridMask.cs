@@ -39,6 +39,14 @@ public class GridMask :UnityEngine.ScriptableObject {
             Debug.Log("Besdilo"+i);
         }
     }
+
+    internal bool IsSelfMask(Unit u, Vector3 attackedSlot) {
+        if (u.snapPos == attackedSlot && w > 0 && l > 0 && mask[(int)(w/2f)].col[(int)(l/2f)] == true) {
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Square masks only.
     /// </summary>

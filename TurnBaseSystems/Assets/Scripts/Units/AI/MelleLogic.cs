@@ -10,25 +10,29 @@ public class MelleLogic : AiLogic {
         if (!unit.detection.detectedSomeone || UnitStates.GetVisibleUnits( Combat.Instance.GetUnits(0)).Length == 0)
             yield break;
 
+        // set up data
+        Vector3 selfPos = unit.snapPos;
+
+        // search to choose target
+        
         // find closest visible enemy
         Unit[] visibleUnits = UnitStates.GetVisibleUnits(Combat.Instance.GetUnits(0));
-        
         float[] dists = transform.position.GetDistances(visibleUnits);
         int closestUnitIndex = dists.GetIndexOfMin();
-        Vector3 closestEnemyPos = GridManager.SnapPoint(visibleUnits[closestUnitIndex].transform.position); //SelectionManager.GetAsSlot(search[closestUnitIndex].transform.position);
 
-        // set up data
-        Vector3 selfPos = GridManager.SnapPoint(unit.transform.position);
+        Vector3 closestEnemyPos = visibleUnits[closestUnitIndex].snapPos;
         Vector3 enemyPos = closestEnemyPos;
 
+        // choose move pos
         Vector3 targetMovePos;
-
         if (AiHelper.IsNeighbour(unit.transform.position, enemyPos)) { // don't move when already near
             targetMovePos = selfPos;
         }
         else {
             targetMovePos = AiHelper.ClosestToTargetOverMask(unit.transform.position, enemyPos, unit.abilities.move2.move.range);
         }
+
+        // move
         if (targetMovePos != selfPos)
         {
             Debug.Log("Moving to " + targetMovePos, unit);
@@ -39,7 +43,8 @@ public class MelleLogic : AiLogic {
             }
             selfPos = GridManager.SnapPoint(unit.transform.position);
         }
-        // command 2
+
+        // attack
         if (GridLookup.IsPosInMask(selfPos, enemyPos, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(enemyPos));
 
@@ -48,7 +53,8 @@ public class MelleLogic : AiLogic {
         while (unit.attacking) {
             yield return null;
         }
-        Combat.Instance.UnitNullCheck();
+
+        //Combat.Instance.UnitNullCheck();
 
         // end unit turn
         yield return null;

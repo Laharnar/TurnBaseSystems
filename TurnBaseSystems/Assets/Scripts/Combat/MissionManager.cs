@@ -86,11 +86,10 @@ public class MissionManager:MonoBehaviour {
 
 
         // focus on enemies, shortly
-        Debug.Log("eemies");
         Vector3 center = GetCenter((Transform[])Combat.Instance.flags[1].info);
         GameManager.Instance.combatCam.AddPos(center);
         CombatDisplayManager.Instance.Register(GameManager.Instance.combatCam,
-            "MoveToPos", GameManager.Instance.combatCam.RequiredTimeToMoveToPos(center) + 1, "MissionManager/focus on enemy");
+            "MoveToPos", GameManager.Instance.combatCam.RequiredTimeToMoveToPos(center) + 0.5f, "MissionManager/focus on enemy");
 
         // focus back on player
         center = GetCenter(teamInsts) + new Vector3(20, 0, 0);

@@ -42,6 +42,7 @@ public class Combat : MonoBehaviour {
             teamInsts[i].GetComponent<Unit>().Init();
         }
 
+        CombatData.Instance = new CombatData();
         Combat.Instance.StartCombatLoop();
 
         Debug.Log("Initing gameplay manager");
@@ -73,10 +74,10 @@ public class Combat : MonoBehaviour {
         if (gameplayUp != null)
             StopCoroutine(gameplayUp);
 
-        gameplayUp = StartCoroutine(GameplayUpdate());
+        gameplayUp = StartCoroutine(CombatUpdate());
     }
 
-    IEnumerator GameplayUpdate() {
+    IEnumerator CombatUpdate() {
         // wait until start
         yield return null;
         yield return null;
@@ -88,62 +89,67 @@ public class Combat : MonoBehaviour {
         // flash the combat ui screen
         UIManager.m.slideScreenContent = "FIGHT!";
         CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 4.5f, "Combat/ShowBeginCombatScreen");
-        yield return new WaitForSeconds(4.5f);
+        yield return new WaitForSeconds(3.5f);
 
         Vector3[] positions = new Vector3[flags[0].info.units.Count];
         for (int i = 0; i < flags[0].info.units.Count; i++) {
-            positions[i] = flags[0].info.units[i].transform.position;
+            flags[0].info.units[i].transform.position = flags[0].info.units[i].snapPos;
+            positions[i] = flags[0].info.units[i].snapPos;
         }
 
         // blinking to player to select the unit.
         UIManager.m.indicatorPositions = positions;
-        UIManager.m.indicatorTimeout = 2f;
+        UIManager.m.indicatorTimeout = 1f;
         CombatDisplayManager.Instance.Register(UIManager.m,
-            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
+            "ShowIndicators_evt", 1f, "MissionManager/show selection indicators");
 
-        CombatDisplayManager.Instance.Register(this, null, 1.1f, "wait");
+        CombatDisplayManager.Instance.Register(this, null, 0.8f, "wait");
         CombatDisplayManager.Instance.Register(UIManager.m,
-            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
-        CombatDisplayManager.Instance.Register(this, null, 1.1f, "wait");
+            "ShowIndicators_evt", 1f, "MissionManager/show selection indicators");
+        CombatDisplayManager.Instance.Register(this, null, 0.8f, "wait");
 
         CombatDisplayManager.Instance.Register(UIManager.m,
-            "ShowIndicators_evt", 1.5f, "MissionManager/show selection indicators");
+            "ShowIndicators_evt", 1f, "MissionManager/show selection indicators");
 
         // start combat
 
         bool done = false;
         Debug.Log("Started main loop");
+        bool started = false;
         while (true) {
             for (int j = 0; j < flags.Count; j++) {
-                if (j == 1) {
-                    Debug.Log("slide msg 1");
-                    UIManager.ShowSlideMsg("-- Enemy turn --", 3.5f, "Combat/end player turn");
+                if (started) {
+                    if (j == 1) {
+                        UIManager.ShowSlideMsg("-- Enemy turn --", 3.5f, "Combat/end player turn");
+                        yield return new WaitForSeconds(3.5f);
+                    }
+                    if (j == 0) {
+                        UIManager.ShowSlideMsg("-- Player turn --", 3.5f, "Combat/end player turn");
+                        yield return new WaitForSeconds(2.5f);
+                    }
                 }
-                if (j == 0) {
-                    Debug.Log("slide msg 0");
-                    UIManager.ShowSlideMsg("-- Player turn --", 3.5f, "Combat/end player turn");
-                }
-                yield return new WaitForSeconds(3.5f);
+                started = true;
 
                 activeFlagTurn = j;
 
                 CombatEvents.OnTurnStart(flags[j]);
 
-                flags[j].NullifyUnits();
+                flags[0].NullifyUnits();
+                flags[1].NullifyUnits();
                 yield return StartCoroutine(flags[j].controller.FlagUpdate(flags[j]));
-
-
                 CombatEvents.OnTurnEnd(flags[j]);
                 
                 Debug.Log("Flag done - " + (j + 1));
-                flags[j].NullifyUnits();
+                flags[0].NullifyUnits();
+                flags[1].NullifyUnits();
+                // all player units die --> lose.
                 if (GetUnits(0).Count == 0) {
                     yield return StartCoroutine(LoseGame());
                     done = true;
                     break;
 
                 }
-                // temp - win condition that enemy dies.
+                // all waves were cleared --> win.
                 if (GetUnits(1).Count == 0 || MissionManager.levelCompleted) {
                     if (j == 1) {
                         WaveManager.m.OnWaveCleared();
@@ -155,7 +161,6 @@ public class Combat : MonoBehaviour {
                     }
                 }
 
-                
                 yield return new WaitForSeconds(0.5f);
 
             }

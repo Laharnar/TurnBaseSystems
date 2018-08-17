@@ -34,21 +34,21 @@ public class GridDisplay {
     static Color GetColorCode(GridDisplayLayer layer) {
         switch (layer) {
             case GridDisplayLayer.GreenMovement:
-                return Color.green;
+                return GameManager.Instance.moveColor;
             case GridDisplayLayer.RedAttackArea:
-                return Color.red;
+                return GameManager.Instance.attackColor;
             case GridDisplayLayer.Aura:
                 return Color.yellow;
             case GridDisplayLayer.BlueSelectionArea:
-                return Color.blue;
+                return GameManager.Instance.allySelectColor;
             case GridDisplayLayer.RedSelectionArea:
-                return Color.red;
+                return GameManager.Instance.enemySelectColor;
             case GridDisplayLayer.SelfActivate:
-                return Color.yellow;
+                return GameManager.Instance.attackColor;
             case GridDisplayLayer.OrangeAOEAttack:
-                return new Color(1, 0.6f, 0, 2);//orange;
+                return GameManager.Instance.aoeColor;
             case GridDisplayLayer.OrangePierce:
-                return new Color(1, 0.6f, 0, 2);//orange;
+                return GameManager.Instance.aoeColor;//orange;
             case GridDisplayLayer.AIAction:
                 return Color.yellow;
             default:
@@ -64,18 +64,47 @@ public class GridDisplay {
         // create if not enough
         for (int i = instances.Count; i < flattened.Count; i++) {
             Transform t = GridManager.NewGridPrefInstance(flattened[i].pos);
-            t.GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
+            //t.GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
             instances.Add(t);
         }
         // recolor and reposition
         for (int i = 0; i < instances.Count && i < flattened.Count; i++) {
             instances[i].transform.position = flattened[i].pos;
+            instances[i].transform.localScale = GetColorScale(flattened[i].color);
             instances[i].GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
         }
         // remove if it's too much
         while (instances.Count > flattened.Count) {
             GameObject.Destroy(instances[instances.Count-1].gameObject);
             instances.RemoveAt(instances.Count-1);
+        }
+    }
+
+    private Vector3 GetColorScale(GridDisplayLayer color) {
+        Vector3 size1 = Vector3.one;
+        Vector3 size2 = new Vector3(1.05f, 1.05f, 1f);
+        switch (color) {
+            case GridDisplayLayer.GreenMovement:
+                return Vector3.one;
+            case GridDisplayLayer.RedAttackArea:
+                return Vector3.one;
+            case GridDisplayLayer.Aura:
+                return Vector3.one;
+            case GridDisplayLayer.BlueSelectionArea:
+                return size2;
+            case GridDisplayLayer.RedSelectionArea:
+                return size2;
+            case GridDisplayLayer.SelfActivate:
+                return Vector3.one;
+            case GridDisplayLayer.OrangeAOEAttack:
+                return size2;
+            case GridDisplayLayer.OrangePierce:
+                return size2;
+            case GridDisplayLayer.AIAction:
+                return size2;
+            default:
+                Debug.Log("Unhandled color, empty color.");
+                return Vector3.one;
         }
     }
 

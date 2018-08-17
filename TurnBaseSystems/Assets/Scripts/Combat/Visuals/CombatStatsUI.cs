@@ -12,33 +12,38 @@ public class CombatStatsUI :MonoBehaviour{
     }
 
     public void UpdateStats() {
-        if (PlayerFlag.selectedPlayerUnit) {
-            selectedText.text = PlayerFlag.selectedUnit.codename + 
-                "\nHP | " + PlayerFlag.selectedUnit.hp +"/"+PlayerFlag.selectedUnit.maxHp+
-                "\nAP | " + PlayerFlag.selectedUnit.ActionsLeft + "/" + PlayerFlag.selectedUnit.maxActions +
-                (PlayerFlag.selectedUnit.temporaryArmor > 0 ? "\nArmor | " + PlayerFlag.selectedUnit.temporaryArmor : "")+
-                (PlayerFlag.selectedUnit.charges > 0 ? "\nCharges | " + PlayerFlag.selectedUnit.charges + "/"+PlayerFlag.selectedUnit.maxCharges: "");
-
-        } else if (PlayerFlag.selectedUnit) {// enemy
-            selectedText.text = PlayerFlag.selectedUnit.codename +
-                "\nHP | " + PlayerFlag.selectedUnit.hp + "/" + PlayerFlag.selectedUnit.maxHp+
-                (PlayerFlag.selectedUnit.temporaryArmor > 0 ? "\nArmor | " + PlayerFlag.selectedUnit.temporaryArmor : "");
-        } else {
+        Unit selectedUnit = CombatData.Instance.selectedUnit;//selectedPlayerUnit;
+        if (!selectedUnit)
             selectedText.text = "SELECT UNIT";
+        else {
+            bool selectedIsPlayer = selectedUnit.flag.allianceId == 0;
+            if (selectedIsPlayer) {
+                selectedText.text = selectedUnit.codename +
+                    "\nHP | " + selectedUnit.hp + "/" + selectedUnit.maxHp +
+                    "\nAP | " + selectedUnit.ActionsLeft + "/" + selectedUnit.maxActions +
+                    (selectedUnit.temporaryArmor > 0 ? "\nArmor | " + selectedUnit.temporaryArmor : "") +
+                    (selectedUnit.charges > 0 ? "\nCharges | " + selectedUnit.charges + "/" + selectedUnit.maxCharges : "");
+            } else {// enemy
+                selectedText.text = selectedUnit.codename +
+                    "\nHP | " + selectedUnit.hp + "/" + selectedUnit.maxHp +
+                    (selectedUnit.temporaryArmor > 0 ? "\nArmor | " + selectedUnit.temporaryArmor : "");
+            }
         }
 
-        if (PlayerFlag.hoveredUnit) {
-            if (PlayerFlag.hoveredUnit.flag.allianceId == 0 && PlayerFlag.hoveredUnit != PlayerFlag.selectedPlayerUnit) {
-                hoverText.text = PlayerFlag.hoveredUnit.codename+
-                    "\nHP | " + PlayerFlag.hoveredUnit.hp + "/" + PlayerFlag.hoveredUnit.maxHp+
-                    "\nAP | " + PlayerFlag.hoveredUnit.ActionsLeft + "/" + PlayerFlag.hoveredUnit.maxActions +
-                    (PlayerFlag.hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + PlayerFlag.hoveredUnit.temporaryArmor : "") +
-                    (PlayerFlag.hoveredUnit.charges > 0 ? "\nCharges | " + PlayerFlag.hoveredUnit.charges + "/" + PlayerFlag.hoveredUnit.maxCharges : "");
+        Unit hoveredUnit = CombatData.Instance.hoveredUnit;
+        if (hoveredUnit) {
+            bool hoveredIsPlayer = hoveredUnit.flag.allianceId == 0;
+            if (hoveredIsPlayer && hoveredUnit != CombatData.Instance.selectedPlayerUnit) {
+                hoverText.text = hoveredUnit.codename+
+                    "\nHP | " + hoveredUnit.hp + "/" + hoveredUnit.maxHp+
+                    "\nAP | " + hoveredUnit.ActionsLeft + "/" + hoveredUnit.maxActions +
+                    (hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + hoveredUnit.temporaryArmor : "") +
+                    (hoveredUnit.charges > 0 ? "\nCharges | " + hoveredUnit.charges + "/" + hoveredUnit.maxCharges : "");
 
-            } else if (PlayerFlag.hoveredUnit.flag.allianceId != 0 && PlayerFlag.hoveredUnit != PlayerFlag.selectedPlayerUnit) {// enemy
-                hoverText.text = PlayerFlag.hoveredUnit.codename + 
-                    "\nHP | " + PlayerFlag.hoveredUnit.hp + "/" + PlayerFlag.hoveredUnit.maxHp+
-                    (PlayerFlag.hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + PlayerFlag.hoveredUnit.temporaryArmor : "");
+            } else if (!hoveredIsPlayer && hoveredUnit != CombatData.Instance.selectedPlayerUnit) {// enemy
+                hoverText.text = hoveredUnit.codename + 
+                    "\nHP | " + hoveredUnit.hp + "/" + hoveredUnit.maxHp+
+                    (hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + hoveredUnit.temporaryArmor : "");
             }
         } else {
             hoverText.text = "";

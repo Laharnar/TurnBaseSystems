@@ -84,9 +84,9 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             }
             if (hpUI) {
                 if (hpUI.canvasRoot) {
-                    hpUI.canvasRoot.gameObject.SetActive(true);
-                    if (hpUI.background) hpUI.background.gameObject.SetActive(true);
-                    hpUI.InitBarWithGrey(hp, 10, this);
+                    hpUI.canvasRoot.gameObject.SetActive(hpUI.visible);
+                    if (hpUI.background) hpUI.background.gameObject.SetActive(hpUI.visible);
+                    hpUI.InitHiddenHpObjects(hp, 10, this);
                     hpUI.ShowHpWithGrey(hp, temporaryArmor);
                 }
             }
@@ -219,6 +219,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Destroy(gameObject);
         }
         return 2;
+    }
+
+    internal AttackData2 GetNextAbilityWithEnoughActions() {
+        foreach (var item in abilities.GetNormalAbilities()) {
+            if (item.actionCost <= ActionsLeft) {
+                return item;
+            }
+        }
+        return null;
     }
 
     private void TurnInDir(Vector3 snapPos, Vector3 attackedSlot) {

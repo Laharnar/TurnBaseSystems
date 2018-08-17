@@ -17,12 +17,24 @@ public class AttackDisplay {
     //}
 
     public static void ShowGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
+        if (data == null) {
+            Debug.LogError(source + "NULL data");
+            return;
+        }
+        if (source == null) {
+            Debug.LogError("Null source");
+            return;
+        }
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(Combat.Instance.mouseDirection));
+            GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(0));
         }
         if (data.standard.used) {
-            GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(Combat.Instance.mouseDirection));
+            if (data.standard.GetMask(0).IsSelfMask(source, attackedSlot)) {
+                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.SelfActivate, data.standard.GetMask(0));
+            } else {
+                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(0));
+            }
         }
         if (data.move.used) {
             GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
@@ -45,6 +57,11 @@ public class AttackDisplay {
             data.pierce.Draw(attacked);
         }
     }
+
+    internal static void HideGrid(Unit curPlayerUnit, Vector3 hoveredSlot, object lastAbility) {
+        throw new NotImplementedException();
+    }
+
     public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
         if (data == null)
             return;

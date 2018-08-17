@@ -336,6 +336,7 @@ UI clarity update
 mvc overhaul
 do cycles... mvc overhaul -> UI update -> bug fixing
 triple k
-cycle 1 = Combat k
+cycle 1 = Combat begin kkk
+cycle 2 = Combat exectution player k
 
 
