@@ -82,6 +82,7 @@ public class PlayerFlag : FlagController {
             yield return null;
         }
         PlayerTurnData.Instance.Reset();
+        AbilityInfo.Instance.Reset();
         CombatUI.OnTurnComplete();
 
 

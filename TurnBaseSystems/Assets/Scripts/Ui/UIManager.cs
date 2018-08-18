@@ -4,13 +4,17 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
     public static UIManager m;
+
+    // player ui.
     public Transform pSelectAlly;
     public Transform playerUI;
 
+    // slide in text at end of turns.
     public Text slide;
     public Animator slideAnim;
     internal string slideScreenContent;
 
+    // additional select indicators.
     public Transform selectIndicatorPref;
     internal Vector3[] indicatorPositions;
     internal float indicatorTimeout = 1;
@@ -19,7 +23,6 @@ public class UIManager : MonoBehaviour {
     private void Awake() {
         m = this;
     }
-
 
     public void ShowSlideScreen() {
         Debug.Log("Showing slide screen");
@@ -33,8 +36,9 @@ public class UIManager : MonoBehaviour {
         if (m.pSelectAlly)
             m.pSelectAlly.gameObject.SetActive(v);
         PlayerUIAbilityList.ClearInstanceList();
-        if (unit)
+        if (unit) {
             PlayerUIAbilityList.LoadAbilitiesOnUI(unit, allowInteraction);
+        }
     }
 
     internal static void ShowPlayerUI(bool v) {

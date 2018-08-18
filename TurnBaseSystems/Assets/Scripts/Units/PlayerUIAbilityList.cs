@@ -15,6 +15,9 @@ public class PlayerUIAbilityList : MonoBehaviour {
 
     List<Transform> instances = new List<Transform>();
 
+    public Transform selectedButtonPref;
+    Transform selectedButtonInstance;
+
     private void Start() {
         m = this;
     }
@@ -71,5 +74,21 @@ public class PlayerUIAbilityList : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Marks the button with "overlay" object.
+    /// </summary>
+    /// <param name="btnObj">Set to null to not change position.</param>
+    /// <param name="visible"></param>
+    public void MarkButtonAsSelected(int btnId, bool visible) {
+        Transform btnObj = btnId < instances.Count ? instances[btnId] : null;
+        
+        if (selectedButtonInstance == null) {
+            selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
+        }
+        if (btnObj != null) {
+            selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
+        }
+        selectedButtonInstance.gameObject.SetActive(visible);
+    }
 
 }

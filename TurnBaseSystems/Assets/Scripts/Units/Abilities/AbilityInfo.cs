@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // Note: assumes source ability stats don't change.
 public class AbilityInfo {
@@ -43,4 +44,9 @@ public class AbilityInfo {
     public static Unit SourceSecondaryExecUnit { get { return Instance.TargetedUnit; } }
 
     public static Vector3 directionOfAttack { get { return AttackedSlot - AttackStartedAt; } }
+
+    internal void Reset() {
+        executingUnit = null;
+        activeAbility = null;
+    }
 }

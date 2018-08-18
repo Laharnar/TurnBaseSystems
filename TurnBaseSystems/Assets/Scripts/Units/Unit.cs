@@ -261,7 +261,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         } else {
             float dir = (snapPos.x - attackedSlot.x) / Mathf.Abs(snapPos.x - attackedSlot.x);
 
-            characterSprite.localScale = new Vector3(dir, 1, 1);
+            characterSprite.localScale = 
+                new Vector3(characterSprite.localScale.x*Mathf.Sign(dir), 1, 1);
         }
     }
 

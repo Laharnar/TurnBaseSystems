@@ -19,6 +19,10 @@ public class UnitAbilities : MonoBehaviour {
             atkLib = GetComponent<AttackDataLib>();
         }
 
+        move2.id = 0;
+        for (int i = 0; i < additionalAbilities2.Count; i++) {
+            additionalAbilities2[i].id = i+1;
+        }
     }
 
     public virtual AttackData2[] GetNormalAbilities() {
@@ -28,6 +32,7 @@ public class UnitAbilities : MonoBehaviour {
         for (int i = 0; i < data.Count; i++) {
             if (data[i].active == false) {
                 data.RemoveAt(i);
+                i--;
             }
         }
         return data.ToArray();

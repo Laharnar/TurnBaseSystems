@@ -355,7 +355,7 @@ do cycles... mvc overhaul -> UI update -> bug fixing
 triple k
 cycle 1 = Combat begin kkk
 cycle 2 = Combat exectution player kkk
-cycle 3 = Action stack for abilities.
+cycle 3 = Action stack for abilities. k 
 to be able to wait a bit... animations effects, movement, etc
 the point of this is, to stack the enemy commands.
 to create buff priority list

@@ -29,11 +29,14 @@ public class CombatUI {
         if (PlayerTurnData.ActiveAbility != null)
             AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
+
+        ShowUI(true, curPlayerUnit, curPlayerUnit, true);
     }
+
 
     public static void OnSelectDifferentUnit() {
         GridDisplay.Instance.ClearAll();
-        ShowUI(curPlayerUnit, curUnit, true);
+        ShowUI(true, curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         }
@@ -74,20 +77,14 @@ public class CombatUI {
     /// </summary>
     /// <param name="pUnit"></param>
     /// <param name="unit"></param>
-    private static void ShowUI(Unit pUnit, Unit unit, bool interactible) {
-        bool showPlayerUI = pUnit && unit;
-        bool showButtonAbilities = pUnit != null && unit != null;
+    private static void ShowUI(bool visible, Unit pUnit, Unit unit, bool interactible) {
+        bool showPlayerUI = pUnit && unit && visible;
+        bool showButtonAbilities = pUnit != null && unit != null && visible;
         UIManager.ShowPlayerUI(showPlayerUI);
         UIManager.ShowAbilities(showButtonAbilities, pUnit, interactible);
-    }
-    /// <summary>
-    /// pass false and null, to hide
-    /// </summary>
-    /// <param name="v"></param>
-    /// <param name="u"></param>
-    private static void ShowUI(bool v,Unit u, bool interactible) {
-        UIManager.ShowPlayerUI(v);
-        UIManager.ShowAbilities(v, u, interactible);
+
+        PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.ActiveAbility.id, showButtonAbilities);
+
     }
 
     internal static void OnMouseHoverEmpty(Vector3 hoveredSlot, Vector3 lastHoveredSlot) {
@@ -101,18 +98,18 @@ public class CombatUI {
             AttackDisplay.ShowGrid(unit, hoveredSlot, PlayerTurnData.ActiveAbility);
             GridDisplay.Instance.RemakeGrid();
         }
-        ShowUI(curPlayerUnit, curUnit, true);// update with buttons are enabled
+        ShowUI(true, curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
 
     internal static void OnUnitRunsOutOfActions() {
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
-        ShowUI(false, null, false);
+        ShowUI(false, curPlayerUnit, null, false);
         GridDisplay.Instance.RemakeGrid();
     }
 
     internal static void OnTurnComplete() {
         GridDisplay.Instance.ClearAll(); 
-        ShowUI(curPlayerUnit, curUnit, false);
+        ShowUI(true, curPlayerUnit, curUnit, false);
         GridDisplay.Instance.RemakeGrid();
     }
 
@@ -127,7 +124,7 @@ public class CombatUI {
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
         GridDisplay.Instance.RemakeGrid();
-        ShowUI(curPlayerUnit, curUnit, false);
+        ShowUI(true, curPlayerUnit, curUnit, false);
     }
 
     internal static void OnMouseMovedToDfSlot(Vector3 hoveredSlot, Vector3 lastHoveredSlot) {

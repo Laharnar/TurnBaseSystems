@@ -22,7 +22,8 @@ public sealed class AttackData2 : StdAttackData {
     public PassiveData passive;
     public PierceAtkData pierce;
     public SpawnAttackData spawn;
-    
+    internal int id;
+
     public AbilityEffect[] GetAbilityEffects() {
         return new AbilityEffect[] {
             range,
