@@ -18,6 +18,11 @@ public class HpUIController: MonoBehaviour {
     private Unit source;
 
     private void Update() {
+        if (canvasRoot == null) {
+            Debug.Log("missing canvas ", this);
+            return;
+        }
+
         canvasRoot.eulerAngles = HpUISettings.m.angle;
         canvasRoot.localScale = HpUISettings.m.canvasScale;
         canvasRoot.localPosition = new Vector3(0, HpUISettings.m.offsetY);

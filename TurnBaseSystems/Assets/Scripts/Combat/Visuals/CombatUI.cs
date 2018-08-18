@@ -83,7 +83,11 @@ public class CombatUI {
         UIManager.ShowPlayerUI(showPlayerUI);
         UIManager.ShowAbilities(showButtonAbilities, pUnit, interactible);
 
-        PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.ActiveAbility.id, showButtonAbilities);
+        if (PlayerTurnData.ActiveAbility!= null)
+            PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.ActiveAbility.id, showButtonAbilities);
+        else
+            PlayerUIAbilityList.m.MarkButtonAsSelected(0, false);
+
 
     }
 

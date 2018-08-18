@@ -330,6 +330,9 @@ prep project to allow fast prototyping
 and testing
 swap complete ability sets
 ----------------------------------
+enemy start wave comes in, cam change*
+selected ability is highlited 18.8.2018*
+
 register unit < plop unit in, indicator
 deregister unit < fade out unit indicator
 
@@ -342,26 +345,24 @@ enemy wave comes in, cam change
 over attack, show attack signal
 over move... show move signal, or path over there.
 
-currently active selected ability!
-
-grid items
-
+grid items transparent middle
+selecting units in selection menu
+camera limits
+to main menu
+global level grid.
 
 Goal 14.8.2018
-bug fixing
-UI clarity update
-mvc overhaul
+
+
 do cycles... mvc overhaul -> UI update -> bug fixing
+art cycles --- 4 images > define idea in the world 
+> 4 images > define attacks > choose 2 > color > choose 1 
+> simple animations > import > expand > fixed, repeat > full colored
+
 triple k
 cycle 1 = Combat begin kkk
 cycle 2 = Combat exectution player kkk
-cycle 3 = Action stack for abilities. k 
-to be able to wait a bit... animations effects, movement, etc
-the point of this is, to stack the enemy commands.
-to create buff priority list
-maybe stack by events instead?
-instead of function calls directly stack- ability id, unity, attack pos
-problems if attack pos state changes.
+cycle 3 = Action stack for abilities. kkk
+art cycle 1 = Enemy characters...
 
-stack by states - end turn, click etc.
 
