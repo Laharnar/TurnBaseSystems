@@ -60,6 +60,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     internal Vector3 scriptedMovePos;
 
+    public Transform characterSprite;
+
     private void Start() {
         Init();
     }
@@ -91,6 +93,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
                 }
             }
 
+            if (!characterSprite) {
+                characterSprite = GetComponentInChildren<SpriteRenderer>().transform;
+                Debug.Log(name+ " Automatically linking character sprite.", this);
+            }
+
             if (!anim) {
                 anim = GetComponentInChildren<AnimationController>();
             }
@@ -111,13 +118,23 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         return true;
     }
 
+
+    public IEnumerator WaitActionsToComplete() {
+        while (moving) {
+            yield return null;
+        }
+        while (attacking) {
+            yield return null;
+        }
+    }
+
     public void OnTurnEnd() {
-        CI.sourceExecutingUnit = this;
-        CI.attackedSlot = snapPos;
-        CI.attackStartedAt = snapPos;
+        AbilityInfo.SourceExecutingUnit = this;
+        AbilityInfo.AttackedSlot = snapPos;
+        AbilityInfo.AttackStartedAt = snapPos;
         Debug.Log("Applying passives.");
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
-            CI.activeAbility = abilities.additionalAbilities2[i];
+            AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
             if (abilities.additionalAbilities2[i].active && 
                 abilities.additionalAbilities2[i].passive.used) {
                 AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
@@ -181,8 +198,10 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     /// Indiscriminately run all possible abilities.
     /// </summary>
     /// <param name="activator"></param>
+    [System.Obsolete("Too easy to get lost in making abilities")]
     public void RunAllAbilities(CombatEventMask activator) {
-        CI.sourceSecondaryExecUnit = this;
+        Debug.Log("disabled");
+        //AbilityInfo.SourceSecondaryExecUnit = this;
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
             for (int j = 0; j < abilities.additionalAbilities2[i].effects.Length
                 && j < abilities.additionalAbilities2[i].activators.Length; j++) {
@@ -197,7 +216,9 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
+
         TurnInDir(snapPos, attackedSlot);
+
         if (!InteractionPass(u, atk)) {
             return 3;
         }
@@ -212,7 +233,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
         AttackData2.UseAttack(this, attackedSlot, atk);
 
-        AttackAnimations(atk);
+        // AttackAnimations(atk);
 
         // temp
         if (unitType == UnitType.Pickup) {
@@ -231,12 +252,16 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     private void TurnInDir(Vector3 snapPos, Vector3 attackedSlot) {
-        if (snapPos.x - attackedSlot.x == 0)
-            transform.localScale = new Vector3(1, 1, 1);
-        else {
+        if (!characterSprite) {
+            Debug.Log("Missing character sprite." , this);
+            return;
+        }
+        if (snapPos.x - attackedSlot.x == 0) {
+            //characterSprite.localScale = new Vector3(characterSprite, 1, 1);
+        } else {
             float dir = (snapPos.x - attackedSlot.x) / Mathf.Abs(snapPos.x - attackedSlot.x);
 
-            transform.localScale = new Vector3(dir, 1, 1);
+            characterSprite.localScale = new Vector3(dir, 1, 1);
         }
     }
 
@@ -256,18 +281,21 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         actionsLeft -= atk.actionCost;
     }
 
-    void AttackAnimations(AttackData2 attack) {
+    public void AttackAnimations(AttackData2 attack) {
         if (attacking) return;
         if (anim == null) { Debug.Log("Can't run animations, no animator", this); return; }
-        if (!attack.standard.used && !attack.aoe.used && !attack.buff.used) return;
-        if (attack.standard.used) AttackData2.RunAnimations(this, attack.standard.animSets);
-        if (attack.aoe.used) AttackData2.RunAnimations(this, attack.aoe.animSets);
-        if (attack.buff.used) { AttackData2.RunAnimations(this, attack.buff.animSets); }
-        float len = AttackData2.AnimLength(this, attack);
-        StartCoroutine(WaitAttack(len));
+        foreach (var item in attack.GetAbilityEffects()) {
+            if (item.used) {
+                AttackData2.RunAnimations(this, attack.aoe.animSets);
+            }
+        }
+
+        //float len = AttackData2.AnimLength(this, attack);
+        //StartCoroutine(WaitAttack(len));
     }
 
-    IEnumerator WaitAttack(float len) {
+
+    public IEnumerator WaitAttack(float len) {
         attacking = true;
         yield return new WaitForSeconds(len);
         attacking = false;

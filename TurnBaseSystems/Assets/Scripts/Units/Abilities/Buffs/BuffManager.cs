@@ -50,8 +50,8 @@ public class BuffManager {
                 
                 // type: consume only on enemy faction.
                 if (buffInstances[i].source.flag.allianceId != faction.id) {
-                    CI.activeOrigBuff = origData;
-                    CI.activeBuffData = buffInstances[i];
+                    AbilityInfo.ActiveOrigBuff = origData;
+                    AbilityInfo.ActiveBuffData = buffInstances[i];
 
                     buffInstances[i].buff.AtkBehaviourExecute();
                 }

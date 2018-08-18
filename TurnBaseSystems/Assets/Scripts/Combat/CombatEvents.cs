@@ -22,18 +22,19 @@ public static class CombatEvents {
         onUnitDies
      * 
      * */
-    static void ActivateAbilitiesForCurCombatState() {
+     [System.Obsolete("too hard to edit by hand")]
+    public static void ActivateAbilitiesForCurCombatState() {
         for (int i = 0; i < Combat.Instance.units.Count; i++) {
-            Combat.Instance.units[i].RunAllAbilities(CI.curActivator);
+            Combat.Instance.units[i].RunAllAbilities(AbilityInfo.CurActivator);
         }
     }
 
 
     public static void OnTurnStart(FlagManager flag) {
-        CI.curActivator.Reset();
-        CI.curActivator.onAnyTurnStart = !CI.curActivator.never;
-        CI.curActivator.onEnemyTurnStart = flag.id == 1 && !CI.curActivator.never;
-        CI.curActivator.onPlayerTurnStart = flag.id == 0 && !CI.curActivator.never;
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onAnyTurnStart = !AbilityInfo.CurActivator.never;
+        AbilityInfo.CurActivator.onEnemyTurnStart = flag.id == 1 && !AbilityInfo.CurActivator.never;
+        AbilityInfo.CurActivator.onPlayerTurnStart = flag.id == 0 && !AbilityInfo.CurActivator.never;
         ActivateAbilitiesForCurCombatState();
 
         flag.NullifyUnits();
@@ -44,10 +45,10 @@ public static class CombatEvents {
 
     public static void OnTurnEnd(FlagManager flag) {
         // end
-        CI.curActivator.Reset();
-        CI.curActivator.onAnyTurnEnd = !CI.curActivator.never;
-        CI.curActivator.onEnemyTurnEnd = flag.id == 1 && !CI.curActivator.never;
-        CI.curActivator.onPlayerTurnEnd = flag.id == 0 && !CI.curActivator.never;
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onAnyTurnEnd = !AbilityInfo.CurActivator.never;
+        AbilityInfo.CurActivator.onEnemyTurnEnd = flag.id == 1 && !AbilityInfo.CurActivator.never;
+        AbilityInfo.CurActivator.onPlayerTurnEnd = flag.id == 0 && !AbilityInfo.CurActivator.never;
         ActivateAbilitiesForCurCombatState();
 
         flag.NullifyUnits();
@@ -55,12 +56,12 @@ public static class CombatEvents {
             item.OnTurnEnd();
         }
 
-        //BuffManager.ConsumeBuffs(flag);
+        BuffManager.ConsumeBuffs(flag);
     }
 
     public static void OnUnitActivatesAbility(Unit unit) {
-        CI.curActivator.Reset();
-        CI.curActivator.onDamaged = !CI.curActivator.never;
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onDamaged = !AbilityInfo.CurActivator.never;
         ActivateAbilitiesForCurCombatState();
 
         foreach (var items in FactionCheckpoint.checkpointsInLevel) {
@@ -69,32 +70,6 @@ public static class CombatEvents {
         Combat.Instance.UnitNullCheck();
     }
 
-    public static void CombatAction(Unit selectedPlayerUnit, Vector3 hoveredSlot, AttackData2 activeAbility) {
-        // v1
-        CI.curActivator.Reset();
-        CI.curActivator.onAttack = !CI.curActivator.never;
-        CI.sourceExecutingUnit = selectedPlayerUnit;
-
-        CI.attackedSlot = hoveredSlot;
-        CI.attackStartedAt = selectedPlayerUnit.snapPos;
-        CI.activeAbility = activeAbility;
-        ActivateAbilitiesForCurCombatState();
-
-        CI.curActivator.Reset();
-        CI.curActivator.onMove = !CI.curActivator.never;
-        ActivateAbilitiesForCurCombatState();
-
-        CI.curActivator.Reset();
-        CI.curActivator.onDamaged = !CI.curActivator.never;
-        ActivateAbilitiesForCurCombatState();
-
-        // v2
-        int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
-
-        if (activeAbility == selectedPlayerUnit.abilities.move2) {// move
-            OnUnitExecutesMoveAction(selectedPlayerUnit.snapPos, hoveredSlot, selectedPlayerUnit);
-        }
-    }
     public static void OnUnitExecutesMoveAction(Vector3 oldPos, Vector3 newPos, Unit unit) {
 
 

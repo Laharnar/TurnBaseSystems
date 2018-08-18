@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,27 +21,35 @@ public class HpUIController: MonoBehaviour {
         canvasRoot.eulerAngles = HpUISettings.m.angle;
         canvasRoot.localScale = HpUISettings.m.canvasScale;
         canvasRoot.localPosition = new Vector3(0, HpUISettings.m.offsetY);
-        Vector2 start = new Vector2(
-            /*Mathf.Sin(canvasRoot.right.x) * */
-            (-(source.maxHp-1) * (HpUISettings.m.offsetPerItem + HpUISettings.m.widthPerHp) / 2),
-            /*Mathf.Cos(canvasRoot.right.y) * HpUISettings.m.offsetY*/0f);
 
+        // join all blocks
+        int width = source.maxHp + source.temporaryArmor;
+        List<Transform> t = new List<Transform>();
         for (int i = 0; i < hpList.Length; i++) {
+            t.Add(hpList[i]);
+        }
+        for (int i = 0; i < greyhpList.Length; i++) {
+            t.Add(greyhpList[i]);
+        }
+
+        Vector2 start = new Vector2((-(width - 1) * (HpUISettings.m.offsetPerItem + HpUISettings.m.widthPerHp) / 2), 0f);
+        for (int i = 0; i < t.Count; i++) {
             Vector2 pos = new Vector2(i * (HpUISettings.m.offsetPerItem 
                 + HpUISettings.m.widthPerHp)
                 , 0) + start;
-            hpList[i].localPosition = pos + (Vector2)HpUISettings.m.offset;
-            Image img1 = hpList[i].GetComponent<Image>();
+            t[i].localPosition = pos + (Vector2)HpUISettings.m.offset;
+
+            Image img1 = t[i].GetComponent<Image>();
+            float alphaEdit = HpUISettings.m.alphaHp;
             Color col1 = img1.color;
-            img1.color = new Color(col1.r, col1.g, col1.b, HpUISettings.m.alphaHp);
+            img1.color = new Color(col1.r, col1.g, col1.b, alphaEdit);
         }
 
         background.localPosition = new Vector3(0, 0, 0) + HpUISettings.m.offset;
-        background.localScale = HpUISettings.m.hpScale* new Vector3((source.maxHp * (HpUISettings.m.offsetPerItem + HpUISettings.m.widthPerHp)) * 2 + HpUISettings.m.edgesOffset, 1, 1);
+        background.localScale = HpUISettings.m.hpScale * new Vector3(((source.maxHp+source.temporaryArmor) * (HpUISettings.m.offsetPerItem + HpUISettings.m.widthPerHp)) * 2 + HpUISettings.m.edgesOffset, 1, 1);
         Image img = background.GetComponent<Image>();
         Color col = img.color;
         img.color = new Color(col.r, col.g, col.b, HpUISettings.m.alphaBackground);
-
     }
 
     public void ShowHp(int curHp) {

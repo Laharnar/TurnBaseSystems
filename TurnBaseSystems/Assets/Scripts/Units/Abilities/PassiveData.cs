@@ -18,14 +18,14 @@ public class PassiveData : DamageBasedAttackData {
 
     public void Execute() {
         if (giveCharges) {
-            CI.sourceExecutingUnit.AddCharges(this, UnityEngine.Random.Range(chargesAmtMin, chargesAmtMax));
+            AbilityInfo.SourceExecutingUnit.AddCharges(this, UnityEngine.Random.Range(chargesAmtMin, chargesAmtMax));
         }
         if (canBackstab) {
-            Unit[] units= backstabRange.GetUnits(CI.attackStartedAt);
+            Unit[] units= backstabRange.GetUnits(AbilityInfo.AttackStartedAt);
             // backstab 1 unit
             int c = maxBackstabCount;
             for (int i = 0; i < units.Length; i++) {
-                if (units[i].flag.allianceId!= CI.sourceExecutingUnit.flag.allianceId) {
+                if (units[i].flag.allianceId!= AbilityInfo.SourceExecutingUnit.flag.allianceId) {
                     units[i].GetDamaged(backstabDmg);
                     if (c == 0)
                         break;

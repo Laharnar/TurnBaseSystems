@@ -23,6 +23,20 @@ public sealed class AttackData2 : StdAttackData {
     public PierceAtkData pierce;
     public SpawnAttackData spawn;
     
+    public AbilityEffect[] GetAbilityEffects() {
+        return new AbilityEffect[] {
+            range,
+            standard,
+            aoe,
+            buff,
+            aura,
+            move,
+            passive,
+            pierce,
+            spawn
+        };
+    }
+
     /// <summary>
     /// Executes attack data.
     /// Included all types of attacks(normal, aoe, buff...)
@@ -44,10 +58,10 @@ public sealed class AttackData2 : StdAttackData {
             " "+data.standard.used+" "+data.aoe.used+" "+ data.buff.used);
         //AbilityEffect[] attacks = data.GetAttacks();
 
-        CI.activeAbility = data;
-        CI.sourceExecutingUnit = source;
-        CI.attackedSlot = attackedSlot;
-        CI.attackStartedAt = source.snapPos;
+        AbilityInfo.ActiveAbility = data;
+        AbilityInfo.SourceExecutingUnit = source;
+        AbilityInfo.AttackedSlot = attackedSlot;
+        AbilityInfo.AttackStartedAt = source.snapPos;
         // standard
         if (data.standard.used) {
             data.standard.Execute();
@@ -69,7 +83,7 @@ public sealed class AttackData2 : StdAttackData {
             data.pierce.Execute();
         }
         if (data.passive.used) {
-            CI.attackStartedAt = attackedSlot;
+            AbilityInfo.AttackStartedAt = attackedSlot;
             data.passive.Execute();
         }
         if (data.spawn.used) {

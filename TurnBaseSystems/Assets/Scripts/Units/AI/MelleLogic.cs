@@ -36,7 +36,7 @@ public class MelleLogic : AiLogic {
         if (targetMovePos != selfPos)
         {
             Debug.Log("Moving to " + targetMovePos, unit);
-            CombatEvents.CombatAction(unit, targetMovePos, unit.abilities.move2);
+            Combat.Instance.CombatAction(unit, targetMovePos, unit.abilities.move2);
             //unit.MoveAction(targetMovePos);
             while (unit.moving) {
                 yield return null;
@@ -48,7 +48,7 @@ public class MelleLogic : AiLogic {
         if (GridLookup.IsPosInMask(selfPos, enemyPos, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(enemyPos));
 
-            CombatEvents.CombatAction(unit, enemyPos, unit.abilities.additionalAbilities2[0]);
+            Combat.Instance.CombatAction(unit, enemyPos, unit.abilities.additionalAbilities2[0]);
         }
         while (unit.attacking) {
             yield return null;

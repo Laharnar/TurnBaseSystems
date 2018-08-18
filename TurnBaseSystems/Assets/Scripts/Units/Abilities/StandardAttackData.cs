@@ -44,9 +44,9 @@ public class StandardAttackData : DamageBasedAttackData {
     internal void Execute() {
         curDmg = dmgInfo;
         dmgReduction = Mathf.Clamp(dmgReduction, 0f, 1f);
-        AttackData2 data = CI.activeAbility;
-        Unit u = GridAccess.GetUnitAtPos(CI.attackedSlot);
-        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, CI.sourceExecutingUnit)) {
+        AttackData2 data = AbilityInfo.ActiveAbility;
+        Unit u = GridAccess.GetUnitAtPos(AbilityInfo.AttackedSlot);
+        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, AbilityInfo.SourceExecutingUnit)) {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
                     u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));
@@ -58,10 +58,10 @@ public class StandardAttackData : DamageBasedAttackData {
             // enemy killed
             Debug.Log("Enemy hp left "+u.hp + " heal on kill "+healOnKills+ " healing " +heal+" dmg "+damage);
             if (u.dead && healOnKills > 0) {
-                CI.sourceExecutingUnit.Heal(healOnKills, this);
+                AbilityInfo.SourceExecutingUnit.Heal(healOnKills, this);
             }
         }
         if (data.standard.setStatus != CombatStatus.SameAsBefore)
-            CI.sourceExecutingUnit.combatStatus = data.standard.setStatus;
+            AbilityInfo.SourceExecutingUnit.combatStatus = data.standard.setStatus;
     }
 }

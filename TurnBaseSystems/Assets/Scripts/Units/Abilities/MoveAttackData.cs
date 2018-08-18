@@ -24,22 +24,22 @@ public class MoveAttackData : AbilityEffect{
 
     public void Execute() {
         if (onStartApplyAOE) {
-            CI.activeAbility.aoe.Execute();
+            AbilityInfo.ActiveAbility.aoe.Execute();
         }
-        Unit existing = GridAccess.GetUnitAtPos(CI.attackedSlot);
+        Unit existing = GridAccess.GetUnitAtPos(AbilityInfo.AttackedSlot);
         
-        CI.sourceExecutingUnit.MoveAction(CI.attackedSlot);
+        AbilityInfo.SourceExecutingUnit.MoveAction(AbilityInfo.AttackedSlot);
 
         if (onEndApplyAOE) {
-            CI.activeAbility.aoe.Execute();
+            AbilityInfo.ActiveAbility.aoe.Execute();
         }
 
         if (existing) {
-            existing.abilities.ActivateOnSteppedOn(existing, CI.sourceExecutingUnit);
+            existing.abilities.ActivateOnSteppedOn(existing, AbilityInfo.SourceExecutingUnit);
         }
 
         if (setStatus != CombatStatus.SameAsBefore)
-            CI.sourceExecutingUnit.combatStatus = setStatus;
+            AbilityInfo.SourceExecutingUnit.combatStatus = setStatus;
     }
 }
 

@@ -1,98 +1,33 @@
-﻿using UnityEngine;
-
-/// <summary>
-/// Updates all units in real time for quick scene tuning... save changes.
-/// </summary>
-public class BalanceTunning {
-
-}
-
-public class CombatData {
-    public static CombatData Instance;
-
-    public AttackData2 lastAbility;
-    public AttackData2 activeAbility;
-    public Unit selectedPlayerUnit;
-    public Unit selectedUnit;
-    public Vector3 selectedAttackSlot;
-    public Unit hoveredUnit;
-    public Unit lastHoveredUnit;
-    public Vector3 hoveredSlot;
-    public Vector3 lastHoveredSlot;
-    public bool walkMode;
-
-    public static AttackData2 ActiveAbility { get { return Instance.activeAbility; } }
-    public static AttackData2 LastAbility { get { return Instance.lastAbility; } }
-
-
-    public void Reset() {
-        selectedPlayerUnit = null;
-        selectedUnit = null;
-        hoveredUnit = null;
-        lastHoveredUnit = null;
-
-        lastAbility = null;
-        activeAbility = null;
-
-        walkMode = false;
-    }
-    public GridMask GetMask(int i) {
-        int mouseDirection = 0;//this.mouseDirection;
-        if (activeAbility == null) {
-            Debug.Log("ablity is null");
-            return null;
-        }
-        if (i == 0) {
-            if (activeAbility.range.attackRange != null) {
-                return GridMask.RotateMask(activeAbility.range.attackRange, mouseDirection);
-            } else
-            if (activeAbility.standard.attackRangeMask != null) {
-                return GridMask.RotateMask(activeAbility.standard.attackRangeMask, mouseDirection);
-            } else if (activeAbility.move.range != null) {
-                return GridMask.RotateMask(activeAbility.move.range, mouseDirection);
-            } else {
-                Debug.Log("Get mask fail 1");
-                return null;
-            }
-        }
-        if (i == 1) {
-            if (activeAbility.aoe.aoeMask != null) {
-                return GridMask.RotateMask(activeAbility.aoe.aoeMask, mouseDirection);
-            } else {
-                Debug.Log("Get mask fail 2");
-                return null;
-            }
-        }
-        return null;
-    }
-}
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Combat grid display.
 /// </summary>
 public class CombatUI {
 
-    public static Unit lastHoveredUnit { get { return CombatData.Instance.lastHoveredUnit; } set { CombatData.Instance.lastHoveredUnit = value; } }
-    public static Unit hoveredUnit { get { return CombatData.Instance.hoveredUnit; } }
-    public static Unit curPlayerUnit { get { return CombatData.Instance.selectedPlayerUnit; } }
-    public static Unit curUnit { get { return CombatData.Instance.selectedUnit; } }
-    public static Vector3 hoveredSlot { get { return CombatData.Instance.hoveredSlot; } }
-    public static Vector3 lastHoveredSlot { get { return CombatData.Instance.lastHoveredSlot; } set { CombatData.Instance.lastHoveredSlot = value; } }
+    public static Unit lastHoveredUnit { get { return PlayerTurnData.Instance.lastHoveredUnit; } set { PlayerTurnData.Instance.lastHoveredUnit = value; } }
+    public static Unit hoveredUnit { get { return PlayerTurnData.Instance.hoveredUnit; } }
+    public static Unit curPlayerUnit { get { return PlayerTurnData.Instance.selectedPlayerUnit; } }
+    public static Unit curUnit { get { return PlayerTurnData.Instance.selectedUnit; } }
+    public static Vector3 hoveredSlot { get { return PlayerTurnData.Instance.hoveredSlot; } }
+    public static Vector3 lastHoveredSlot { get { return PlayerTurnData.Instance.lastHoveredSlot; } set { PlayerTurnData.Instance.lastHoveredSlot = value; } }
 
     public void UpdateUI() {
-        if (hoveredSlot != lastHoveredSlot)
-            CombatUI.OnMouseMovedToDfSlot(hoveredSlot, lastHoveredSlot);
+        //if (hoveredSlot != lastHoveredSlot)
+            //CombatUI.OnMouseMovedToDfSlot(hoveredSlot, lastHoveredSlot);
 
-        CombatUI.OnHover();
+        //CombatUI.OnHover();
     }
 
     internal static void OnActiveAbilityChange() {
         GridDisplay.Instance.ClearAll();
-        if (CombatData.LastAbility != null)
-            AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, CombatData.LastAbility);
+        if (PlayerTurnData.LastAbility != null)
+            AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.LastAbility);
 
-        if (CombatData.ActiveAbility != null)
-            AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, CombatData.ActiveAbility);
+        if (PlayerTurnData.ActiveAbility != null)
+            AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
     }
 
@@ -100,7 +35,7 @@ public class CombatUI {
         GridDisplay.Instance.ClearAll();
         ShowUI(curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
-            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         }
         GridDisplay.Instance.RemakeGrid();
     }
@@ -163,14 +98,14 @@ public class CombatUI {
 
     internal static void OnUnitFinishesAction(Unit unit) {
         if (!unit.NoActions && unit.CanDoAnyAction) {
-            AttackDisplay.ShowGrid(unit, hoveredSlot, CombatData.ActiveAbility);
+            AttackDisplay.ShowGrid(unit, hoveredSlot, PlayerTurnData.ActiveAbility);
             GridDisplay.Instance.RemakeGrid();
         }
         ShowUI(curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
 
     internal static void OnUnitRunsOutOfActions() {
-        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         ShowUI(false, null, false);
         GridDisplay.Instance.RemakeGrid();
     }
@@ -182,12 +117,12 @@ public class CombatUI {
     }
 
     internal static void OnMouseScrolled() {
-        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
-        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
+        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
     }
     internal static void OnBeginAttack() {
-        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
@@ -198,10 +133,11 @@ public class CombatUI {
     internal static void OnMouseMovedToDfSlot(Vector3 hoveredSlot, Vector3 lastHoveredSlot) {
         if (hoveredSlot != lastHoveredSlot) {
             GridDisplay.Instance.HideGrid(lastHoveredSlot, GridDisplayLayer.BlueSelectionArea, GridMask.One);
-            AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, CombatData.ActiveAbility);
+            if (curPlayerUnit && PlayerTurnData.ActiveAbility != null)
+                AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, PlayerTurnData.ActiveAbility);
         }
-        if (curPlayerUnit!= null && CombatData.ActiveAbility != null && hoveredSlot != lastHoveredSlot) {
-            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
+        if (curPlayerUnit && PlayerTurnData.ActiveAbility != null && hoveredSlot != lastHoveredSlot) {
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         }
         if (hoveredSlot != lastHoveredSlot) {
             GridDisplay.Instance.SetUpGrid(hoveredSlot, GridDisplayLayer.BlueSelectionArea, GridMask.One);

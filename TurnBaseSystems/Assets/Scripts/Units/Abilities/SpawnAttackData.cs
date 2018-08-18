@@ -13,7 +13,7 @@ public class SpawnAttackData : AbilityEffect {
     }
 
     public void Execute() {
-        if (GridManager.ValidSlot(CI.attackedSlot, requirments))
-            SpawnItem(CI.attackedSlot);
+        if (GridManager.ValidSlot(AbilityInfo.AttackedSlot, requirments))
+            SpawnItem(AbilityInfo.AttackedSlot);
     }
 }

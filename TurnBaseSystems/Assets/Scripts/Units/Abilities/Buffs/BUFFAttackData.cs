@@ -29,22 +29,22 @@ public class BUFFAttackData : AbilityEffect {
     }
 
     internal override void AtkBehaviourExecute() {
-        CombatEventMask mask = CI.curActivator;
-        BUFFAttackData buffInstance = CI.activeBuffData.buff;
+        CombatEventMask mask = AbilityInfo.CurActivator;
+        BUFFAttackData buffInstance = AbilityInfo.ActiveBuffData.buff;
         if (mask.onAttack) {
             // original is this, when attacking
-            ExecuteOnStart(CI.sourceExecutingUnit, this);
-            BuffManager.Register(CI.sourceExecutingUnit, CI.sourceSecondaryExecUnit, this);
+            ExecuteOnStart(AbilityInfo.SourceExecutingUnit, this);
+            BuffManager.Register(AbilityInfo.SourceExecutingUnit, AbilityInfo.SourceSecondaryExecUnit, this);
         }
         if (mask.onEnemyTurnEnd) {
             // original is now saved in combat info
-            if (CI.sourceExecutingUnit.flag.allianceId != CI.sourceSecondaryExecUnit.flag.allianceId) {
-                Consume(CI.activeOrigBuff, CI.activeBuffData);
+            if (AbilityInfo.SourceExecutingUnit.flag.allianceId != AbilityInfo.SourceSecondaryExecUnit.flag.allianceId) {
+                Consume(AbilityInfo.ActiveOrigBuff, AbilityInfo.ActiveBuffData);
             }
         }
         if (mask.onUnitDies) {
             UnitDeath();
-            BuffManager.Remove(CI.activeOrigBuff, this, CI.activeBuffData);
+            BuffManager.Remove(AbilityInfo.ActiveOrigBuff, this, AbilityInfo.ActiveBuffData);
         }
     }
     internal void Execute(Unit target) {

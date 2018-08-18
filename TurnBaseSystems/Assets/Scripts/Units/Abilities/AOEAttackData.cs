@@ -17,9 +17,9 @@ public class AOEAttackData : DamageBasedAttackData {
     internal void Execute() {
         curDmg = damageInfo;
         GridMask mask = GridMask.RotateMask(/*data.aoe.*/aoeMask, 0);
-        Unit[] vec = mask.GetUnits(CI.attackedSlot);
-        int charges = CI.sourceExecutingUnit.charges;
-        Unit source = CI.sourceExecutingUnit;
+        Unit[] vec = mask.GetUnits(AbilityInfo.AttackedSlot);
+        int charges = AbilityInfo.SourceExecutingUnit.charges;
+        Unit source = AbilityInfo.SourceExecutingUnit;
         for (int i = 0; i < vec.Length; i++) {
             if (!vec[i] || !EmpowerAlliesData.ValidTarget(targets, vec[i].flag.allianceId, source)) continue;
             if (useChargesToChooseLimitSlots) {
@@ -33,7 +33,7 @@ public class AOEAttackData : DamageBasedAttackData {
             vec[i].GetDamaged(damage);//data.aoe.damage);
         }
         if (/*data.aoe.*/setStatus != CombatStatus.SameAsBefore)
-            CI.sourceExecutingUnit.combatStatus = setStatus;//data.aoe.setStatus;
+            AbilityInfo.SourceExecutingUnit.combatStatus = setStatus;//data.aoe.setStatus;
     }
 
     internal GridMask GetMask(int mouseDirection) {

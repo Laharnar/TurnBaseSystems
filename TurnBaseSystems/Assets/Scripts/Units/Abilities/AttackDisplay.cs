@@ -8,7 +8,7 @@ public class GridDisplayMask {
     public int useSlot = 0;
 
     internal Vector3 GetPos() {
-        return useSlot == 0 ? CI.attackStartedAt : CI.attackedSlot;
+        return useSlot == 0 ? AbilityInfo.AttackStartedAt : AbilityInfo.AttackedSlot;
     }
 }
 public class AttackDisplay {

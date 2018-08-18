@@ -34,14 +34,21 @@ public class UnitAbilities : MonoBehaviour {
     }
     
     public void ActivateOnSteppedOn(Unit unit, Unit steppedOnBy) {
-        CI.curActivator.Reset();
-        CI.curActivator.onStepOnEnemy = true;
-        steppedOnBy.RunAllAbilities(CI.curActivator);
-        unit.RunAllAbilities(CI.curActivator);
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onStepOnEnemy = true;
+        steppedOnBy.RunAllAbilities(AbilityInfo.CurActivator);
+        unit.RunAllAbilities(AbilityInfo.CurActivator);
 
         for (int i = 0; i < abilityOnSteppedOn.Length; i++) {
             if (abilityOnSteppedOn[i] < additionalAbilities2.Count) {
-                steppedOnBy.AttackAction2(unit.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
+                PlayerTurnData.Instance.activeAbility = additionalAbilities2[abilityOnSteppedOn[i]];
+                //int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
+                PlayerTurnData copy = PlayerTurnData.Instance.Copy();
+                copy.selectedPlayerUnit = steppedOnBy;
+                
+                Combat.Instance.abilitiesQue.Enqueue(new AbilityInfo(copy.selectedPlayerUnit, copy.selectedAttackSlot, copy.activeAbility));
+
+                //steppedOnBy.AttackAction2(unit.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
             }
         }
     }

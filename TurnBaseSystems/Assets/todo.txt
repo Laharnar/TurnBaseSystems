@@ -329,6 +329,23 @@ large aoe based on hp
 prep project to allow fast prototyping
 and testing
 swap complete ability sets
+----------------------------------
+register unit < plop unit in, indicator
+deregister unit < fade out unit indicator
+
+all player dead < game over, player unit counter
+all waves dieid < game win, waves left
+
+enemy moves
+enemy wave comes in, cam change
+
+over attack, show attack signal
+over move... show move signal, or path over there.
+
+currently active selected ability!
+
+grid items
+
 
 Goal 14.8.2018
 bug fixing
@@ -337,6 +354,14 @@ mvc overhaul
 do cycles... mvc overhaul -> UI update -> bug fixing
 triple k
 cycle 1 = Combat begin kkk
-cycle 2 = Combat exectution player k
+cycle 2 = Combat exectution player kkk
+cycle 3 = Action stack for abilities.
+to be able to wait a bit... animations effects, movement, etc
+the point of this is, to stack the enemy commands.
+to create buff priority list
+maybe stack by events instead?
+instead of function calls directly stack- ability id, unity, attack pos
+problems if attack pos state changes.
 
+stack by states - end turn, click etc.
 

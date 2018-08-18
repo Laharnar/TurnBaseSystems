@@ -246,17 +246,17 @@ public class CustomTests: MonoBehaviour {
             Test("get pierced1a", nuker.charges, 2);
             CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
             PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
-            CI.sourceExecutingUnit = nuker;
-            CI.attackedSlot = new Vector3(0, 0, 0);
-            CI.attackStartedAt = nuker.snapPos;
-            CI.activeAbility = nuker.abilities.additionalAbilities2[1];
+            AbilityInfo.SourceExecutingUnit = nuker;
+            AbilityInfo.AttackedSlot = new Vector3(0, 0, 0);
+            AbilityInfo.AttackStartedAt = nuker.snapPos;
+            AbilityInfo.ActiveAbility = nuker.abilities.additionalAbilities2[1];
 
 
             Unit[] units = atkD.GetUnitsPierced(melee);
 
-            CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            Combat.Instance.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
-            CombatEvents.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            Combat.Instance.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             Test("get pierced1a", melee.dead, true);
             Test("get pierced1b", !melee1.dead, true);
             Test("get pierced1b", nuker.hp==2, true);

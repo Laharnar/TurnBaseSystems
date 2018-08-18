@@ -12,7 +12,7 @@ public class CombatStatsUI :MonoBehaviour{
     }
 
     public void UpdateStats() {
-        Unit selectedUnit = CombatData.Instance.selectedUnit;//selectedPlayerUnit;
+        Unit selectedUnit = PlayerTurnData.Instance.selectedUnit;//selectedPlayerUnit;
         if (!selectedUnit)
             selectedText.text = "SELECT UNIT";
         else {
@@ -30,17 +30,17 @@ public class CombatStatsUI :MonoBehaviour{
             }
         }
 
-        Unit hoveredUnit = CombatData.Instance.hoveredUnit;
+        Unit hoveredUnit = PlayerTurnData.Instance.hoveredUnit;
         if (hoveredUnit) {
             bool hoveredIsPlayer = hoveredUnit.flag.allianceId == 0;
-            if (hoveredIsPlayer && hoveredUnit != CombatData.Instance.selectedPlayerUnit) {
+            if (hoveredIsPlayer && hoveredUnit != PlayerTurnData.Instance.selectedPlayerUnit) {
                 hoverText.text = hoveredUnit.codename+
                     "\nHP | " + hoveredUnit.hp + "/" + hoveredUnit.maxHp+
                     "\nAP | " + hoveredUnit.ActionsLeft + "/" + hoveredUnit.maxActions +
                     (hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + hoveredUnit.temporaryArmor : "") +
                     (hoveredUnit.charges > 0 ? "\nCharges | " + hoveredUnit.charges + "/" + hoveredUnit.maxCharges : "");
 
-            } else if (!hoveredIsPlayer && hoveredUnit != CombatData.Instance.selectedPlayerUnit) {// enemy
+            } else if (!hoveredIsPlayer && hoveredUnit != PlayerTurnData.Instance.selectedPlayerUnit) {// enemy
                 hoverText.text = hoveredUnit.codename + 
                     "\nHP | " + hoveredUnit.hp + "/" + hoveredUnit.maxHp+
                     (hoveredUnit.temporaryArmor > 0 ? "\nArmor | " + hoveredUnit.temporaryArmor : "");

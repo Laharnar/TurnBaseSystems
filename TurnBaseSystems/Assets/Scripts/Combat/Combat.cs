@@ -25,6 +25,8 @@ public class Combat : MonoBehaviour {
 
     public List<FlagManager> flags;
 
+    public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
+
     private void Awake() {
         instance = this;
         if (initAwake) {
@@ -42,7 +44,11 @@ public class Combat : MonoBehaviour {
             teamInsts[i].GetComponent<Unit>().Init();
         }
 
-        CombatData.Instance = new CombatData();
+        // Set up data instances.
+        AbilityInfo.Instance = new AbilityInfo(null, new Vector3(), null);
+        PlayerTurnData.Instance = new PlayerTurnData();
+
+
         Combat.Instance.StartCombatLoop();
 
         Debug.Log("Initing gameplay manager");
@@ -50,7 +56,10 @@ public class Combat : MonoBehaviour {
         flags.Add(new FlagManager(new PlayerFlag(), 0));
         flags.Add(new FlagManager(new EnemyFlag(), 1));
 
-        CI.curActivator = new CombatEventMask();
+        // obsolete?
+        AbilityInfo.CurActivator = new CombatEventMask();
+
+        StartCoroutine(AbilityQueHandler());
     }
 
     public void RegisterUnit(Unit u) {
@@ -205,6 +214,70 @@ public class Combat : MonoBehaviour {
                 units.RemoveAt(i);
                 i--;
             }
+        }
+    }
+
+    public void CombatAction(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility) {
+        // v1
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onAttack = !AbilityInfo.CurActivator.never;
+        AbilityInfo.SourceExecutingUnit = unit;
+
+        AbilityInfo.AttackedSlot = hoveredSlot;
+        AbilityInfo.AttackStartedAt = unit.snapPos;
+        AbilityInfo.ActiveAbility = activeAbility;
+        CombatEvents.ActivateAbilitiesForCurCombatState();
+
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onMove = !AbilityInfo.CurActivator.never;
+        CombatEvents.ActivateAbilitiesForCurCombatState();
+
+        AbilityInfo.CurActivator.Reset();
+        AbilityInfo.CurActivator.onDamaged = !AbilityInfo.CurActivator.never;
+        CombatEvents.ActivateAbilitiesForCurCombatState();
+
+        // v2
+        //PlayerTurnData.Instance.activeAbility = activeAbility;
+        //int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
+        AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility);
+        Combat.Instance.abilitiesQue.Enqueue(info);
+
+        // move reaction is executed when attack is move.
+        if (activeAbility == unit.abilities.move2) {// move
+            CombatEvents.OnUnitExecutesMoveAction(unit.snapPos, hoveredSlot, unit);
+        }
+
+        CombatEvents.OnUnitActivatesAbility(unit);
+    }
+
+    /// <summary>
+    /// Global ability handler... Executes single ability, animations and all.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator AbilityQueHandler() {
+        while (true) {
+            if (abilitiesQue.Count == 0) {
+                yield return null;
+                continue;
+            }
+            
+            AbilityInfo info = abilitiesQue.Dequeue();
+            // activates attack. these attacks can add further attacks to be executed.
+            info.executingUnit.AttackAction2(info.attackedSlot, info.activeAbility);
+            // handles, data changes
+
+            // wait animations
+            info.executingUnit.AttackAnimations(info.activeAbility);
+            float len = AttackData2.AnimLength(info.executingUnit, info.activeAbility);
+            if (len > 0)
+                yield return new WaitForSeconds(len);
+
+
+            // movement
+
+            // effects
+
+            // sound
         }
     }
 }

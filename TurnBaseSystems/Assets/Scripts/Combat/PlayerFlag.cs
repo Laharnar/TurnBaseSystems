@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerFlag : FlagController {
 
-    public Vector3 lastHoveredSlot { get { return CombatData.Instance.lastHoveredSlot; } set { CombatData.Instance.lastHoveredSlot = value; } }
-    public Unit selectedPlayerUnit { get { return CombatData.Instance.selectedPlayerUnit; } set { CombatData.Instance.selectedPlayerUnit = value; } }
-    public Unit selectedUnit { get { return CombatData.Instance.selectedUnit; } private set { CombatData.Instance.selectedUnit = value; } }
-    public Vector3 selectedAttackSlot { get { return CombatData.Instance.selectedAttackSlot; } private set { CombatData.Instance.selectedAttackSlot = value; } }
+    public Vector3 lastHoveredSlot { get { return PlayerTurnData.Instance.lastHoveredSlot; } set { PlayerTurnData.Instance.lastHoveredSlot = value; } }
+    public Unit selectedPlayerUnit { get { return PlayerTurnData.Instance.selectedPlayerUnit; } set { PlayerTurnData.Instance.selectedPlayerUnit = value; } }
+    public Unit selectedUnit { get { return PlayerTurnData.Instance.selectedUnit; } private set { PlayerTurnData.Instance.selectedUnit = value; } }
+    public Vector3 selectedAttackSlot { get { return PlayerTurnData.Instance.selectedAttackSlot; } private set { PlayerTurnData.Instance.selectedAttackSlot = value; } }
 
-    public Unit hoveredUnit { get { return CombatData.Instance.hoveredUnit; } private set { CombatData.Instance.hoveredUnit = value; } }
-    public Unit lastHoveredUnit { get { return CombatData.Instance.lastHoveredUnit; } private set { CombatData.Instance.lastHoveredUnit = value; } }
-    public Vector3 hoveredSlot { get { return CombatData.Instance.hoveredSlot; } private set { CombatData.Instance.hoveredSlot = value; } }
+    public Unit hoveredUnit { get { return PlayerTurnData.Instance.hoveredUnit; } private set { PlayerTurnData.Instance.hoveredUnit = value; } }
+    public Unit lastHoveredUnit { get { return PlayerTurnData.Instance.lastHoveredUnit; } private set { PlayerTurnData.Instance.lastHoveredUnit = value; } }
+    public Vector3 hoveredSlot { get { return PlayerTurnData.Instance.hoveredSlot; } private set { PlayerTurnData.Instance.hoveredSlot = value; } }
 
-    public bool walkMode { get { return CombatData.Instance.walkMode; } private set { CombatData.Instance.walkMode = value; } }
+    public bool walkMode { get { return PlayerTurnData.Instance.walkMode; } private set { PlayerTurnData.Instance.walkMode = value; } }
 
     //bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
     //public int mouseDirection { get { return Combat.Instance.mouseDirection; } set { Combat.Instance.mouseDirection = value; } }
@@ -81,30 +81,29 @@ public class PlayerFlag : FlagController {
             
             yield return null;
         }
-        CombatData.Instance.Reset();
+        PlayerTurnData.Instance.Reset();
         CombatUI.OnTurnComplete();
 
 
         // Wait until all actions are complete
         for (int i = 0; i < units.Count; i++) {
-            yield return Combat.Instance.StartCoroutine(WaitActionsToComplete(units[i]));
+            yield return Combat.Instance.StartCoroutine(units[i].WaitActionsToComplete());
         }
         yield return null;
     }
 
     private IEnumerator HandleAttack() {
         Debug.Log("Trying to attack: " + selectedAttackSlot + " in range: " +
-                    GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, CombatData.Instance.GetMask(0)) + " enough actions:" + (CombatData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft));
+                    GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0)) + " enough actions:" + (PlayerTurnData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft));
         //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
-        if (CombatData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft
-            && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, CombatData.Instance.GetMask(0))) {
+        if (PlayerTurnData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft
+            && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0))) {
 
             CombatUI.OnBeginAttack();
 
-            CombatEvents.CombatAction(selectedPlayerUnit, hoveredSlot, CombatData.ActiveAbility);
-            CombatEvents.OnUnitActivatesAbility(selectedPlayerUnit);
-
-            yield return Combat.Instance.StartCoroutine(WaitActionsToComplete(selectedPlayerUnit));
+            Combat.Instance.CombatAction(selectedPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+            yield return null;
+            yield return Combat.Instance.StartCoroutine(selectedPlayerUnit.WaitActionsToComplete());
 
             SwapToValidAbility();
 
@@ -120,14 +119,6 @@ public class PlayerFlag : FlagController {
         }
     }
 
-    private IEnumerator WaitActionsToComplete(Unit unit) {
-        while (unit.moving) {
-            yield return null;
-        }
-        while (unit.attacking) {
-            yield return null;
-        }
-    }
 
     private float HandleWalkMode(List<Unit> units) {
 
@@ -158,9 +149,9 @@ public class PlayerFlag : FlagController {
     }
 
     private void SwapToValidAbility() {
-        CombatData.Instance.lastAbility = CombatData.ActiveAbility;
+        PlayerTurnData.Instance.lastAbility = PlayerTurnData.ActiveAbility;
         if (selectedPlayerUnit.CanDoAnyAction && 
-            (CombatData.ActiveAbility==null || CombatData.ActiveAbility.actionCost > selectedPlayerUnit.ActionsLeft)) {
+            (PlayerTurnData.ActiveAbility==null || PlayerTurnData.ActiveAbility.actionCost > selectedPlayerUnit.ActionsLeft)) {
             SetActiveAbility(selectedPlayerUnit, selectedPlayerUnit.GetNextAbilityWithEnoughActions());
         }
         CombatUI.OnActiveAbilityChange();
@@ -186,8 +177,8 @@ public class PlayerFlag : FlagController {
     internal void SetActiveAbility(Unit unitSource, AttackData2 atk) {
 
         Debug.Log("Setting active ability " + atk.o_attackName);
-        CombatData.Instance.lastAbility = CombatData.ActiveAbility;
-        CombatData.Instance.activeAbility = atk;//unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
+        PlayerTurnData.Instance.lastAbility = PlayerTurnData.ActiveAbility;
+        PlayerTurnData.Instance.activeAbility = atk;//unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
 
         CombatUI.OnActiveAbilityChange();
     }
@@ -197,7 +188,7 @@ public class PlayerFlag : FlagController {
             CombatUI.OnUnitDeseleted();
             selectedUnit = null;
             selectedPlayerUnit = null;
-            CombatData.Instance.activeAbility = null;
+            PlayerTurnData.Instance.activeAbility = null;
         }
     }
 
