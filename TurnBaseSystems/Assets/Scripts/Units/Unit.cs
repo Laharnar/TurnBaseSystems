@@ -4,6 +4,8 @@ using UnityEngine;
 public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
+    public string description;
+    public string aiDescription;
     public bool moving = false;
     public Pathing pathing;
     public Alliance flag;

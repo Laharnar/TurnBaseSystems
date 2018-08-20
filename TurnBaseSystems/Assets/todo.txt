@@ -352,7 +352,7 @@ to main menu
 global level grid.
 
 Goal 14.8.2018
-
+Release: Okt 1.
 
 do cycles... mvc overhaul -> UI update -> bug fixing
 art cycles --- 4 images > define idea in the world 
@@ -363,6 +363,8 @@ triple k
 cycle 1 = Combat begin kkk
 cycle 2 = Combat exectution player kkk
 cycle 3 = Action stack for abilities. kkk
+cycle 4 = set up character prefabs. 4 main team. 14 chars.
 art cycle 1 = Enemy characters...
+
 
 

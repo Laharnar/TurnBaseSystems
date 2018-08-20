@@ -662,3 +662,28 @@ resistances - physical, magic and range, melee
 balance running, tanking, healing, defend, and attacking
 1 per turn, optional, optional defensive, 
 
+
+tactical, core survival role team based combat.
+relatively medium-fast clear rate.
+short but packed content.
+team composition.
+weakneses.
+enemy behaviours and weakneses.
+learning how to use characters.
+discovering tactics.
+
+the counter moves... at end of turn.
+
+SKILL SET
+move
+standard attack ability. optional debuff.
+higher cost better ability.
+special character specific ability.
+faction based. secondary bonus. utility. passive. auras. other stuff. 
+passive.
+
+Play:
+You can play on standard and strong... then explore the rest.
+Activate in mid combat. That would be cool!
+
+Progression. What can i do with these characters later on?
