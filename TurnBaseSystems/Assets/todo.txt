@@ -367,4 +367,5 @@ cycle 4 = set up character prefabs. 4 main team. 14 chars.
 art cycle 1 = Enemy characters...
 
 attach to on enemy.
-
+debuffs.<<22.8-
+on standard click, aoe, allies, enemies.

@@ -38,7 +38,7 @@ public class BUFFAttackData : AbilityEffect {
         Debug.Log("Buff "+mask.onAttack + " "+mask.onEnemyTurnEnd +" "+mask.onUnitDies);
         if (mask.onAttack) {
             // original is this, when attacking
-            ExecuteOnStart(info.executingUnit, this);
+            ExecuteOnStart(info.TargetedUnit, this);
             BuffManager.Register(info.executingUnit, info.TargetedUnit, this);
         }
         if (mask.onEnemyTurnEnd || mask.onAnyTurnEnd) {

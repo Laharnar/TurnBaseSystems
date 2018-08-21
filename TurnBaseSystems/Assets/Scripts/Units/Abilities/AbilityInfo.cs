@@ -41,11 +41,17 @@ public class AbilityInfo {
         this.activeAbility = activeAbility;
         this.activator = mask;
     }
+
+    public AbilityInfo(AbilityInfo info) : this(info.executingUnit, info.attackedSlot, info.activeAbility, info.activator) {
+        
+    }
+
     // todo
     public static AttackData2 ActiveAbility { get { return PlayerTurnData.ActiveAbility; } set { PlayerTurnData.Instance.activeAbility = value; } }
     public static CombatEventMask CurActivator { get { return Instance.activator; } set { Instance.activator = value; } }
     public static BUFFAttackData ActiveOrigBuff;
     public static BuffUnitData ActiveBuffData;
+    private AbilityInfo info;
 
     public static Unit ExecutingUnit { get { return Instance.executingUnit; } set { Instance.executingUnit = value; } }
     public static Vector3 AttackStartedAt { get { return Instance.attackStartedAt; } set { Instance.attackStartedAt = value; } }

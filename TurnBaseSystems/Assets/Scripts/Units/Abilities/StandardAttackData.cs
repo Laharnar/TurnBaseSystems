@@ -59,8 +59,18 @@ public class StandardAttackData : DamageBasedAttackData {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
                     u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));
-            } else if (data.standard.damage > 0)
+            } else if (data.standard.damage > 0) {
                 u.GetDamaged((int)((float)data.standard.damage * (1f - dmgReduction)));
+                // add debuffs.
+                AbilityInfo inf = new AbilityInfo(info) {
+                    attackedSlot = u.snapPos
+                };
+
+                if (info.activeAbility.buff.used) {
+                    info.activeAbility.buff.AtkBehaviourExecute(inf);
+                }
+
+            }
             if (heal > 0) {
                 u.Heal(heal, this);
             }

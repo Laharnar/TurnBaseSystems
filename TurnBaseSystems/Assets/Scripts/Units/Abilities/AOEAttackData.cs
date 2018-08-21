@@ -32,6 +32,15 @@ public class AOEAttackData : DamageBasedAttackData {
                 }
             }
             vec[i].GetDamaged(damage);//data.aoe.damage);
+
+            // add debuffs.
+            AbilityInfo inf = new AbilityInfo(info) {
+                attackedSlot = vec[i].snapPos
+            };
+
+            if (info.activeAbility.buff.used) {
+                info.activeAbility.buff.AtkBehaviourExecute(inf);
+            }
         }
         if (/*data.aoe.*/setStatus != CombatStatus.SameAsBefore)
             info.executingUnit.combatStatus = setStatus;//data.aoe.setStatus;
