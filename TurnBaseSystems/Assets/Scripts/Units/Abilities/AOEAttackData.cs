@@ -10,16 +10,17 @@ public class AOEAttackData : DamageBasedAttackData {
     public AuraTarget targets = AuraTarget.All;
     public DamageInfo damageInfo = new DamageInfo(1, DamageType.Magic, EnergyType.None, DamageAttribute.HardObject);
 
-    internal override void AtkBehaviourExecute() {
-        Execute();
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
+        if (info.activator.onAttack)
+            Execute(info);
     }
 
-    internal void Execute() {
+    internal void Execute(AbilityInfo info) {
         curDmg = damageInfo;
         GridMask mask = GridMask.RotateMask(/*data.aoe.*/aoeMask, 0);
-        Unit[] vec = mask.GetUnits(AbilityInfo.AttackedSlot);
-        int charges = AbilityInfo.SourceExecutingUnit.charges;
-        Unit source = AbilityInfo.SourceExecutingUnit;
+        Unit[] vec = mask.GetUnits(info.attackedSlot);
+        int charges = info.executingUnit.charges;
+        Unit source = info.executingUnit;
         for (int i = 0; i < vec.Length; i++) {
             if (!vec[i] || !EmpowerAlliesData.ValidTarget(targets, vec[i].flag.allianceId, source)) continue;
             if (useChargesToChooseLimitSlots) {
@@ -33,7 +34,7 @@ public class AOEAttackData : DamageBasedAttackData {
             vec[i].GetDamaged(damage);//data.aoe.damage);
         }
         if (/*data.aoe.*/setStatus != CombatStatus.SameAsBefore)
-            AbilityInfo.SourceExecutingUnit.combatStatus = setStatus;//data.aoe.setStatus;
+            info.executingUnit.combatStatus = setStatus;//data.aoe.setStatus;
     }
 
     internal GridMask GetMask(int mouseDirection) {

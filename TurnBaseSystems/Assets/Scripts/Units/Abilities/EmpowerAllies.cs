@@ -23,9 +23,11 @@ public class EmpowerAlliesData : AbilityEffect {
     public AuraTrigger trigger;
     public int maxAuraStacks = 1;
 
-    internal override void AtkBehaviourExecute() {
-        DeEffectArea(AbilityInfo.SourceExecutingUnit.snapPos, AbilityInfo.SourceExecutingUnit, true);
-        EffectArea(AbilityInfo.SourceExecutingUnit.snapPos, AbilityInfo.SourceExecutingUnit);
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
+        if (info.activator.onAttack || info.activator.onAllyEnterRange) {
+            DeEffectArea(info.executingUnit.snapPos, info.executingUnit, true);
+            EffectArea(info.executingUnit.snapPos, info.executingUnit);
+        }
     }
 
     public static bool ValidTarget(AuraTarget target, int flag, Unit source) {

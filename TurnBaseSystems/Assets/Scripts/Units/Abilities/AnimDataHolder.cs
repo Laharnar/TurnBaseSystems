@@ -21,6 +21,8 @@ public class AnimDataHolder:MonoBehaviour {
     }
 
     public static float GetLongestTriggerAnimLength(Unit source, int[] sourceSet) {
+        if (source.abilities == null || source.abilities.abilityAnimations == null)
+            return 0;
         float f = 0;
         AttackAnimationInfo[] animSets = source.abilities.abilityAnimations.animSets;
         for (int i = 0; i < sourceSet.Length; i++) {

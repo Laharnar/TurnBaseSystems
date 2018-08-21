@@ -67,7 +67,7 @@ public class CustomTests: MonoBehaviour {
                 AttackData2 atk = witch.abilities.additionalAbilities2[1];
                 CombatStats comstat = witch.stats;
                 witch.OnTurnStart();
-                witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
+                //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
 
                 Test("EmpowerShieldBuffWorks1a", comstat.GetSum(CombatStatType.Armor), 3);
                 witch.GetDamaged(1);
@@ -77,7 +77,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks1f", comstat.GetSum(CombatStatType.Hp), 4);
 
                 witch.OnTurnStart();
-                witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
+                //witch.AttackAction(witch.transform.position, witch.abilities.additionalAbilities2[1]);
                 comstat = witch.stats;
 
                 Test("EmpowerShieldBuffWorks2a", comstat.GetSum(CombatStatType.Armor), 3);
@@ -92,7 +92,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks2d", comstat.GetSum(CombatStatType.Hp), 2);
 
                 witch.OnTurnStart();
-                witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
+                //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
 
                 Test("EmpowerShieldBuffWorks3c", comstat.GetSum(CombatStatType.Armor), 3);
                 Test("EmpowerShieldBuffWorks3d", comstat.GetSum(CombatStatType.Hp), 3);
@@ -168,25 +168,25 @@ public class CustomTests: MonoBehaviour {
 
             EmpowerAlliesData aura1 = dekurion.abilities.additionalAbilities2[1].aura;
             dekurion.transform.position = new Vector3(-10, 1, 0);
-            CombatEvents.OnUnitExecutesMoveAction(new Vector3(), new Vector3(-10, 1, 0), dekurion);
+            CombatEvents.ReapplyAuras(new Vector3(), new Vector3(-10, 1, 0), dekurion);
             Test("AurasSourceMoveOut2a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("AurasSourceMoveOut2b", comstat2.GetSum(CombatStatType.Armor), 0);
             yield return new WaitForSeconds(2);
 
             melee.transform.position = new Vector3(-9, 0, 0);
-            CombatEvents.OnUnitExecutesMoveAction(new Vector3(1, 0, 0), new Vector3(-9, 0, 0), melee);
+            CombatEvents.ReapplyAuras(new Vector3(1, 0, 0), new Vector3(-9, 0, 0), melee);
             Test("NonAuraMoveINAura3a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("NonAuraMoveINAura3b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
 
             melee.transform.position = new Vector3(0, 0, 0);
-            CombatEvents.OnUnitExecutesMoveAction(new Vector3(-9,0,0), new Vector3(0, 0, 0), melee);
+            CombatEvents.ReapplyAuras(new Vector3(-9,0,0), new Vector3(0, 0, 0), melee);
             Test("NonAuraMoveOut4a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("NonAuraMoveOut4b", comstat2.GetSum(CombatStatType.Armor), 0);
             yield return new WaitForSeconds(2);
 
             dekurion.transform.position = new Vector3(-1, 1, 0);
-            CombatEvents.OnUnitExecutesMoveAction(new Vector3(-10, 1, 0), new Vector3(-1, 1, 0), dekurion);
+            CombatEvents.ReapplyAuras(new Vector3(-10, 1, 0), new Vector3(-1, 1, 0), dekurion);
             Test("AuraMoveIn3a", comstat1.GetSum(CombatStatType.Armor), 1);
             Test("AuraMoveIn3b", comstat2.GetSum(CombatStatType.Armor), 1);
             yield return new WaitForSeconds(2);
@@ -246,17 +246,17 @@ public class CustomTests: MonoBehaviour {
             Test("get pierced1a", nuker.charges, 2);
             CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
             PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
-            AbilityInfo.SourceExecutingUnit = nuker;
+            AbilityInfo.ExecutingUnit = nuker;
             AbilityInfo.AttackedSlot = new Vector3(0, 0, 0);
             AbilityInfo.AttackStartedAt = nuker.snapPos;
             AbilityInfo.ActiveAbility = nuker.abilities.additionalAbilities2[1];
 
 
-            Unit[] units = atkD.GetUnitsPierced(melee);
+            Unit[] units = null;// atkD.GetUnitsPierced(melee);
 
-            Combat.Instance.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            CombatEvents.ClickAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
-            Combat.Instance.CombatAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
+            CombatEvents.ClickAction(nuker, new Vector3(0, 0, 0), nuker.abilities.additionalAbilities2[1]);
             Test("get pierced1a", melee.dead, true);
             Test("get pierced1b", !melee1.dead, true);
             Test("get pierced1b", nuker.hp==2, true);

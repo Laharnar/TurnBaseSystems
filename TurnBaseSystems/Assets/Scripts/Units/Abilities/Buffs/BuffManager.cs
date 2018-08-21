@@ -35,11 +35,10 @@ public class BuffManager {
     }
 
     public static void ConsumeBuffs(FlagManager faction) {
-        
         foreach (var item in CopyReferences.sourceCopies) {
             BUFFAttackData origData = item.Key;
             List<BuffUnitData> buffInstances = item.Value;
-
+    
             for (int i = 0; i < buffInstances.Count; i++) {
                 // One buff ref still stays in.
                 if (buffInstances[i].source == null) {
@@ -53,7 +52,7 @@ public class BuffManager {
                     AbilityInfo.ActiveOrigBuff = origData;
                     AbilityInfo.ActiveBuffData = buffInstances[i];
 
-                    buffInstances[i].buff.AtkBehaviourExecute();
+                    buffInstances[i].buff.AtkBehaviourExecute(AbilityInfo.Instance);
                 }
             }
         }

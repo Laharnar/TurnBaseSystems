@@ -11,7 +11,6 @@ public sealed class AttackData2 : StdAttackData {
 
     // activators activate the effect from combat manager
     public CombatEventMask[] activators;
-    public AbilityEffectTarget[] effects;
 
     public AttackRangeData range;
     public StandardAttackData standard;
@@ -38,6 +37,7 @@ public sealed class AttackData2 : StdAttackData {
         };
     }
 
+    [System.Obsolete("Use atk.")]
     /// <summary>
     /// Executes attack data.
     /// Included all types of attacks(normal, aoe, buff...)
@@ -58,7 +58,7 @@ public sealed class AttackData2 : StdAttackData {
         Debug.Log("Using attack "+data.o_attackName +" unit: "+source+
             " "+data.standard.used+" "+data.aoe.used+" "+ data.buff.used);
         //AbilityEffect[] attacks = data.GetAttacks();
-
+        /*
         AbilityInfo.ActiveAbility = data;
         AbilityInfo.SourceExecutingUnit = source;
         AbilityInfo.AttackedSlot = attackedSlot;
@@ -74,7 +74,7 @@ public sealed class AttackData2 : StdAttackData {
         // buff
         if (data.buff.used) {
             if (GridAccess.GetUnitAtPos(attackedSlot)) {
-                data.buff.Register(source, GridAccess.GetUnitAtPos(attackedSlot));
+                data.buff.AtkBehaviourExecute();// Register(source, GridAccess.GetUnitAtPos(attackedSlot));
             }
         }
         if (data.move.used) {
@@ -90,9 +90,16 @@ public sealed class AttackData2 : StdAttackData {
         if (data.spawn.used) {
             data.spawn.Execute();
         }
-        
+        */
     }
-
+    public void ActivateAbility(AbilityInfo info) {
+        foreach (var item in GetAbilityEffects()) {
+            //if(CombatEventMask.CanActivate(activator, item.activator)) {
+            if (item.used)
+                item.AtkBehaviourExecute(info);
+            //}
+        }
+    }
 
     /// <summary>
     /// Activates triggers and bools in anim controller.
@@ -114,4 +121,5 @@ public sealed class AttackData2 : StdAttackData {
         // todo: for dash
         return maxLen;
     }
+    
 }

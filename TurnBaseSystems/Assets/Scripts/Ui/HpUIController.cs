@@ -16,17 +16,19 @@ public class HpUIController: MonoBehaviour {
     public Transform[] hpList;
     public Transform[] greyhpList;
     private Unit source;
+    bool init = false;
 
     private void Update() {
+        if (!init) return;
         if (canvasRoot == null) {
             Debug.Log("missing canvas ", this);
             return;
         }
-
-        canvasRoot.eulerAngles = HpUISettings.m.angle;
-        canvasRoot.localScale = HpUISettings.m.canvasScale;
-        canvasRoot.localPosition = new Vector3(0, HpUISettings.m.offsetY);
-
+        if (HpUISettings.m != null) {
+            canvasRoot.eulerAngles = HpUISettings.m.angle;
+            canvasRoot.localScale = HpUISettings.m.canvasScale;
+            canvasRoot.localPosition = new Vector3(0, HpUISettings.m.offsetY);
+        }
         // join all blocks
         int width = source.maxHp + source.temporaryArmor;
         List<Transform> t = new List<Transform>();
@@ -89,6 +91,8 @@ public class HpUIController: MonoBehaviour {
         if (!visible) {
             return;
         }
+        init = true;
+
         this.source = source;
         canvasRoot.rotation = Quaternion.Euler(HpUISettings.m.angle);
         canvasRoot.localScale = HpUISettings.m.canvasScale;

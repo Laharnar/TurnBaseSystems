@@ -26,6 +26,8 @@ public class Combat : MonoBehaviour {
     public List<FlagManager> flags;
 
     public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
+    public Queue<CombatEventMask> activatorsQue = new Queue<CombatEventMask>();
+    public const int gameRules = 3; // 0: abilities on energy. 1: max 2. 2: abilities on energy and max 2. 3: energy, max 2, max 1 move
 
     private void Awake() {
         instance = this;
@@ -142,7 +144,6 @@ public class Combat : MonoBehaviour {
                 activeFlagTurn = j;
 
                 CombatEvents.OnTurnStart(flags[j]);
-
                 flags[0].NullifyUnits();
                 flags[1].NullifyUnits();
                 yield return StartCoroutine(flags[j].controller.FlagUpdate(flags[j]));
@@ -217,37 +218,18 @@ public class Combat : MonoBehaviour {
         }
     }
 
-    public void CombatAction(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility) {
-        // v1
-        AbilityInfo.CurActivator.Reset();
-        AbilityInfo.CurActivator.onAttack = !AbilityInfo.CurActivator.never;
-        AbilityInfo.SourceExecutingUnit = unit;
 
-        AbilityInfo.AttackedSlot = hoveredSlot;
-        AbilityInfo.AttackStartedAt = unit.snapPos;
-        AbilityInfo.ActiveAbility = activeAbility;
-        CombatEvents.ActivateAbilitiesForCurCombatState();
-
-        AbilityInfo.CurActivator.Reset();
-        AbilityInfo.CurActivator.onMove = !AbilityInfo.CurActivator.never;
-        CombatEvents.ActivateAbilitiesForCurCombatState();
-
-        AbilityInfo.CurActivator.Reset();
-        AbilityInfo.CurActivator.onDamaged = !AbilityInfo.CurActivator.never;
-        CombatEvents.ActivateAbilitiesForCurCombatState();
-
-        // v2
-        //PlayerTurnData.Instance.activeAbility = activeAbility;
-        //int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
-        AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility);
+    /// <summary>
+    /// Global ability registration.
+    /// Use always when unit attacks or does something.
+    /// </summary>
+    /// <param name="unit"></param>
+    /// <param name="hoveredSlot"></param>
+    /// <param name="activeAbility"></param>
+    public static void RegisterAbilityUse(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility) {
+        AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility, AbilityInfo.CurActivator.Copy());
+        // sort ability into correct stacks
         Combat.Instance.abilitiesQue.Enqueue(info);
-
-        // move reaction is executed when attack is move.
-        if (activeAbility == unit.abilities.move2) {// move
-            CombatEvents.OnUnitExecutesMoveAction(unit.snapPos, hoveredSlot, unit);
-        }
-
-        CombatEvents.OnUnitActivatesAbility(unit);
     }
 
     /// <summary>
@@ -255,6 +237,7 @@ public class Combat : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public IEnumerator AbilityQueHandler() {
+        
         while (true) {
             if (abilitiesQue.Count == 0) {
                 yield return null;
@@ -263,8 +246,13 @@ public class Combat : MonoBehaviour {
             
             AbilityInfo info = abilitiesQue.Dequeue();
             // activates attack. these attacks can add further attacks to be executed.
-            info.executingUnit.AttackAction2(info.attackedSlot, info.activeAbility);
+
+            info.executingUnit.AttackAction(info);
             // handles, data changes
+            // move reaction is executed when attack is move.
+            if (info.activeAbility == info.executingUnit.abilities.move2) {// move
+                CombatEvents.ReapplyAuras(info.executingUnit.snapPos, info.attackedSlot, info.executingUnit);
+            }
 
             // wait animations
             info.executingUnit.AttackAnimations(info.activeAbility);

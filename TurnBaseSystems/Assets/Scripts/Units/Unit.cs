@@ -63,6 +63,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal Vector3 scriptedMovePos;
 
     public Transform characterSprite;
+    public int abilitiesUsed = 0;
+    public int movesUsed = 0;
 
     private void Start() {
         Init();
@@ -131,7 +133,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public void OnTurnEnd() {
-        AbilityInfo.SourceExecutingUnit = this;
+        AbilityInfo.ExecutingUnit = this;
         AbilityInfo.AttackedSlot = snapPos;
         AbilityInfo.AttackStartedAt = snapPos;
         Debug.Log("Applying passives.");
@@ -139,7 +141,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
             if (abilities.additionalAbilities2[i].active && 
                 abilities.additionalAbilities2[i].passive.used) {
-                AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
+                abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
+                //AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
                 AttackAnimations(abilities.additionalAbilities2[i]);
             }
             
@@ -153,6 +156,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public void OnTurnStart() {
+        abilitiesUsed = 0;
+        movesUsed = 0;
         ResetActions();
         attacking = false;
         //ResetGreyHp();
@@ -188,7 +193,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public bool CanDoAnyAction {
         get {
             foreach (var item in abilities.GetNormalAbilities()) {
-                if (item.actionCost <= ActionsLeft) {
+                if (PassGameRules(item)) {
                     return true;
                 }
             }
@@ -196,26 +201,31 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         }
     }
 
-    /// <summary>
-    /// Indiscriminately run all possible abilities.
-    /// </summary>
-    /// <param name="activator"></param>
-    [System.Obsolete("Too easy to get lost in making abilities")]
-    public void RunAllAbilities(CombatEventMask activator) {
-        Debug.Log("disabled");
-        //AbilityInfo.SourceSecondaryExecUnit = this;
-        for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
-            for (int j = 0; j < abilities.additionalAbilities2[i].effects.Length
-                && j < abilities.additionalAbilities2[i].activators.Length; j++) {
-                if (CombatEventMask.CanActivate(activator, abilities.additionalAbilities2[i].activators[j]))
-                {
-                    abilities.additionalAbilities2[i].effects[j].Execute(abilities.atkLib, activator);
-                }
-            }
-        }
+    public bool PassGameRules(AttackData2 item) {
+        return
+            (Combat.gameRules == 3 && item.actionCost <= ActionsLeft && abilitiesUsed <= 1 && (item != abilities.move2 || movesUsed < 1))
+            || (Combat.gameRules == 2 && item.actionCost <= ActionsLeft && abilitiesUsed <= 1)
+            || (Combat.gameRules == 1 && abilitiesUsed <= 1) 
+            || (Combat.gameRules == 0 && item.actionCost <= ActionsLeft);
     }
 
-    internal int AttackAction2(Vector3 attackedSlot, AttackData2 atk) {
+    /// <summary>
+    /// Don't forget to set AbilityInfo.CurActivator.
+    /// </summary>
+    /// <param name="activator"></param>
+    public void RunAllAbilities2(CombatEventMask activator=null) {
+        AbilityInfo.ExecutingUnit = this;
+        /*for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
+            abilities.additionalAbilities2[i].ActivateAbility();
+        }*/
+    }
+    
+
+    internal int AttackAction(AbilityInfo info) {
+        AttackData2 atk = info.activeAbility;
+        Vector3 attackedSlot = info.attackedSlot;
+        abilitiesUsed++;
+
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
 
@@ -229,11 +239,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Debug.Log("Running animations, waiting. action aborted.");
             return -1;
         }
+        if (atk == abilities.move2)
+            movesUsed++;
+
         Debug.Log("Executing attack " + atk.o_attackName);
 
         CostActions(atk);
 
-        AttackData2.UseAttack(this, attackedSlot, atk);
+        atk.ActivateAbility(info);
+        // AttackData2.UseAttack(this, attackedSlot, atk);
 
         // AttackAnimations(atk);
 
@@ -246,7 +260,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     internal AttackData2 GetNextAbilityWithEnoughActions() {
         foreach (var item in abilities.GetNormalAbilities()) {
-            if (item.actionCost <= ActionsLeft) {
+            if (PassGameRules(item)) {
                 return item;
             }
         }

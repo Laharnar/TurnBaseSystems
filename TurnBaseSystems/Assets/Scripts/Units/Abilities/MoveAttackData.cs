@@ -18,28 +18,29 @@ public class MoveAttackData : AbilityEffect{
         return move;
     }
 
-    internal override void AtkBehaviourExecute() {
-        Execute();
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
+        if (info.activator.onMove)
+            Execute(info);
     }
 
-    public void Execute() {
+    public void Execute(AbilityInfo info) {
         if (onStartApplyAOE) {
-            AbilityInfo.ActiveAbility.aoe.Execute();
+            info.activeAbility.aoe.Execute(info);
         }
-        Unit existing = GridAccess.GetUnitAtPos(AbilityInfo.AttackedSlot);
-        
-        AbilityInfo.SourceExecutingUnit.MoveAction(AbilityInfo.AttackedSlot);
+        Unit existing = GridAccess.GetUnitAtPos(info.attackedSlot);
+
+        info.executingUnit.MoveAction(info.attackedSlot);
 
         if (onEndApplyAOE) {
-            AbilityInfo.ActiveAbility.aoe.Execute();
+            info.activeAbility.aoe.Execute(info);
         }
 
         if (existing) {
-            existing.abilities.ActivateOnSteppedOn(existing, AbilityInfo.SourceExecutingUnit);
+            existing.abilities.ActivateOnSteppedOn(existing, info.executingUnit);
         }
 
         if (setStatus != CombatStatus.SameAsBefore)
-            AbilityInfo.SourceExecutingUnit.combatStatus = setStatus;
+            info.executingUnit.combatStatus = setStatus;
     }
 }
 

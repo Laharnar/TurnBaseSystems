@@ -8,12 +8,13 @@ public class SpawnAttackData : AbilityEffect {
         t.transform.position = GridManager.SnapPoint(pos);
     }
 
-    internal override void AtkBehaviourExecute() {
-        Execute();
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
+        if (info.activator.onAttack)
+            Execute(info);
     }
 
-    public void Execute() {
-        if (GridManager.ValidSlot(AbilityInfo.AttackedSlot, requirments))
-            SpawnItem(AbilityInfo.AttackedSlot);
+    public void Execute(AbilityInfo info) {
+        if (GridManager.ValidSlot(info.attackedSlot, requirments))
+            SpawnItem(info.attackedSlot);
     }
 }

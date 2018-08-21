@@ -19,9 +19,16 @@ public class UnitAbilities : MonoBehaviour {
             atkLib = GetComponent<AttackDataLib>();
         }
 
-        move2.id = 0;
+        int counter = 0;
+        if (move2.active) {
+            move2.id = 0;
+            counter++;
+        }
         for (int i = 0; i < additionalAbilities2.Count; i++) {
-            additionalAbilities2[i].id = i+1;
+            if (additionalAbilities2[i].active) {
+                additionalAbilities2[i].id = counter;
+                counter++;
+            }
         }
     }
 
@@ -39,19 +46,19 @@ public class UnitAbilities : MonoBehaviour {
     }
     
     public void ActivateOnSteppedOn(Unit unit, Unit steppedOnBy) {
+        CombatEvents.DebugEvents("OnSteppedOn-not fixed");
         AbilityInfo.CurActivator.Reset();
         AbilityInfo.CurActivator.onStepOnEnemy = true;
-        steppedOnBy.RunAllAbilities(AbilityInfo.CurActivator);
-        unit.RunAllAbilities(AbilityInfo.CurActivator);
+        //steppedOnBy.RunAllAbilities(AbilityInfo.CurActivator);
+        //unit.RunAllAbilities(AbilityInfo.CurActivator);
+
+        //steppedOnBy.RunAllAbilities2(AbilityInfo.CurActivator);
+        //unit.RunAllAbilities2(AbilityInfo.CurActivator);
 
         for (int i = 0; i < abilityOnSteppedOn.Length; i++) {
             if (abilityOnSteppedOn[i] < additionalAbilities2.Count) {
-                PlayerTurnData.Instance.activeAbility = additionalAbilities2[abilityOnSteppedOn[i]];
-                //int action = selectedPlayerUnit.AttackAction2(hoveredSlot, activeAbility);
-                PlayerTurnData copy = PlayerTurnData.Instance.Copy();
-                copy.selectedPlayerUnit = steppedOnBy;
                 
-                Combat.Instance.abilitiesQue.Enqueue(new AbilityInfo(copy.selectedPlayerUnit, copy.selectedAttackSlot, copy.activeAbility));
+                Combat.RegisterAbilityUse(unit, steppedOnBy.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
 
                 //steppedOnBy.AttackAction2(unit.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
             }

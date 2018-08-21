@@ -21,8 +21,9 @@ public class AbilityEffect{
     public bool used = false;
     public int[] animSets;
     public CombatStatus setStatus = CombatStatus.Normal;
+    public CombatEventMask activator;
 
-    internal virtual void AtkBehaviourExecute() {
+    internal virtual void AtkBehaviourExecute(AbilityInfo info) {
         
     }
 

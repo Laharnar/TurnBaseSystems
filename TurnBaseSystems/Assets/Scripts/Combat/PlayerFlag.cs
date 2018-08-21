@@ -15,6 +15,7 @@ public class PlayerFlag : FlagController {
 
     public bool walkMode { get { return PlayerTurnData.Instance.walkMode; } private set { PlayerTurnData.Instance.walkMode = value; } }
 
+
     //bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
     //public int mouseDirection { get { return Combat.Instance.mouseDirection; } set { Combat.Instance.mouseDirection = value; } }
 
@@ -95,14 +96,15 @@ public class PlayerFlag : FlagController {
 
     private IEnumerator HandleAttack() {
         Debug.Log("Trying to attack: " + selectedAttackSlot + " in range: " +
-                    GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0)) + " enough actions:" + (PlayerTurnData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft));
+                GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0)) + " enough actions:" + selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility));
         //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
-        if (PlayerTurnData.ActiveAbility.actionCost <= selectedPlayerUnit.ActionsLeft
-            && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0))) {
+        if (selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility)
+            && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0))
+            ) {
 
             CombatUI.OnBeginAttack();
 
-            Combat.Instance.CombatAction(selectedPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+            CombatEvents.ClickAction(selectedPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
             yield return null;
             yield return Combat.Instance.StartCoroutine(selectedPlayerUnit.WaitActionsToComplete());
 
@@ -111,6 +113,7 @@ public class PlayerFlag : FlagController {
             CombatUI.OnUnitFinishesAction(selectedPlayerUnit);
         }
     }
+
 
     private void HandleRunningOutOfActions() {
         if (selectedPlayerUnit) {
@@ -152,7 +155,7 @@ public class PlayerFlag : FlagController {
     private void SwapToValidAbility() {
         PlayerTurnData.Instance.lastAbility = PlayerTurnData.ActiveAbility;
         if (selectedPlayerUnit.CanDoAnyAction && 
-            (PlayerTurnData.ActiveAbility==null || PlayerTurnData.ActiveAbility.actionCost > selectedPlayerUnit.ActionsLeft)) {
+            (PlayerTurnData.ActiveAbility==null || !selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility))) {
             SetActiveAbility(selectedPlayerUnit, selectedPlayerUnit.GetNextAbilityWithEnoughActions());
         }
         CombatUI.OnActiveAbilityChange();

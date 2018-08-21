@@ -37,16 +37,17 @@ public class StandardAttackData : DamageBasedAttackData {
         GridDisplay.Instance.HideGrid(info.GetPos(), info.layer, GetMask(Combat.Instance.mouseDirection));
     }
 
-    internal override void AtkBehaviourExecute() {
-        Execute();
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
+        if (info.activator.onAttack)
+            Execute(info);
     }
 
-    internal void Execute() {
+    internal void Execute(AbilityInfo info) {
         curDmg = dmgInfo;
         dmgReduction = Mathf.Clamp(dmgReduction, 0f, 1f);
-        AttackData2 data = AbilityInfo.ActiveAbility;
-        Unit u = GridAccess.GetUnitAtPos(AbilityInfo.AttackedSlot);
-        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, AbilityInfo.SourceExecutingUnit)) {
+        AttackData2 data = info.activeAbility;
+        Unit u = GridAccess.GetUnitAtPos(info.attackedSlot);
+        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, info.executingUnit)) {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
                     u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));
@@ -58,10 +59,10 @@ public class StandardAttackData : DamageBasedAttackData {
             // enemy killed
             Debug.Log("Enemy hp left "+u.hp + " heal on kill "+healOnKills+ " healing " +heal+" dmg "+damage);
             if (u.dead && healOnKills > 0) {
-                AbilityInfo.SourceExecutingUnit.Heal(healOnKills, this);
+                info.executingUnit.Heal(healOnKills, this);
             }
         }
         if (data.standard.setStatus != CombatStatus.SameAsBefore)
-            AbilityInfo.SourceExecutingUnit.combatStatus = data.standard.setStatus;
+            info.executingUnit.combatStatus = data.standard.setStatus;
     }
 }

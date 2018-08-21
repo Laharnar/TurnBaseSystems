@@ -23,24 +23,23 @@ public class BUFFAttackData : AbilityEffect {
         return buff;
     }
 
-    internal void Register(Unit source, Unit target) {
+    /*internal void Register(Unit source, Unit target) {
         BuffManager.Register(source, target, this);
         ExecuteOnStart(target, this);
-    }
+    }*/
 
-    internal override void AtkBehaviourExecute() {
+    internal override void AtkBehaviourExecute(AbilityInfo info) {
         CombatEventMask mask = AbilityInfo.CurActivator;
-        BUFFAttackData buffInstance = AbilityInfo.ActiveBuffData.buff;
+        //BUFFAttackData buffInstance = AbilityInfo.ActiveBuffData.buff;
+        Debug.Log("Buff "+mask.onAttack + " "+mask.onEnemyTurnEnd +" "+mask.onUnitDies);
         if (mask.onAttack) {
             // original is this, when attacking
-            ExecuteOnStart(AbilityInfo.SourceExecutingUnit, this);
-            BuffManager.Register(AbilityInfo.SourceExecutingUnit, AbilityInfo.SourceSecondaryExecUnit, this);
+            ExecuteOnStart(info.executingUnit, this);
+            BuffManager.Register(info.executingUnit, info.TargetedUnit, this);
         }
-        if (mask.onEnemyTurnEnd) {
+        if (mask.onEnemyTurnEnd || mask.onAnyTurnEnd) {
             // original is now saved in combat info
-            if (AbilityInfo.SourceExecutingUnit.flag.allianceId != AbilityInfo.SourceSecondaryExecUnit.flag.allianceId) {
-                Consume(AbilityInfo.ActiveOrigBuff, AbilityInfo.ActiveBuffData);
-            }
+            Consume(AbilityInfo.ActiveOrigBuff, AbilityInfo.ActiveBuffData);
         }
         if (mask.onUnitDies) {
             UnitDeath();
@@ -84,6 +83,7 @@ public class BUFFAttackData : AbilityEffect {
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;
     }
+
     private void ExecuteOnEnd(Unit target, BUFFAttackData original) {
         AttackData2.RunAnimations(target, endAnimSets);
         if (armorAmt != 0) {

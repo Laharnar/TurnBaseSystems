@@ -31,7 +31,7 @@ public class RangeLogic : AiLogic {
 
         yield return unit.StartCoroutine(DebugGrid.BlinkColor(targetMovePos));
 
-        Combat.Instance.CombatAction(unit, targetMovePos, unit.abilities.move2);
+        CombatEvents.ClickAction(unit, targetMovePos, unit.abilities.move2);
         //unit.MoveAction(targetMovePos);
         while (unit.moving) {
             yield return null;
@@ -42,7 +42,7 @@ public class RangeLogic : AiLogic {
         if (GridLookup.IsPosInMask(selfPos, enemyPos, unit.abilities.additionalAbilities2[0].standard.attackRangeMask)) {
             yield return unit.StartCoroutine(DebugGrid.BlinkColor(enemyPos));
 
-            Combat.Instance.CombatAction(unit, enemyPos, unit.abilities.additionalAbilities2[0]);
+            CombatEvents.ClickAction(unit, enemyPos, unit.abilities.additionalAbilities2[0]);
         }
 
         while (unit.attacking) {
