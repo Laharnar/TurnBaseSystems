@@ -8,6 +8,12 @@ public class MoveAttackData : AbilityEffect{
 
     public bool onStartApplyAOE, onEndApplyAOE;
     public int[] endAnimSets;
+    internal GridMask originalRange { get; private set; }
+    public void SetRange(GridMask newRange) {
+        if (originalRange == null)
+            originalRange = range;
+        range = newRange;
+    }
 
     internal MoveAttackData Copy() {
         MoveAttackData move = new MoveAttackData();
@@ -15,6 +21,7 @@ public class MoveAttackData : AbilityEffect{
         move.onStartApplyAOE = onStartApplyAOE;
         move.onEndApplyAOE = onEndApplyAOE;
         move.range = range;
+        move.originalRange = originalRange;
         return move;
     }
 

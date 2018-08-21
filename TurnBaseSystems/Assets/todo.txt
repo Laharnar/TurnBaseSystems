@@ -366,5 +366,5 @@ cycle 3 = Action stack for abilities. kkk
 cycle 4 = set up character prefabs. 4 main team. 14 chars.
 art cycle 1 = Enemy characters...
 
-
+attach to on enemy.
 

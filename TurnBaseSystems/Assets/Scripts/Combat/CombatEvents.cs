@@ -102,6 +102,7 @@ public static class CombatEvents {
 
         flag.NullifyUnits();
         foreach (var item in flag.info.units) {
+
             item.OnTurnEnd();
         }
 

@@ -65,6 +65,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public Transform characterSprite;
     public int abilitiesUsed = 0;
     public int movesUsed = 0;
+    public float dmgMult = 1f;
 
     private void Start() {
         Init();
@@ -134,6 +135,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void OnTurnEnd() {
         AbilityInfo.ExecutingUnit = this;
+        AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
         AbilityInfo.AttackedSlot = snapPos;
         AbilityInfo.AttackStartedAt = snapPos;
         Debug.Log("Applying passives.");
@@ -303,7 +305,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         if (anim == null) { Debug.Log("Can't run animations, no animator", this); return; }
         foreach (var item in attack.GetAbilityEffects()) {
             if (item.used) {
-                AttackData2.RunAnimations(this, attack.aoe.animSets);
+                AttackData2.RunAnimations(this, item.animSets);
             }
         }
 
@@ -325,7 +327,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public void GetDamaged(int realDmg) {
         if (dead) return;
         realDmg = resistances.ApplyResistance(realDmg, AbilityEffect.curDmg);
-        int dmgToHp = realDmg;
+        int dmgToHp = (int)(realDmg*dmgMult);
 
         if (realDmg > 0) {
             dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);

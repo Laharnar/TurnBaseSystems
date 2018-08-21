@@ -51,7 +51,7 @@ public class BuffManager {
                 if (buffInstances[i].source.flag.allianceId != faction.id) {
                     AbilityInfo.ActiveOrigBuff = origData;
                     AbilityInfo.ActiveBuffData = buffInstances[i];
-
+                    AbilityInfo.Instance.executingUnit = AbilityInfo.ActiveBuffData.target;
                     buffInstances[i].buff.AtkBehaviourExecute(AbilityInfo.Instance);
                 }
             }

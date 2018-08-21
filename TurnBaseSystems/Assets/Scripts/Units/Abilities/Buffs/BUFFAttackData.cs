@@ -7,7 +7,11 @@ public class BUFFAttackData : AbilityEffect {
     public bool activated = true;
     public int turns = 1;
     public int armorAmt;
+    public int recieveDmg;
+    public float dmgMultiplierUp;
     public int healAmount;
+    public GridMask temporaryMoveRange;
+    public GridMask temporaryAttackRange;
     public BuffType buffType = BuffType.None;
     public CombatStatus endBuffStatus = CombatStatus.Normal;
     public int[] endAnimSets;
@@ -29,7 +33,7 @@ public class BUFFAttackData : AbilityEffect {
     }*/
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        CombatEventMask mask = AbilityInfo.CurActivator;
+        CombatEventMask mask = info.activator;
         //BUFFAttackData buffInstance = AbilityInfo.ActiveBuffData.buff;
         Debug.Log("Buff "+mask.onAttack + " "+mask.onEnemyTurnEnd +" "+mask.onUnitDies);
         if (mask.onAttack) {
@@ -52,6 +56,10 @@ public class BUFFAttackData : AbilityEffect {
         if (healAmount != 0) {
             Debug.Log("[heal buff] +hp" + healAmount + " t:"+target);
             target.Heal(healAmount, null);
+        }
+        if (recieveDmg!= 0) {
+            Debug.Log("[dmg buff] +dmg " + recieveDmg);
+            target.GetDamaged(recieveDmg);
         }
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;
@@ -80,6 +88,18 @@ public class BUFFAttackData : AbilityEffect {
             Debug.Log("[heal buff] +hp" + healAmount + " t:" + target);
             target.Heal(healAmount, null);
         }
+        if (temporaryMoveRange != null) {
+            Debug.Log("[move range buff] +range" + " t:" + target);
+            target.abilities.move2.standard.SetRange(temporaryMoveRange);
+        }
+        if (temporaryAttackRange != null) {
+            Debug.Log("[move range buff] +range" + " t:" + target);
+            target.abilities.move2.standard.SetRange(temporaryAttackRange);
+        }
+        if (dmgMultiplierUp != 0) {
+            Debug.Log("[dmg buff] +dmg mult" + dmgMultiplierUp + " t:" + target);
+            target.dmgMult += dmgMultiplierUp;
+        }
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;
     }
@@ -89,6 +109,14 @@ public class BUFFAttackData : AbilityEffect {
         if (armorAmt != 0) {
             Debug.Log("[shield buff] -shield " + armorAmt);
             target.AddShield(original, -armorAmt);
+        }
+        if (temporaryMoveRange != null) {
+            Debug.Log("[move range buff] -range"  + " t:" + target);
+            target.abilities.move2.move.SetRange(target.abilities.move2.move.originalRange);
+        }
+        if (dmgMultiplierUp != 0) {
+            Debug.Log("[dmg buff] -dmg mult" + dmgMultiplierUp + " t:" + target);
+            target.dmgMult -= dmgMultiplierUp;
         }
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;

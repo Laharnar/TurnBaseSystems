@@ -11,7 +11,7 @@ public class AOEAttackData : DamageBasedAttackData {
     public DamageInfo damageInfo = new DamageInfo(1, DamageType.Magic, EnergyType.None, DamageAttribute.HardObject);
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onAttack)
+        if (info != null && info.activator!= null && info.activator.onAttack)
             Execute(info);
     }
 

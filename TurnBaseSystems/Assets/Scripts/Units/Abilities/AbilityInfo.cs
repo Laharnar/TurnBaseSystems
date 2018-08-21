@@ -43,7 +43,7 @@ public class AbilityInfo {
     }
     // todo
     public static AttackData2 ActiveAbility { get { return PlayerTurnData.ActiveAbility; } set { PlayerTurnData.Instance.activeAbility = value; } }
-    public static CombatEventMask CurActivator;
+    public static CombatEventMask CurActivator { get { return Instance.activator; } set { Instance.activator = value; } }
     public static BUFFAttackData ActiveOrigBuff;
     public static BuffUnitData ActiveBuffData;
 
@@ -60,6 +60,6 @@ public class AbilityInfo {
         executingUnit = null;
         attackStartedAt = new Vector3(10000,0,0);
         attackedSlot = new Vector3(10000,0,0);
-        activator = null;
+        activator.Reset();
     }
 }

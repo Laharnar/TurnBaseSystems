@@ -164,11 +164,16 @@ public class Combat : MonoBehaviour {
                     if (j == 1) {
                         WaveManager.m.OnWaveCleared();
                     }
-                    if (WaveManager.m.AllWavesCleared()&& GetUnits(1).Count == 0) {
+                    if (WaveManager.m.AllWavesCleared() && GetUnits(1).Count == 0) {
                         yield return StartCoroutine(WinGame());
                         done = true;
                         break;
                     }
+                }
+                if (GetUnits(0).Count == 0) {
+                    yield return StartCoroutine(WinGame());// lose
+                    done = true;
+                    break;
                 }
 
                 yield return new WaitForSeconds(0.5f);

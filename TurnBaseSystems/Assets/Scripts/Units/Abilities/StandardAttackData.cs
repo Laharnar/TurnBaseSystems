@@ -20,6 +20,14 @@ public class StandardAttackData : DamageBasedAttackData {
     public static float dmgReduction = 0;
     public AuraTarget targets = AuraTarget.All;
 
+    internal GridMask originalRange { get; private set; }
+
+    public void SetRange(GridMask newRange) {
+        if (originalRange == null)
+            originalRange = attackRangeMask;
+        attackRangeMask = newRange;
+    }
+
     public GridMask GetMask(int direction) {
         return GridMask.RotateMask(attackRangeMask, direction);
     }
