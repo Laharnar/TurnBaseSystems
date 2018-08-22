@@ -5,6 +5,9 @@ public class AttackAnimationInfo {
     public string animTrigger;
     public string animBool;
     public bool animBoolValue = false;
+    public string animFloat;
+    public float animFloatValue = 0;
+
     /// <summary>
     /// Time, length of animation
     /// </summary>

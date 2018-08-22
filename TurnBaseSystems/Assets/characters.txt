@@ -6,6 +6,7 @@ doing 2 things
 draw 4-6 concrete ideas > explore animations, skills, role in combat
 pick or draw 2 > fast colorize 2
 pick 1 > fast animate and effects all for feel > import and test feeling
+1h to get ideas down, define attacks, fast animate.
 
 10 pics, insert emotions, intent, personality, race into animations 
 animate full color
@@ -40,9 +41,18 @@ poisonous zombie
 passive aoe - poison cloud, damage all, emmit a cloud at the end of every turn
 self heal
 
-poisonous zombie, ACTIVE version
+drugged human, red blood, powers, zombie
 bite - panick the enemy, and bleed
 aoe - poison cloud, damage all, emmit a cloud at the end of every turn
+grab and stresi in zruki
+ground smash
+throw
+jump attack
+take drug
+faction : withdrawal...?
+Role: damaged from drug. requires backup by medic.
+highly effective for periods of time. requires protection to not die in melee.
+Personality: craizy, dope, fun, weird, strong, weak, addiction.
 
 info broker
 talking option - aoe distraction, automatically doesn't enter combat when visible

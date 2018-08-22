@@ -27,3 +27,14 @@ checkpoint rewards are set per house type and size
 
 stun status
 more statuses
+
+multi step system.
+targeting-> sinlgle pos to target stack
+aoe -> add more positions to stack
+convert to units
+debuffs -> apply to those units
+move -> move
+pierce -> add those units to stack.
+don't target directly, but at stack
+
+excel based.

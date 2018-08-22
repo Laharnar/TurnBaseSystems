@@ -369,3 +369,6 @@ art cycle 1 = Enemy characters...
 attach to on enemy.
 debuffs.<<22.8-
 on standard click, aoe, allies, enemies.
+
+targeting aoeDamage debuffs move targeting aoeDamage pierce debuffs
+
