@@ -60,8 +60,11 @@ public class GlobalAiBehavioursLogic : AiLogic {
             targetMovePos = AiHelper.ClosestToTargetOverMask(unit.snapPos, groupInfluencedPos, unit.abilities.move2.move.range);
         }
 
+        AttackData2 ability = null;
+        ability = unit.abilities.additionalAbilities2[0];
+
         yield return unit.StartCoroutine(MoveToPos(unit, targetMovePos, unit.abilities.move2));
-        yield return unit.StartCoroutine(AttackPos(unit, attackPos, unit.abilities.additionalAbilities2[0]));
+        yield return unit.StartCoroutine(AttackPos(unit, attackPos, ability));
 
         yield return null;
     }
