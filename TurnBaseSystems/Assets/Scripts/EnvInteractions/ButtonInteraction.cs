@@ -12,8 +12,15 @@ public class ButtonInteraction : MonoBehaviour {
     public bool destroyAfter = true;
 
     public void Activate() {
-        interaction.Interact(weaponSource != null ? weaponSource as IInteractible : null);//source);
+        interaction.Interact();
+
+        //PlayerUIAbilityList.m.showAbilityDescription = false;
+
         if (destroyAfter)
             Destroy(gameObject);
+    }
+
+    public void ActivateHelp() {
+        //PlayerUIAbilityList.m.showAbilityDescription = true;
     }
 }

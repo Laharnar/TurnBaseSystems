@@ -8,7 +8,7 @@
         return this;
     }
 
-    public override void Interact(IInteractible other) {
+    public override void Interact() {
         (Combat.Instance.flags[0].controller as PlayerFlag).SetActiveAbility(unitSource, unitSource.abilities.GetNormalAbilities()[atkId]);
     }
 }

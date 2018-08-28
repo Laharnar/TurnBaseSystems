@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Base weapon, contains stats, if it's dropped etc..
 /// </summary>
-public class Weapon:MonoBehaviour,IInteractible {
+public class Weapon:MonoBehaviour {
     public static List<Weapon> weapons = new List<Weapon>();
 
     public float accuracy = 1;

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Displays buttons for player abilities.
+/// </summary>
 public class PlayerUIAbilityList : MonoBehaviour {
 
     public static PlayerUIAbilityList m;
@@ -19,6 +22,8 @@ public class PlayerUIAbilityList : MonoBehaviour {
     public Transform selectedButtonPref;
     Transform selectedButtonInstance;
     Coroutine slideBetweenChoices;
+
+    public bool showAbilityDescription  =false;
 
     private void Start() {
         m = this;
@@ -82,7 +87,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
     /// <param name="visible"></param>
     public void MarkButtonAsSelected(int btnId, bool visible) {
         Transform btnObj = btnId < instances.Count ? instances[btnId] : null;
-        
+        // create overlay
         if (selectedButtonInstance == null) {
             selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
             selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
@@ -92,7 +97,10 @@ public class PlayerUIAbilityList : MonoBehaviour {
             slideBetweenChoices = StartCoroutine(LerpTo(selectedButtonInstance.transform, btnObj.position + new Vector3(0, 0, 0.01f), 0.25f));
         }
         selectedButtonInstance.gameObject.SetActive(visible);
+
+        UIManager.ShowPopup(btnObj.position, AbilityInfo.ActiveAbility.detailedDescription);
     }
+
 
     private IEnumerator LerpTo(Transform transform, Vector3 vector3, float inTime) {
         float t = 0;

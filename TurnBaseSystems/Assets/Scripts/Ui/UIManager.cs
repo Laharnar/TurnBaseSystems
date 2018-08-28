@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour {
     public static UIManager m;
 
-    // player ui.
+    // whole player ui.
     public Transform pSelectAlly;
     public Transform playerUI;
 
@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour {
     internal Vector3[] indicatorPositions;
     internal float indicatorTimeout = 1;
 
+    public Transform descriptionPopupRoot;
+    public Text descriptionPopupText;
 
     private void Awake() {
         m = this;
@@ -35,6 +37,9 @@ public class UIManager : MonoBehaviour {
     public static void ShowAbilities(bool v, Unit unit, bool allowInteraction) {
         if (m.pSelectAlly)
             m.pSelectAlly.gameObject.SetActive(v);
+        if (m.descriptionPopupRoot) {
+            m.descriptionPopupRoot.gameObject.SetActive(v);
+        }
         PlayerUIAbilityList.ClearInstanceList();
         if (unit) {
             PlayerUIAbilityList.LoadAbilitiesOnUI(unit, allowInteraction);
@@ -60,5 +65,13 @@ public class UIManager : MonoBehaviour {
     internal static void ShowSlideMsg(string text, float time, string msg) {
         UIManager.m.slideScreenContent = text;
         CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", time, msg);
+    }
+
+    public static void ShowPopup(Vector3 rectPos, string text) {
+        // disabled
+        //(UIManager.m.descriptionPopupRoot as RectTransform).position = rectPos; 
+        if (text == "")
+            text = "No description.";
+        m.descriptionPopupText.text = text;
     }
 }

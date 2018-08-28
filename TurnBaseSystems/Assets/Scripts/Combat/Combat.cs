@@ -76,8 +76,10 @@ public class Combat : MonoBehaviour {
         AbilityInfo.Instance = new AbilityInfo(null, new Vector3(), null);
         PlayerTurnData.Instance = new PlayerTurnData();
 
-
-        Combat.Instance.StartCombatLoop();
+        // start combat loop
+        if (gameplayUp != null)
+            StopCoroutine(gameplayUp);
+        gameplayUp = StartCoroutine(CombatUpdate());
 
         Debug.Log("Initing gameplay manager");
         flags = new List<FlagManager>();
@@ -106,14 +108,7 @@ public class Combat : MonoBehaviour {
     public List<Unit> GetUnits(int allianceId) {
         return flags[allianceId].info.units;
     }
-
-    public void StartCombatLoop() {
-        if (gameplayUp != null)
-            StopCoroutine(gameplayUp);
-
-        gameplayUp = StartCoroutine(CombatUpdate());
-    }
-
+    
     IEnumerator CombatUpdate() {
         // wait until start
         yield return null;
@@ -157,12 +152,12 @@ public class Combat : MonoBehaviour {
             for (int j = 0; j < flags.Count; j++) {
                 if (started) {
                     if (j == 1) {
-                        UIManager.ShowSlideMsg("-- Enemy turn --", 3.5f, "Combat/end player turn");
-                        yield return new WaitForSeconds(3.5f);
+                        UIManager.ShowSlideMsg("-- Enemy turn --", 2.5f, "Combat/end player turn");
+                        yield return new WaitForSeconds(2.5f);
                     }
                     if (j == 0) {
-                        UIManager.ShowSlideMsg("-- Player turn --", 3.5f, "Combat/end player turn");
-                        yield return new WaitForSeconds(2.5f);
+                        UIManager.ShowSlideMsg("-- Player turn --", 2.5f, "Combat/end player turn");
+                        yield return new WaitForSeconds(1.75f);
                     }
                 }
                 started = true;

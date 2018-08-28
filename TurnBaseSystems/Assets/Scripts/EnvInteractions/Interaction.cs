@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 public abstract class Interaction:ScriptableObject {
     [System.Obsolete("Shouldn't ever be called. not 100%")]
-    public abstract void Interact(IInteractible other);
+    public abstract void Interact();
 
     public string interactionType = "Normal";
     
