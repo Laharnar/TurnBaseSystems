@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum GridDisplayLayer {
+    GlobalGrid,
     GreenMovement,
     RedAttackArea,
     Aura,
@@ -19,6 +20,7 @@ public class GridDisplay {
     public List<GridDisplayItem> flattened = new List<GridDisplayItem>();
 
     public List<Transform> instances = new List<Transform>();
+    public List<Transform> permanentInstances = new List<Transform>();
 
     static GridDisplay instance;
 
@@ -28,32 +30,6 @@ public class GridDisplay {
                 instance = new GridDisplay();
             }
             return instance;
-        }
-    }
-
-    static Color GetColorCode(GridDisplayLayer layer) {
-        switch (layer) {
-            case GridDisplayLayer.GreenMovement:
-                return GameManager.Instance.moveColor;
-            case GridDisplayLayer.RedAttackArea:
-                return GameManager.Instance.attackColor;
-            case GridDisplayLayer.Aura:
-                return Color.yellow;
-            case GridDisplayLayer.BlueSelectionArea:
-                return GameManager.Instance.allySelectColor;
-            case GridDisplayLayer.RedSelectionArea:
-                return GameManager.Instance.enemySelectColor;
-            case GridDisplayLayer.SelfActivate:
-                return GameManager.Instance.attackColor;
-            case GridDisplayLayer.OrangeAOEAttack:
-                return GameManager.Instance.aoeColor;
-            case GridDisplayLayer.OrangePierce:
-                return GameManager.Instance.aoeColor;//orange;
-            case GridDisplayLayer.AIAction:
-                return Color.yellow;
-            default:
-                Debug.Log("Unhandled color, empty color.");
-                return GridManager.m.defaultColor;
         }
     }
 
@@ -70,51 +46,25 @@ public class GridDisplay {
         // recolor and reposition
         for (int i = 0; i < instances.Count && i < flattened.Count; i++) {
             instances[i].transform.position = flattened[i].pos;
-            instances[i].transform.localScale = GetColorScale(flattened[i].color);
-            instances[i].GetComponentInChildren<SpriteRenderer>().color = GetColorCode(flattened[i].color);
+            instances[i].transform.localScale = flattened[i].scale;
+            instances[i].GetComponentInChildren<SpriteRenderer>().color = flattened[i].color;
         }
         // remove if it's too much
-        while (instances.Count > flattened.Count) {
+        int x = 1000000;
+        while (instances.Count > flattened.Count && x > 0) {
+            x--;
             GameObject.Destroy(instances[instances.Count-1].gameObject);
             instances.RemoveAt(instances.Count-1);
         }
     }
-
-    private Vector3 GetColorScale(GridDisplayLayer color) {
-        Vector3 size1 = Vector3.one;
-        Vector3 size2 = new Vector3(1.05f, 1.05f, 1f);
-        switch (color) {
-            case GridDisplayLayer.GreenMovement:
-                return Vector3.one;
-            case GridDisplayLayer.RedAttackArea:
-                return Vector3.one;
-            case GridDisplayLayer.Aura:
-                return Vector3.one;
-            case GridDisplayLayer.BlueSelectionArea:
-                return size2;
-            case GridDisplayLayer.RedSelectionArea:
-                return size2;
-            case GridDisplayLayer.SelfActivate:
-                return Vector3.one;
-            case GridDisplayLayer.OrangeAOEAttack:
-                return size2;
-            case GridDisplayLayer.OrangePierce:
-                return size2;
-            case GridDisplayLayer.AIAction:
-                return size2;
-            default:
-                Debug.Log("Unhandled color, empty color.");
-                return Vector3.one;
-        }
-    }
-
-    public void SetUpGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask) {
-        while (layers.Count <= (int)layer && (int)layer > -1) {
+    
+    public void SetUpGrid(Vector3 pos, GridDisplayLayer layer, GridMask mask, float alphaMult = 1f) {
+        while (layers.Count <= (int)layer && (int)layer > -1 ) {
             layers.Add(new GridLayer());
         }
         Vector3[] positions = mask.GetPositions(pos);
         for (int i = 0; i < positions.Length; i++) {
-            layers[(int)layer].items.Add(new GridDisplayItem(positions[i], layer));
+            layers[(int)layer].items.Add(new GridDisplayItem(positions[i], layer, alphaMult));
         }
     }
 
@@ -169,7 +119,7 @@ public class GridDisplay {
                         continue;
                     }
                 }
-                flattened.Add(new GridDisplayItem(position, layers[i].items[j].color));
+                flattened.Add(new GridDisplayItem(layers[i].items[j]));
             }
         }
         center = lowerLeft + (topRight - lowerLeft) / 2;
@@ -177,7 +127,8 @@ public class GridDisplay {
 
     internal void ClearAll() {
         for (int i = 0; i < instances.Count; i++) {
-            GameObject.Destroy(instances[i].gameObject);
+            if (flattened[i].colorLayer != GridDisplayLayer.GlobalGrid)
+                GameObject.Destroy(instances[i].gameObject);
         }
         layers.Clear();
         instances.Clear();
@@ -197,10 +148,88 @@ public class GridLayer {
 public class GridDisplayItem {
     public Vector3 pos;
     public Transform pref;
-    public GridDisplayLayer color;
+    public Color color;
+    public Vector3 scale;
+    public GridDisplayLayer colorLayer;
 
+    public GridDisplayItem(GridDisplayItem source) {
+        this.pos = source.pos;
+        this.color = source.color;
+        this.scale = source.scale;
+        this.colorLayer = source.colorLayer;
+    }
     public GridDisplayItem(Vector3 pos, GridDisplayLayer color) {
         this.pos = pos;
-        this.color = color;
+        this.color = GetColorCode(color);
+        this.scale = GetColorScale(color);
+        this.colorLayer = color;
     }
+    public GridDisplayItem(Vector3 pos, GridDisplayLayer color, float alphaMult) {
+        this.pos = pos;
+        Color c = GetColorCode(color);
+        c.a *= alphaMult;
+        this.color = c;
+        this.scale = GetColorScale(color);
+        this.colorLayer = color;
+    }
+
+    private Vector3 GetColorScale(GridDisplayLayer color) {
+        Vector3 size1 = Vector3.one;
+        Vector3 size2 = new Vector3(1.05f, 1.05f, 1f);
+        switch (color) {
+            case GridDisplayLayer.GlobalGrid:
+                return Vector3.one;
+            case GridDisplayLayer.GreenMovement:
+                return Vector3.one;
+            case GridDisplayLayer.RedAttackArea:
+                return Vector3.one;
+            case GridDisplayLayer.Aura:
+                return Vector3.one;
+            case GridDisplayLayer.BlueSelectionArea:
+                return size2;
+            case GridDisplayLayer.RedSelectionArea:
+                return size2;
+            case GridDisplayLayer.SelfActivate:
+                return Vector3.one;
+            case GridDisplayLayer.OrangeAOEAttack:
+                return size2;
+            case GridDisplayLayer.OrangePierce:
+                return size2;
+            case GridDisplayLayer.AIAction:
+                return size2;
+            default:
+                Debug.Log("Unhandled color, empty color.");
+                return Vector3.one;
+        }
+    }
+
+
+    public static Color GetColorCode(GridDisplayLayer layer) {
+        switch (layer) {
+            case GridDisplayLayer.GlobalGrid:
+                return GameManager.Instance.globalColor;
+            case GridDisplayLayer.GreenMovement:
+                return GameManager.Instance.moveColor;
+            case GridDisplayLayer.RedAttackArea:
+                return GameManager.Instance.attackColor;
+            case GridDisplayLayer.Aura:
+                return Color.yellow;
+            case GridDisplayLayer.BlueSelectionArea:
+                return GameManager.Instance.allySelectColor;
+            case GridDisplayLayer.RedSelectionArea:
+                return GameManager.Instance.enemySelectColor;
+            case GridDisplayLayer.SelfActivate:
+                return GameManager.Instance.attackColor;
+            case GridDisplayLayer.OrangeAOEAttack:
+                return GameManager.Instance.aoeColor;
+            case GridDisplayLayer.OrangePierce:
+                return GameManager.Instance.aoeColor;//orange;
+            case GridDisplayLayer.AIAction:
+                return Color.yellow;
+            default:
+                Debug.Log("Unhandled color, empty color.");
+                return GridManager.m.defaultColor;
+        }
+    }
+
 }

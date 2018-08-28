@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
 
     public Transform selectedButtonPref;
     Transform selectedButtonInstance;
+    Coroutine slideBetweenChoices;
 
     private void Start() {
         m = this;
@@ -73,7 +75,6 @@ public class PlayerUIAbilityList : MonoBehaviour {
             
         }
     }
-
     /// <summary>
     /// Marks the button with "overlay" object.
     /// </summary>
@@ -84,11 +85,21 @@ public class PlayerUIAbilityList : MonoBehaviour {
         
         if (selectedButtonInstance == null) {
             selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
+            selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
         }
         if (btnObj != null) {
-            selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
+            if (slideBetweenChoices!= null) StopCoroutine(slideBetweenChoices);
+            slideBetweenChoices = StartCoroutine(LerpTo(selectedButtonInstance.transform, btnObj.position + new Vector3(0, 0, 0.01f), 0.25f));
         }
         selectedButtonInstance.gameObject.SetActive(visible);
     }
 
+    private IEnumerator LerpTo(Transform transform, Vector3 vector3, float inTime) {
+        float t = 0;
+        for (int i = 0; i < inTime/Time.deltaTime; i++) {
+            transform.position=Vector3.Lerp(transform.position, vector3, i/(inTime / Time.deltaTime));
+            yield return null;
+        }
+        transform.position = Vector3.Lerp(transform.position, vector3, 1);
+    }
 }

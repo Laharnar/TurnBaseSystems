@@ -10,6 +10,10 @@ public class EnemyFlag : FlagController {
         //HandleDetectionAndAlert(flag, units);
 
         for (int i = 0; i < units.Count; i++) {
+            if (units[i].ai == null) {
+                UnityEngine.Debug.Log("Missing Ai logic");
+                continue;
+            }
             yield return units[i].StartCoroutine(units[i].ai.Execute(units[i]));
 
             if (MissionManager.levelCompleted) {

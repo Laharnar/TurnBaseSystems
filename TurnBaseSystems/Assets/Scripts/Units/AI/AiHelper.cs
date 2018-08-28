@@ -54,6 +54,12 @@ public static class AiHelper {
         return maxI;
     }
 
+    internal static Vector3 RandomPointOnMask(Vector3 patrolStartPos, float patrolRange, GridMask range) {
+        Vector3 randomPoint = new Vector3(UnityEngine.Random.Range(patrolStartPos.x - patrolRange, patrolStartPos.x + patrolRange)
+            , UnityEngine.Random.Range(patrolStartPos.y-patrolRange, patrolStartPos.y+ patrolRange));
+        return ClosestToTarget(patrolStartPos, randomPoint, range);
+    }
+
     /// <summary>
     /// Example: Put range unit on max attack range.
     /// NOT 100% reliable.
@@ -78,7 +84,7 @@ public static class AiHelper {
     }
 
     /// <summary>
-    /// Pick a slot that's furthest away from mask source, and closest to target.
+    /// Pick a slot on the mask, and closest to target.
     /// </summary>
     /// <param name="pos">pos which defines which side we want</param>
     /// <param name="targetSlot">attacked unit, to which we are applying mask</param>
@@ -199,7 +205,12 @@ public static class AiHelper {
         float[] dists = GetDistances(targetSlot - dir, nbrs);
         return nbrs[dists.GetIndexOfMin()];
     }
+    public static Unit ClosestUnit(Vector3 pos, Unit[] visibleUnits) {
+        float[] dists = pos.GetDistances(visibleUnits);
+        int closestUnitIndex = dists.GetIndexOfMin();
 
+        return visibleUnits[closestUnitIndex];
+    }
     internal static Vector3 ClosestToTargetOverMask(Vector3 source, Vector3 targetSlot, GridMask mask) {
         source = GridManager.SnapPoint(source);
         targetSlot = GridManager.SnapPoint(targetSlot);

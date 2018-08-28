@@ -82,10 +82,10 @@ public class PlayerFlag : FlagController {
             
             yield return null;
         }
-        PlayerTurnData.Instance.Reset();
-        AbilityInfo.Instance.Reset();
-        CombatUI.OnTurnComplete();
 
+
+        PlayerTurnData.Instance.Reset();
+        CombatUI.OnTurnComplete();
 
         // Wait until all actions are complete
         for (int i = 0; i < units.Count; i++) {

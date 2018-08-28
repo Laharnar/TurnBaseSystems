@@ -30,6 +30,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public int maxHp = 5;
     public int logHp;
     public int hp { get { return stats.GetSum(CombatStatType.Hp); } } //set { stats.Set(CombatStatType.Hp, value); logHp = value; } }
+    public int startingArmor = 0;
 
     public int maxActions = 2;
     int actionsLeft = 2;
@@ -106,6 +107,15 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             if (!anim) {
                 anim = GetComponentInChildren<AnimationController>();
             }
+
+            if (ai == null) {
+                ai = GetComponent<AiLogic>();
+            }
+
+            if (startingArmor > 0) {
+                AddShield(null, startingArmor);
+            }
+
             init = true;
         }
     }
@@ -226,7 +236,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     internal int AttackAction(AbilityInfo info) {
         AttackData2 atk = info.activeAbility;
         Vector3 attackedSlot = info.attackedSlot;
-        abilitiesUsed++;
 
         attackedSlot = GridManager.SnapPoint(attackedSlot);
         Unit u = GridAccess.GetUnitAtPos(attackedSlot);
@@ -241,10 +250,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Debug.Log("Running animations, waiting. action aborted.");
             return -1;
         }
+        Debug.Log("Executing attack " + atk.o_attackName);
+
+        abilitiesUsed++;
         if (atk == abilities.move2)
             movesUsed++;
-
-        Debug.Log("Executing attack " + atk.o_attackName);
 
         CostActions(atk);
 

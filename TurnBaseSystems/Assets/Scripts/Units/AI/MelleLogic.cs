@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-
 public class MelleLogic : AiLogic {
     public override IEnumerator Execute(Unit unit) {
         // command 1.

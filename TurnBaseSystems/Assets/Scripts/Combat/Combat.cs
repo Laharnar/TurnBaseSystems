@@ -28,6 +28,7 @@ public class Combat : MonoBehaviour {
     public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
     public Queue<CombatEventMask> activatorsQue = new Queue<CombatEventMask>();
     public const int gameRules = 3; // 0: abilities on energy. 1: max 2. 2: abilities on energy and max 2. 3: energy, max 2, max 1 move
+    public bool setUpTempGrid;
 
     private void Awake() {
         instance = this;
@@ -35,6 +36,31 @@ public class Combat : MonoBehaviour {
             Init(new Transform[0]);
             // StartCombatLoop ();
         }
+    }
+    private void Start() {
+        //TempGroundGrid(transform.position);
+    }
+
+    public static void TempGroundGrid(Vector3 center) {
+        GridMask mask = GridMask.One;
+        float alpha = 1f;
+        float size = 200f;
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                Vector3 blockPos = center + new Vector3(-size/2+j, -size/2+i);
+
+                float dist = (i+j)/2;
+                alpha = 1;// 1-Vector3.Distance(center, blockPos)/(Mathf.Sqrt(2*size*size)/2);//(dist / (size/2+size/2)*2);//Mathf.Clamp(Mathf.Pow(1-manhatt/(size+size)*0.5f, 2)-0.5f, 0f, 1f);
+                //alpha *= alpha;
+                //alpha = (alpha + alphaCenter)%1f;
+                if (alpha > 1f) {
+                    alpha = alpha-1f;
+                }
+                GridDisplay.Instance.SetUpGrid(blockPos, GridDisplayLayer.GlobalGrid, mask, alpha);
+            }
+        }
+        GridDisplay.Instance.RemakeGrid();
     }
 
     public void Init(Transform[] teamInsts) {

@@ -107,6 +107,9 @@ public static class CombatEvents {
         }
 
         BuffManager.ConsumeBuffs(flag);
+
+        AbilityInfo.Instance.Reset();
+       
     }
     
     public static void OnUnitDamaged() {

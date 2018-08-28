@@ -38,3 +38,5 @@ pierce -> add those units to stack.
 don't target directly, but at stack
 
 excel based.
+
+will damage allies warning.

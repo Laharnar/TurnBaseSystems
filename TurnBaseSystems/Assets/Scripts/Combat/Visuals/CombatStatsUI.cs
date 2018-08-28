@@ -23,6 +23,10 @@ public class CombatStatsUI :MonoBehaviour{
                     "\nAP | " + selectedUnit.ActionsLeft + "/" + selectedUnit.maxActions +
                     (selectedUnit.temporaryArmor > 0 ? "\nArmor | " + selectedUnit.temporaryArmor : "") +
                     (selectedUnit.charges > 0 ? "\nCharges | " + selectedUnit.charges + "/" + selectedUnit.maxCharges : "");
+                if (AbilityInfo.Instance.activeAbility != null) {
+                    selectedText.text += AbilityInfo.Instance.activeAbility.detailedDescription;
+                }
+
             } else {// enemy
                 selectedText.text = selectedUnit.codename +
                     "\nHP | " + selectedUnit.hp + "/" + selectedUnit.maxHp +
