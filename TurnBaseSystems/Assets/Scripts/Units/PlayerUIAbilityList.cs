@@ -33,7 +33,10 @@ public class PlayerUIAbilityList : MonoBehaviour {
         InitList(n);
     }*/
 
-    public void InitList(int length) {
+    public void InitList(int length) { 
+        if (length == instances.Count) {
+            return;
+        }
         ClearInstanceList();
 
         Vector2 screenLeft = new Vector2(-Camera.main.pixelWidth/2, 0);
@@ -98,7 +101,9 @@ public class PlayerUIAbilityList : MonoBehaviour {
         }
         selectedButtonInstance.gameObject.SetActive(visible);
 
-        UIManager.ShowPopup(btnObj.position, AbilityInfo.ActiveAbility.detailedDescription);
+        if (btnObj != null && AbilityInfo.ActiveAbility!= null) {// ability is null when enemy is selected, and btn is null in enemy turn
+            UIManager.ShowPopup(btnObj.position, AbilityInfo.ActiveAbility.detailedDescription);
+        }
     }
 
 

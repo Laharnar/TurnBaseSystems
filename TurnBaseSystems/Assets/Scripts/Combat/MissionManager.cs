@@ -86,7 +86,8 @@ public class MissionManager:MonoBehaviour {
 
 
         // focus on enemies, shortly
-        Vector3 center = GetCenter((Transform[])Combat.Instance.flags[1].info);
+        Vector3 center = ((Transform[])Combat.Instance.flags[1].info).Length > 0 ?
+            GetCenter((Transform[])Combat.Instance.flags[1].info) : new Vector3();
         GameManager.Instance.combatCam.AddPos(center);
         CombatDisplayManager.Instance.Register(GameManager.Instance.combatCam,
             "MoveToPos", GameManager.Instance.combatCam.RequiredTimeToMoveToPos(center) + 0.5f, "MissionManager/focus on enemy");
@@ -122,6 +123,7 @@ public class MissionManager:MonoBehaviour {
         //
     }
 
+    // referenced on buttons
     public void Btn_LoadMainMenu() {
         LoadingManager.ToMainMenu();
     }

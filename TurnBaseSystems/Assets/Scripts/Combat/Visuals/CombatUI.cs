@@ -30,12 +30,14 @@ public class CombatUI {
             AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
 
+        Debug.Log("fin action 7");
         ShowUI(true, curPlayerUnit, curPlayerUnit, true);
     }
 
 
     public static void OnSelectDifferentUnit() {
         GridDisplay.Instance.ClearAll();
+        Debug.Log("fin action 2");
         ShowUI(true, curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
@@ -82,7 +84,6 @@ public class CombatUI {
         bool showButtonAbilities = pUnit != null && unit != null && visible;
         UIManager.ShowPlayerUI(showPlayerUI);
         UIManager.ShowAbilities(showButtonAbilities, pUnit, interactible);
-
         if (PlayerTurnData.ActiveAbility!= null)
             PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.ActiveAbility.id, showButtonAbilities);
         else
@@ -102,18 +103,21 @@ public class CombatUI {
             AttackDisplay.ShowGrid(unit, hoveredSlot, PlayerTurnData.ActiveAbility);
             GridDisplay.Instance.RemakeGrid();
         }
+        Debug.Log("fin action");
         ShowUI(true, curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
 
     internal static void OnUnitRunsOutOfActions() {
+        Debug.Log("no actions");
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
         ShowUI(false, curPlayerUnit, null, false);
         GridDisplay.Instance.RemakeGrid();
     }
 
     internal static void OnTurnComplete() {
+        Debug.Log("fin action 3");
         GridDisplay.Instance.ClearAll(); 
-        ShowUI(true, curPlayerUnit, curUnit, false);
+        ShowUI(false, curPlayerUnit, curUnit, false);
         GridDisplay.Instance.RemakeGrid();
     }
 
@@ -128,6 +132,7 @@ public class CombatUI {
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
         GridDisplay.Instance.RemakeGrid();
+        Debug.Log("fin action 5");
         ShowUI(true, curPlayerUnit, curUnit, false);
     }
 

@@ -94,3 +94,13 @@ a station, 5 missions
 
 sej to dej del organizacije dash masters, kjer cel življenje trenirajo, kako se deshat po 10 centimetrov.
 ta karakter je pa mojster.
+
+
+A few rooms around. there, the ppl who want to run the simulation are.
+They move around, just like the characters inside the simulation.
+It's a training location on the space ship.
+Start with main screen. Fade in into the training room. Characters set up
+into their machines and start working.
+Enemy programs are loaded and ready.
+They represent different combat situations, like a puzzle.
+Commentator supports you, as if aerial support.

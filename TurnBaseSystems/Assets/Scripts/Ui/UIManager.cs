@@ -40,9 +40,10 @@ public class UIManager : MonoBehaviour {
         if (m.descriptionPopupRoot) {
             m.descriptionPopupRoot.gameObject.SetActive(v);
         }
-        PlayerUIAbilityList.ClearInstanceList();
         if (unit) {
             PlayerUIAbilityList.LoadAbilitiesOnUI(unit, allowInteraction);
+        } else {
+            PlayerUIAbilityList.ClearInstanceList();
         }
     }
 

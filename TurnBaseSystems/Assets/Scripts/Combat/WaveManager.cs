@@ -1,15 +1,10 @@
 ﻿using UnityEngine;
-[System.Serializable]
-public class Wave {
-    public int[] enemies;
-}
 public class WaveManager :MonoBehaviour{
     public static WaveManager m;
     public Transform[] enemySpawnAreas;
 
     public int activeWave = 0;
     public Wave[] waves;
-    public int[] spawnAreas;
 
     private void Awake() {
         m = this;
@@ -27,7 +22,9 @@ public class WaveManager :MonoBehaviour{
             return; // win
         }
 
-        InitEnemies(spawnAreas[activeWave], waves[activeWave].enemies);
+        for (int i = 0; i < waves[activeWave].spawnArea.Length && i < waves[activeWave].enemySet.Length; i++) {
+            InitEnemies(waves[activeWave].spawnArea[i], waves[activeWave].enemySet[i].enemies);
+        }
         activeWave++;
     }
     public void OnCombatBegins() {
