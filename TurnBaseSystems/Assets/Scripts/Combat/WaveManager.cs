@@ -9,7 +9,8 @@ public class WaveManager :MonoBehaviour{
     private void Awake() {
         m = this;
         for (int i = 0; i < enemySpawnAreas.Length; i++) {
-            enemySpawnAreas[i].GetComponent<SpriteRenderer>().enabled = false;
+            if (enemySpawnAreas[i] != null)
+                enemySpawnAreas[i].GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 
@@ -23,7 +24,7 @@ public class WaveManager :MonoBehaviour{
         }
 
         for (int i = 0; i < waves[activeWave].spawnArea.Length && i < waves[activeWave].enemySet.Length; i++) {
-            InitEnemies(waves[activeWave].spawnArea[i], waves[activeWave].enemySet[i].enemies);
+            InitEnemies(waves[activeWave].spawnArea[i], waves[activeWave].enemySet[i].enemies, waves[activeWave].enemySet[i].allianceId);
         }
         activeWave++;
     }
@@ -31,12 +32,13 @@ public class WaveManager :MonoBehaviour{
         OnWaveCleared();
     }
 
-    public void InitEnemies(int spawnArea, int[] enemyteam) {
+    public void InitEnemies(int spawnArea, int[] enemyteam, int alliance) {
         if (enemySpawnAreas.Length == 0) return;
-        Transform[] insts = CharacterLibrary.CreateEnemiesInstances(enemyteam);
+        Transform[] insts = CharacterLibrary.CreateInstances(enemyteam);
 
-        MissionManager.m.LoadTeamIntoArea(insts, enemySpawnAreas[spawnArea].name);
+        MissionManager.m.LoadTeamIntoArea(insts, enemySpawnAreas[spawnArea]);
         for (int i = 0; i < insts.Length; i++) {
+            insts[i].GetComponent<Unit>().flag.allianceId = alliance;
             insts[i].GetComponent<Unit>().Init();
             insts[i].GetComponent<Unit>().detection.detectedSomeone = true;
         }

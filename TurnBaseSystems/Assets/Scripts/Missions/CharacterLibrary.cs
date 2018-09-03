@@ -23,7 +23,7 @@ public class CharacterLibrary:MonoBehaviour {
             return new Transform[0];
         Transform[] instances = new Transform[team.Length];
         for (int i = 0; i < team.Length; i++) {
-            Transform t = m.GetInstance(team[i]);
+            Transform t = m.CreateInstance(team[i]);
             instances[i] = t;
         }
         return instances;
@@ -34,23 +34,26 @@ public class CharacterLibrary:MonoBehaviour {
             return new Transform[0];
         Transform[] instances = new Transform[team.Length];
         for (int i = 0; i < team.Length; i++) {
-            Transform t = m.GetInstance(team[i]);
+            Transform t = m.CreateInstance(team[i]);
             instances[i] = t;
         }
         return instances;
     }
-    
-    private Transform GetInstance(Character character) {
+
+    public Transform CreateInstance(string code) {
         for (int i = 0; i < characterCode.Length; i++) {
-            if (characterCode[i] == character.name) {
-                return Instantiate(characterPrefs[i]);
+            if (characterCode[i] == code) {
+                return CreateInstance(i);
             }
         }
-        Debug.Log("No character in library with name ."+character.name);
+        Debug.Log("No character in library with name ." + code);
         return null;
     }
+    private Transform CreateInstance(Character character) {
+        return CreateInstance(character.name);
+    }
 
-    private Transform GetInstance(int characteri) {
+    private Transform CreateInstance(int characteri) {
         if (characteri < characterCode.Length)
             return Instantiate(characterPrefs[characteri]);
         return null;
@@ -61,7 +64,7 @@ public class CharacterLibrary:MonoBehaviour {
             return new Transform[0];
         Transform[] instances = new Transform[team.Length];
         for (int i = 0; i < team.Length; i++) {
-            Transform t = m.GetInstance(team[i]);
+            Transform t = m.CreateInstance(team[i]);
             instances[i] = t;
         }
         return instances;

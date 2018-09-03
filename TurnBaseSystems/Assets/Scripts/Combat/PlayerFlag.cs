@@ -162,7 +162,7 @@ public class PlayerFlag : FlagController {
     }
     
     private void WaitUnitSelection() {
-        hoveredUnit = SelectionManager.GetUnitUnderMouse(hoveredSlot);
+        hoveredUnit = GridAccess.GetUnitAtPos(hoveredSlot);// SelectionManager.GetUnitUnderMouse
         if (Input.GetMouseButtonDown(0) && hoveredUnit && (selectedPlayerUnit == null || hoveredUnit != selectedPlayerUnit)) {
             Debug.Log("selecting");
             DeselectUnit();

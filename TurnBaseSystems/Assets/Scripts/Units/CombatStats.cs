@@ -59,7 +59,9 @@ public class CombatStats {
     internal int GetStatCountOfType<T>(CombatStatType statType) {
         int count = 0;
         for (int i = 0; i < powers.Count; i++) {
-            if (powers[i].statType == statType && powers[i].dataSource.GetType() == typeof(T)) {
+            if (powers[i].statType == statType && 
+                (powers[i].dataSource == null ||
+                powers[i].dataSource.GetType() == typeof(T))) {
                 count++;
             }
         }

@@ -23,7 +23,7 @@ public class CustomTests: MonoBehaviour {
                 float[] distsToTarget = new float[] { 3, 4, 5, 4, 1, 2, 3, 4, 5, 4, 3, 2 };
                 Test("AiHelper.IndexOfClosestToTarget", AiHelper.IndexOfClosestToTarget(distsToTarget, distsToSource), 4);
             }
-            if (true) {
+            if (false) {
                 EmpowerAlliesData d1 = new EmpowerAlliesData() { shieldUp = 2 };
                 EmpowerAlliesData d2 = new EmpowerAlliesData() { shieldUp = 5 };
                 CombatStats comstat = new CombatStats();

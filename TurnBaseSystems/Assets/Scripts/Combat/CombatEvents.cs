@@ -66,7 +66,7 @@ public static class CombatEvents {
         CombatEvents.OnUnitActivatesAbility(unit);
     }
 
-    public static void ActivateAbilitiesIfStateMatches() {
+    public static void ActivateAbilitiesByActivator() {
         return;
         for (int i = 0; i < Combat.Instance.units.Count; i++) {
             Combat.Instance.units[i].RunAllAbilities2(AbilityInfo.CurActivator);
@@ -79,11 +79,11 @@ public static class CombatEvents {
         AbilityInfo.CurActivator.onAnyTurnStart = !AbilityInfo.CurActivator.never;
         AbilityInfo.CurActivator.onEnemyTurnStart = flag.id == 1 && !AbilityInfo.CurActivator.never;
         AbilityInfo.CurActivator.onPlayerTurnStart = flag.id == 0 && !AbilityInfo.CurActivator.never;
-        ActivateAbilitiesForCurCombatState();
-        CombatEvents.ActivateAbilitiesIfStateMatches();
+        /*ActivateAbilitiesForCurCombatState();
+        CombatEvents.ActivateAbilitiesByActivator();
         foreach (var unit in flag.info.units) {
             unit.RunAllAbilities2();
-        }
+        }*/
         flag.NullifyUnits();
         foreach (var item in flag.info.units) {
             item.OnTurnStart();
@@ -97,13 +97,17 @@ public static class CombatEvents {
         AbilityInfo.CurActivator.onAnyTurnEnd = !AbilityInfo.CurActivator.never;
         AbilityInfo.CurActivator.onEnemyTurnEnd = flag.id == 1 && !AbilityInfo.CurActivator.never;
         AbilityInfo.CurActivator.onPlayerTurnEnd = flag.id == 0 && !AbilityInfo.CurActivator.never;
-        ActivateAbilitiesForCurCombatState();
-        CombatEvents.ActivateAbilitiesIfStateMatches();
+        /*ActivateAbilitiesForCurCombatState();
+        CombatEvents.ActivateAbilitiesByActivator();
 
+
+        foreach (var unit in flag.info.units) {
+            unit.RunAllAbilities2();
+        }*/
         flag.NullifyUnits();
         foreach (var item in flag.info.units) {
 
-            item.OnTurnEnd();
+            item.OnUnitTurnEnd();
         }
 
         BuffManager.ConsumeBuffs(flag);

@@ -32,8 +32,9 @@ public class MissionManager:MonoBehaviour {
     /// <summary>
     /// Before they are deparented from loader
     /// </summary>
-    public void LoadTeamIntoArea(Transform[] team, string spawnPointsName) {
-        Transform spawnPoints = GameObject.Find(spawnPointsName).transform;
+    public void LoadTeamIntoArea(Transform[] team, Transform spawnPointParent) {
+        
+        Transform spawnPoints = spawnPointParent;
         for (int i = 0; i < team.Length && i < spawnPoints.childCount; i++) {
             if (team[i]) {
                 team[i].transform.position =spawnPoints.GetChild(i).transform.position;
@@ -43,9 +44,9 @@ public class MissionManager:MonoBehaviour {
             }
         }
     }
-    public void WalkTeamIn(Transform[] team, string spawnPointsName) {
+    public void WalkTeamIn(Transform[] team, Transform spawnPointParent) {
         // init team pos
-        Transform spawnPoints = GameObject.Find(spawnPointsName).transform;
+        Transform spawnPoints = spawnPointParent;
         for (int i = 0; i < team.Length && i < spawnPoints.childCount; i++) {
             // scripted move to sp.
             team[i].GetComponent<Unit>().scriptedMovePos = spawnPoints.GetChild(i).transform.position;
@@ -69,11 +70,15 @@ public class MissionManager:MonoBehaviour {
     }
 
     internal void Init(Transform[] teamInsts) {
-
-
-        LoadTeamIntoArea(teamInsts, "DONTRENAME_Starting point");
-        WalkInCamera(teamInsts, "DONTRENAME_Starting point");
-        WalkTeamIn(teamInsts, "DONTRENAME_Starting point");
+        GameObject go = GameObject.Find("DONTRENAME_Starting point");
+        if (go == null) {
+            Debug.Log("ERROR:MISSING object " + "DONTRENAME_Starting point" + " aborting ally load.");
+            return;
+        } else {
+            LoadTeamIntoArea(teamInsts, go.transform);
+            WalkInCamera(teamInsts);
+            WalkTeamIn(teamInsts, go.transform);
+        }
 
         if (missionEndScreen_child)
             missionEndScreen_child.gameObject.SetActive(false);
@@ -107,7 +112,7 @@ public class MissionManager:MonoBehaviour {
         center = (center)/ positions.Length;
         return center;
     }
-    private void WalkInCamera(Transform[] team, string spawnPointsName) {
+    private void WalkInCamera(Transform[] team) {
         GameManager.Instance.combatCam.transform.position = GetCenter(team);
         GameManager.Instance.combatCam.FollowCenterPos(team, 5);
     }

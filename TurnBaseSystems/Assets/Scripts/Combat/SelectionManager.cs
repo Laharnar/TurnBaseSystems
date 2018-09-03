@@ -92,14 +92,10 @@ public static class SelectionManager {
         }
         return null;
     }
-    internal static Vector3 MouseAsPos() {
-        return GridManager.SnapPoint(SelectionManager.GetMouseAsPoint());
-    }
-
     public static Unit GetUnitUnderMouse(Vector3 refSlot) {
         Unit cur = GridAccess.GetUnitAtPos(refSlot);
-        if (cur == null) // maybe hovering over unit's head, which is in other slot.
-            cur = SelectionManager.GetMouseAsUnit2D();
+        //if (cur == null) // maybe hovering over unit's head, which is in other slot.
+            //cur = SelectionManager.GetMouseAsUnit2D();
         return cur;
     }
 

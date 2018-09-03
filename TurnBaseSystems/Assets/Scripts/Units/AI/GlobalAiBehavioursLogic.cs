@@ -38,11 +38,8 @@ public class GlobalAiBehavioursLogic : AiLogic {
         // ranged
         if (mode == 1) {
             // approach at furthest and attack
-            if (AiHelper.IsNeighbour(unit.snapPos, targetEnemy.snapPos)) { // don't move when already near
-                targetMovePos = unit.snapPos;
-            } else {
-                targetMovePos = AiHelper.MaxRangeOnMask(unit.snapPos, targetEnemy.snapPos, unit.abilities.move2.move.range, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
-            }
+            targetMovePos = AiHelper.MaxRangeOnMask(unit.snapPos, targetEnemy.snapPos, unit.abilities.move2.move.range, unit.abilities.additionalAbilities2[0].standard.attackRangeMask);
+            
             if (targetEnemy)
                 attackPos = targetEnemy.snapPos;
         }

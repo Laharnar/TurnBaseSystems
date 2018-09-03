@@ -1,6 +1,13 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+
+/// <summary>
+/// 
+/// </summary>
+/// <example>
+/// Custom create unit into combat: Instantiate pref, Call init.
+/// </example>
 public partial class Unit : MonoBehaviour, ISlotItem{
 
     public string codename;
@@ -143,7 +150,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         }
     }
 
-    public void OnTurnEnd() {
+    public void OnUnitTurnEnd() {
         AbilityInfo.ExecutingUnit = this;
         AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
         AbilityInfo.AttackedSlot = snapPos;
@@ -151,15 +158,14 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         Debug.Log("Applying passives.");
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
             AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
-            if (abilities.additionalAbilities2[i].active && 
-                abilities.additionalAbilities2[i].passive.used) {
+            if (abilities.additionalAbilities2[i].active) {
                 abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
                 //AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
                 AttackAnimations(abilities.additionalAbilities2[i]);
             }
             
         }
-        EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
+        //EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
     }
 
     public void AddCharges(AbilityEffect abilitySource, int amt) {
@@ -167,7 +173,27 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         stats.Set(null, CombatStatType.Charges, amt);
     }
 
+
+
+
     public void OnTurnStart() {
+        // area effect
+        AbilityInfo.ExecutingUnit = this;
+        AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
+        AbilityInfo.AttackedSlot = snapPos;
+        AbilityInfo.AttackStartedAt = snapPos;
+        Debug.Log("Applying auras on turn start for unit.");
+        for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
+            AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
+            if (abilities.additionalAbilities2[i].active) {
+                abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
+                AttackAnimations(abilities.additionalAbilities2[i]);
+            }
+        }
+        //EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
+
+        // reset stats
+
         abilitiesUsed = 0;
         movesUsed = 0;
         ResetActions();
@@ -214,8 +240,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     public bool PassGameRules(AttackData2 item) {
-        return
-            (Combat.gameRules == 3 && item.actionCost <= ActionsLeft && abilitiesUsed <= 1 && (item != abilities.move2 || movesUsed < 1))
+        return (Combat.gameRules == 4 && item.actionCost <= ActionsLeft && abilitiesUsed < 1 && (item != abilities.move2 || movesUsed < 1))
+            || (Combat.gameRules == 3 && item.actionCost <= ActionsLeft && abilitiesUsed <= 1 && (item != abilities.move2 || movesUsed < 1))
             || (Combat.gameRules == 2 && item.actionCost <= ActionsLeft && abilitiesUsed <= 1)
             || (Combat.gameRules == 1 && abilitiesUsed <= 1) 
             || (Combat.gameRules == 0 && item.actionCost <= ActionsLeft);

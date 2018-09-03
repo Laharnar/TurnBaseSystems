@@ -372,3 +372,15 @@ on standard click, aoe, allies, enemies.
 
 targeting aoeDamage debuffs move targeting aoeDamage pierce debuffs
 
+attack testing sim:
+all abilities
+  prep dummies
+  activate on ally target, on enemy target, on self
+  evaluate expected results
+
+
+raycasting on units disabled - ok 3.9.2018
+
+testing env
+
+aura bugs

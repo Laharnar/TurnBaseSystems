@@ -33,7 +33,7 @@ public class PierceAtkData: DamageBasedAttackData {
                 Debug.Log("Null unit for some reason.");
                 continue;
             }
-            if (EmpowerAlliesData.ValidTarget(targetFilter, unit[i].flag.allianceId, info.executingUnit)) {
+            if (EmpowerAlliesData.ValidTarget(info.executingUnit, targetFilter, unit[i].flag.allianceId)) {
                 if (useChargesCountToRepeatPiercing) {
                     if (info.executingUnit.charges == 0)
                         break;
@@ -73,7 +73,7 @@ public class PierceAtkData: DamageBasedAttackData {
                     Debug.LogError("Null unit for some reason.");
                     continue;
                 }
-                if (EmpowerAlliesData.ValidTarget(targetFilter, units[j].flag.allianceId, executingUnit)
+                if (EmpowerAlliesData.ValidTarget(executingUnit, targetFilter, units[j].flag.allianceId)
                     && !foundUnits.ContainsKey(units[j])) {
                     foundUnits.Add(units[j], units[j]);
                     noNewUnits = false;

@@ -24,18 +24,19 @@ public class EmpowerAlliesData : AbilityEffect {
     public int maxAuraStacks = 1;
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onAttack || info.activator.onAllyEnterRange) {
+        if ((info.activator.onAttack) || info.activator.onAllyEnterRange || info.activator.onAnyTurnStart) {
+            CombatDebug.Log("AURA effect");
             DeEffectArea(info.executingUnit.snapPos, info.executingUnit, true);
             EffectArea(info.executingUnit.snapPos, info.executingUnit);
         }
     }
 
-    public static bool ValidTarget(AuraTarget target, int flag, Unit source) {
+    public static bool ValidTarget(Unit source, AuraTarget target, int otherFlag) {
         switch (target) {
             case AuraTarget.Allies:
-                return flag == source.flag.allianceId;
+                return otherFlag == source.flag.allianceId;
             case AuraTarget.Enemies:
-                return flag != source.flag.allianceId;
+                return otherFlag != source.flag.allianceId;
             case AuraTarget.Civilians:
                 return false;
             case AuraTarget.All:
@@ -59,12 +60,11 @@ public class EmpowerAlliesData : AbilityEffect {
         for (int i = 0; i < unitsPos.Length; i++) {
             Unit u = GridAccess.GetUnitAtPos(unitsPos[i]);
             int unitAlliance = u.flag.allianceId;
-            if (ValidTarget(target, unitAlliance, source)) {
-                LoseEffect(u, source);
-                if (u==source) {
-                    sourceDeEffected = true;
-                }
+            LoseEffect(u, source);
+            if (u==source) {
+                sourceDeEffected = true;
             }
+            
         }
         if (alwaysDeEffectUnit && !sourceDeEffected) {
             LoseEffect(source, source);
@@ -76,7 +76,7 @@ public class EmpowerAlliesData : AbilityEffect {
     }
 
     public void Effect(Unit source, Unit other) {
-        if (ValidTarget(target, source.flag.allianceId, source)
+        if (ValidTarget(source, target, other.flag.allianceId)
             && (GetAuraStacks(other, CombatStatType.Armor) < maxAuraStacks)) {
             if (stdDmgUp != 0) other.stats.Increase(this, CombatStatType.StdDmg, stdDmgUp);
             if (aoeDmgUp != 0) other.stats.Increase(this, CombatStatType.AoeDmg, aoeDmgUp);
@@ -85,7 +85,7 @@ public class EmpowerAlliesData : AbilityEffect {
     }
 
     public void LoseEffect(Unit u, Unit source) {
-        if (ValidTarget(target, source.flag.allianceId, source)) {
+        if (ValidTarget(source, target, u.flag.allianceId)) {
             if (stdDmgUp != 0) u.stats.Reduce(this, CombatStatType.StdDmg, stdDmgUp);
             if (aoeDmgUp != 0) u.stats.Reduce(this, CombatStatType.AoeDmg, aoeDmgUp);
             if (shieldUp != 0) u.AddShield(this, -shieldUp);

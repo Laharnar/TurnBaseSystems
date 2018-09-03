@@ -55,7 +55,7 @@ public class StandardAttackData : DamageBasedAttackData {
         dmgReduction = Mathf.Clamp(dmgReduction, 0f, 1f);
         AttackData2 data = info.activeAbility;
         Unit u = GridAccess.GetUnitAtPos(info.attackedSlot);
-        if (u && EmpowerAlliesData.ValidTarget(targets, u.flag.allianceId, info.executingUnit)) {
+        if (u && EmpowerAlliesData.ValidTarget(info.executingUnit, targets, u.flag.allianceId)) {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
                     u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));

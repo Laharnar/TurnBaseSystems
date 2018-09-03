@@ -104,3 +104,6 @@ into their machines and start working.
 Enemy programs are loaded and ready.
 They represent different combat situations, like a puzzle.
 Commentator supports you, as if aerial support.
+
+Combat is fast, spikes every few turns.
+New units drop in.

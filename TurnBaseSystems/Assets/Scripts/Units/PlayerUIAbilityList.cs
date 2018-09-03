@@ -67,7 +67,6 @@ public class PlayerUIAbilityList : MonoBehaviour {
         if (unit.abilities == null) {
             Debug.Log("No ability compoentn");
         }
-        Debug.Log("Loading abilities");
         AttackData2[] abilitis = unit.abilities.GetNormalAbilities() as AttackData2[];
         m.InitList(abilitis.Length);
         for (int i = 0; i < abilitis.Length; i++) {
@@ -94,6 +93,7 @@ public class PlayerUIAbilityList : MonoBehaviour {
         if (selectedButtonInstance == null) {
             selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
             selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
+            selectedButtonInstance.SetSiblingIndex(0);
         }
         if (btnObj != null) {
             if (slideBetweenChoices!= null) StopCoroutine(slideBetweenChoices);

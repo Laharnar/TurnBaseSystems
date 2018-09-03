@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [Serializable]
+[System.Obsolete("Detection isn't used atm")]
 public class Detection {
     public GridMask enemyDetectionMask;
     public GridMask groupSizeMask;

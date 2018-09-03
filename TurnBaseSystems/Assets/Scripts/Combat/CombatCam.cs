@@ -9,6 +9,10 @@ public class CombatCam : MonoBehaviour {
     public float camSpeed=1f;
     Queue<Vector3> customPos = new Queue<Vector3>();
 
+    private void Awake() {
+        cam = Camera.main;
+    }
+
     internal void FollowCenterPos(Transform[] target, float followTime) {
         if (coro != null)
             StopCoroutine(coro);

@@ -36,62 +36,12 @@ public sealed class AttackData2 : StdAttackData {
             spawn
         };
     }
-
-    [System.Obsolete("Use atk.")]
+    
     /// <summary>
-    /// Executes attack data.
-    /// Included all types of attacks(normal, aoe, buff...)
-    /// Modifies Unit.combatStatus
+    /// Runs over all effects and activates them.
+    /// Effects contain responses to activator.
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="attackedSlot"></param>
-    /// <param name="data"></param>
-    public static void UseAttack(Unit source, Vector3 attackedSlot, AttackData2 data) {
-        if (source == null || data==null) {
-            Debug.Log("Error. source:" + (source == null) + " slot:" + attackedSlot + " data:"+(data == null));
-        }
-        if (data.active == false) {
-            Debug.Log("Error, activating disabled ability. source:" + (source == null) + " slot:" + attackedSlot + " data:" + (data == null));
-            return;
-        }
-
-        Debug.Log("Using attack "+data.o_attackName +" unit: "+source+
-            " "+data.standard.used+" "+data.aoe.used+" "+ data.buff.used);
-        //AbilityEffect[] attacks = data.GetAttacks();
-        /*
-        AbilityInfo.ActiveAbility = data;
-        AbilityInfo.SourceExecutingUnit = source;
-        AbilityInfo.AttackedSlot = attackedSlot;
-        AbilityInfo.AttackStartedAt = source.snapPos;
-        // standard
-        if (data.standard.used) {
-            data.standard.Execute();
-        }
-        // aoe
-        if (data.aoe.used) {
-            data.aoe.Execute();
-        }
-        // buff
-        if (data.buff.used) {
-            if (GridAccess.GetUnitAtPos(attackedSlot)) {
-                data.buff.AtkBehaviourExecute();// Register(source, GridAccess.GetUnitAtPos(attackedSlot));
-            }
-        }
-        if (data.move.used) {
-            data.move.Execute();
-        }
-        if (data.pierce.used) {
-            data.pierce.Execute();
-        }
-        if (data.passive.used) {
-            AbilityInfo.AttackStartedAt = attackedSlot;
-            data.passive.Execute();
-        }
-        if (data.spawn.used) {
-            data.spawn.Execute();
-        }
-        */
-    }
+    /// <param name="info"></param>
     public void ActivateAbility(AbilityInfo info) {
         foreach (var item in GetAbilityEffects()) {
             //if(CombatEventMask.CanActivate(activator, item.activator)) {

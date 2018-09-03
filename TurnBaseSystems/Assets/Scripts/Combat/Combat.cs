@@ -27,7 +27,7 @@ public class Combat : MonoBehaviour {
 
     public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
     public Queue<CombatEventMask> activatorsQue = new Queue<CombatEventMask>();
-    public const int gameRules = 3; // 0: abilities on energy. 1: max 2. 2: abilities on energy and max 2. 3: energy, max 2, max 1 move
+    public const int gameRules = 3; // 0: abilities on energy. 1: max 2. 2: abilities on energy and max 2. 3: energy, max 2, max 1 move. 4: max 1 attack, max 1 move
     public bool setUpTempGrid;
 
     private void Awake() {

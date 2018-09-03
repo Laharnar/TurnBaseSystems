@@ -12,6 +12,10 @@ public class CombatStatsUI :MonoBehaviour{
     }
 
     public void UpdateStats() {
+        if (selectedText == null) {
+            Debug.Log("Ignoring on select UI, missing reference.");
+            return;
+        }
         Unit selectedUnit = PlayerTurnData.Instance.selectedUnit;//selectedPlayerUnit;
         if (!selectedUnit)
             selectedText.text = "SELECT UNIT";

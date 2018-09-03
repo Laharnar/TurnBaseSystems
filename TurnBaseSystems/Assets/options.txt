@@ -40,3 +40,5 @@ don't target directly, but at stack
 excel based.
 
 will damage allies warning.
+
+swap units automatically, or trigger which are avaliable.

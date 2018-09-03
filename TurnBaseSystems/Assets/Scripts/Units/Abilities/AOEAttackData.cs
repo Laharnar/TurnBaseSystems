@@ -22,7 +22,7 @@ public class AOEAttackData : DamageBasedAttackData {
         int charges = info.executingUnit.charges;
         Unit source = info.executingUnit;
         for (int i = 0; i < vec.Length; i++) {
-            if (!vec[i] || !EmpowerAlliesData.ValidTarget(targets, vec[i].flag.allianceId, source)) continue;
+            if (!vec[i] || !EmpowerAlliesData.ValidTarget(source, targets, vec[i].flag.allianceId)) continue;
             if (useChargesToChooseLimitSlots) {
                 if (charges > 0) {
                     charges--;

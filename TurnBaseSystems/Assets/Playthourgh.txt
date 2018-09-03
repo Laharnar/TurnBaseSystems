@@ -1,0 +1,117 @@
+﻿----------------------- 3.9.2018 playthrough 1
+had a lot of them earlier, just didn't record...
+
+Notes:
+priest aoe should nuke em, and attacks don't work
+Holy judgement - places a bunch of things that explode
+
+surround was okay
+zombies are a okay
+dogs on ending were okay.
+more dmg on zombies?
+
+only 1 attack
+long shot stronger
+
+disable collision on units.
+heal could be stronger
+
+moving and failing to move, increases movement.
+ranges, are melee
+
+swap units automatically..
+captains with bugs are tuff, 5 units, 5 turns
+but it was fun
+still no one died cuz they shield mine
+dogs could do more dmg
+
+i don't need all the units
+
+2 dekurions, 2 dogs wave is borng
+8 dekurions don't really need to do much
+
+taunt on the melle guy
+
+full shield penetration
+aura disability
+
+it gets grindy after that.
+they don't have enough dmg to be scary.
+aoe would be better as explosion
+was better as small explosion.
+
+always slash twice
+this is good.
+1 dog
+easy.
+anticipation
+
+Length:
+1400/60 mins
+=140/6 = 24mins
+maybe place slot that explodes?
+
+Satistfaction: 2.8f/5
+Meh it wasn't bad. only 1 moment like that. but it wasn't great.
+or that engaging.
+
+Rating: - 
+
+Fixes required:
+Priest/Holy judgement : more specilized, like nuking skill. aoe doesn't really fit.
+more moves on melee gurads
+Long shot should be stronger for 1 use only.
+Raycasting on units shouldn't work.
+Stronger heal, or move empower
+swap units automatically..
+2 dekurions, 2 dogs wave is boring
+Aura bugs.
+drop bugs.
+allies as enemies.
+taunt or parry on enhancer guy
+full shield penetration or aura disability. too bugged.
+
+Improvement:
+lacking specialization. on enforcer and priest. absolete armor(range buff?). 
+weak skills longshot.
+heal up or mobility empower
+lacking mobility on enemies.
+enforcer: taunt or parry. be tanky, glow, frontliner. cant both move and attack.
+priest: full shield penetration debuff or aura disability. 
+mage: high dmg
+infested: infestation shot - poison. change them into indiscriminating zombies.
+
+
+Wave balance:
+last 2 dekurions 2 dogs split into 3 is boring. running over map is boring.
+allies should be enemies
+last big wave is grindy due to unit balance.
+
+Bugs:
+raycasting on units
+auras
+spawn items
+weird move glitches.
+enemy unit move all at same time for some reason, plus banned insta skipped.
+
+Options:
+swap units automatically, or trigger which are avaliable.
+----------------------------
+IN WORKING
+Improvement:
+lacking specialization. on enforcer and priest. absolete armor(range buff?). 
+weak skills longshot.
+heal up or mobility empower
+lacking mobility on enemies.
+no move+attack. only 1.
+only 1 strong attack always.
+enforcer: taunt or parry. be tanky, glow, frontliner.
+priest: full shield penetration debuff or aura disability. 
+mage: high dmg
+infested: infestation shot - poison. change them into indiscriminating zombies.
+
+Bugs:
+spawn items
+weird move glitches.
+enemy unit move all at same time for some reason, plus banned insta skipped.
+
