@@ -96,15 +96,15 @@ public class PlayerFlag : FlagController {
 
     private IEnumerator HandleAttack() {
         Debug.Log("Trying to attack: " + selectedAttackSlot + " in range: " +
-                GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0)) + " enough actions:" + selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility));
+                GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0)) + " enough actions:" + selectedPlayerUnit.PassGameRules(PlayerTurnData.Instance.ActiveAbility));
         //Debug.Log("Attacking v2 (0) " + hoveredSlot.x + " " + hoveredSlot.y);
-        if (selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility)
+        if (selectedPlayerUnit.PassGameRules(PlayerTurnData.Instance.ActiveAbility)
             && GridLookup.IsPosInMask(selectedPlayerUnit.transform.position, hoveredSlot, PlayerTurnData.Instance.GetMask(0))
             ) {
 
             CombatUI.OnBeginAttack();
 
-            CombatEvents.ClickAction(selectedPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+            CombatEvents.ClickAction(selectedPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
             yield return null;
             yield return Combat.Instance.StartCoroutine(selectedPlayerUnit.WaitActionsToComplete());
 
@@ -153,10 +153,11 @@ public class PlayerFlag : FlagController {
     }
 
     private void SwapToValidAbility() {
-        PlayerTurnData.Instance.lastAbility = PlayerTurnData.ActiveAbility;
+        Debug.Log("Swap ability");
+        PlayerTurnData.Instance.lastAbility = PlayerTurnData.Instance.ActiveAbility;
         if (selectedPlayerUnit.CanDoAnyAction && 
-            (PlayerTurnData.ActiveAbility==null || !selectedPlayerUnit.PassGameRules(PlayerTurnData.ActiveAbility))) {
-            SetActiveAbility(selectedPlayerUnit, selectedPlayerUnit.GetNextAbilityWithEnoughActions());
+            (PlayerTurnData.Instance.ActiveAbility==null || !selectedPlayerUnit.PassGameRules(PlayerTurnData.Instance.ActiveAbility))) {
+            SetActiveAbility(selectedPlayerUnit, selectedPlayerUnit.GetLastOrNextAbilityWithEnoughActions());
         }
         CombatUI.OnActiveAbilityChange();
     }
@@ -181,8 +182,8 @@ public class PlayerFlag : FlagController {
     internal void SetActiveAbility(Unit unitSource, AttackData2 atk) {
 
         Debug.Log("Setting active ability " + atk.o_attackName);
-        PlayerTurnData.Instance.lastAbility = PlayerTurnData.ActiveAbility;
-        PlayerTurnData.Instance.activeAbility = atk;//unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
+        PlayerTurnData.Instance.lastAbility = PlayerTurnData.Instance.ActiveAbility;
+        PlayerTurnData.Instance.ActiveAbility = atk;//unitSource.abilities.GetNormalAbilities()[atkId] as AttackData2;
 
         CombatUI.OnActiveAbilityChange();
     }
@@ -192,7 +193,7 @@ public class PlayerFlag : FlagController {
             CombatUI.OnUnitDeseleted();
             selectedUnit = null;
             selectedPlayerUnit = null;
-            PlayerTurnData.Instance.activeAbility = null;
+            PlayerTurnData.Instance.ActiveAbility = null;
         }
     }
 

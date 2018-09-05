@@ -100,6 +100,10 @@ public class Combat : MonoBehaviour {
         units.Add(u);
     }
 
+    internal void Reset() {
+        AbilityInfo.Instance.Reset();
+    }
+
     internal void DeRegisterUnit(Unit u) {
         GetUnits(u.flag.allianceId).Remove(u);
         units.Remove(u);
@@ -167,7 +171,9 @@ public class Combat : MonoBehaviour {
                 CombatEvents.OnTurnStart(flags[j]);
                 flags[0].NullifyUnits();
                 flags[1].NullifyUnits();
+                yield return new WaitForSeconds(1);
                 yield return StartCoroutine(flags[j].controller.FlagUpdate(flags[j]));
+                yield return new WaitForSeconds(1);
                 CombatEvents.OnTurnEnd(flags[j]);
                 
                 Debug.Log("Flag done - " + (j + 1));
@@ -252,8 +258,8 @@ public class Combat : MonoBehaviour {
     /// <param name="unit"></param>
     /// <param name="hoveredSlot"></param>
     /// <param name="activeAbility"></param>
-    public static void RegisterAbilityUse(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility) {
-        AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility, AbilityInfo.CurActivator.Copy());
+    public static void RegisterAbilityUse(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility, CombatEventMask activator) {
+        AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility, activator);
         // sort ability into correct stacks
         Combat.Instance.abilitiesQue.Enqueue(info);
     }
@@ -272,7 +278,7 @@ public class Combat : MonoBehaviour {
             
             AbilityInfo info = abilitiesQue.Dequeue();
             // activates attack. these attacks can add further attacks to be executed.
-
+            AbilityInfo.Instance = new AbilityInfo(info);
             info.executingUnit.AttackAction(info);
             // handles, data changes
             // move reaction is executed when attack is move.
@@ -281,7 +287,7 @@ public class Combat : MonoBehaviour {
             }
 
             // wait animations
-            info.executingUnit.AttackAnimations(info.activeAbility);
+            info.executingUnit.AnimationsIfParsedAttack(info.activeAbility);
             float len = AttackData2.AnimLength(info.executingUnit, info.activeAbility);
             if (len > 0)
                 yield return new WaitForSeconds(len);
@@ -292,6 +298,9 @@ public class Combat : MonoBehaviour {
             // effects
 
             // sound
+
+            // reset
+            //AbilityInfo.Instance.Reset(); don't reset combat after 1 atk.
         }
     }
 }

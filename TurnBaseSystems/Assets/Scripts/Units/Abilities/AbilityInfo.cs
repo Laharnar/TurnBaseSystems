@@ -21,7 +21,7 @@ public class AbilityInfo {
         executingUnit = instance.selectedPlayerUnit;
         attackStartedAt = instance.selectedPlayerUnit.snapPos;
         attackedSlot = instance.hoveredSlot;
-        activeAbility = instance.activeAbility;
+        activeAbility = instance.ActiveAbility;
     }
 
     public AbilityInfo(Unit executingUnit, Vector3 attackedSlot, AttackData2 activeAbility) {
@@ -47,8 +47,13 @@ public class AbilityInfo {
     }
 
     // todo
-    public static AttackData2 ActiveAbility { get { return PlayerTurnData.ActiveAbility; } set { PlayerTurnData.Instance.activeAbility = value; } }
-    public static CombatEventMask CurActivator { get { return Instance.activator; } set { Instance.activator = value; } }
+    public static AttackData2 ActiveAbility { get { return Instance.activeAbility; } set { Instance.activeAbility = value; } }
+    public static CombatEventMask CurActivator {
+        get {
+            if (Instance.activator == null) {
+                Instance.activator = new CombatEventMask();
+            }
+            return Instance.activator; } set { Instance.activator = value; } }
     public static BUFFAttackData ActiveOrigBuff;
     public static BuffUnitData ActiveBuffData;
     private AbilityInfo info;

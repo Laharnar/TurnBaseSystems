@@ -10,6 +10,7 @@ public class BUFFAttackData : AbilityEffect {
     public int recieveDmg;
     public float dmgMultiplierUp;
     public int healAmount;
+    public int addCounters = 0;
     public GridMask temporaryMoveRange;
     public GridMask temporaryAttackRange;
     public BuffType buffType = BuffType.None;
@@ -22,8 +23,11 @@ public class BUFFAttackData : AbilityEffect {
         buff.buffType = buffType;
         buff.armorAmt = armorAmt;
         buff.healAmount = healAmount;
+        buff.recieveDmg = recieveDmg;
+        buff.dmgMultiplierUp = dmgMultiplierUp;
         buff.endBuffStatus = endBuffStatus;
         buff.endAnimSets = endAnimSets;
+        buff.addCounters = addCounters;
         return buff;
     }
 
@@ -35,30 +39,34 @@ public class BUFFAttackData : AbilityEffect {
     internal override void AtkBehaviourExecute(AbilityInfo info) {
         CombatEventMask mask = info.activator;
         //BUFFAttackData buffInstance = AbilityInfo.ActiveBuffData.buff;
-        Debug.Log("Buff "+mask.onAttack + " "+mask.onEnemyTurnEnd +" "+mask.onUnitDies);
+        Debug.Log("Buff activation attempt activators-atk:"+mask.onAttack + (" turnEnd:"+mask.onAnyTurnEnd+" "+ (AbilityInfo.ActiveOrigBuff!=null)+" "+ (AbilityInfo.ActiveBuffData!=null)) +" death:"+mask.onUnitDies);
         if (mask.onAttack) {
             // original is this, when attacking
             ExecuteOnStart(info.TargetedUnit, this);
             BuffManager.Register(info.executingUnit, info.TargetedUnit, this);
+            info.executingUnit.AbilitySuccess();
         }
-        if (mask.onEnemyTurnEnd || mask.onAnyTurnEnd) {
+        if (mask.onAnyTurnEnd) {
             // original is now saved in combat info
-            Consume(AbilityInfo.ActiveOrigBuff, AbilityInfo.ActiveBuffData);
+            // additional check for buff-tick.
+            if (AbilityInfo.ActiveOrigBuff!= null && AbilityInfo.ActiveBuffData!=null) {
+                Consume(AbilityInfo.ActiveOrigBuff, AbilityInfo.ActiveBuffData);
+            }
         }
         if (mask.onUnitDies) {
+            info.executingUnit.AbilitySuccess();
             UnitDeath();
             BuffManager.Remove(AbilityInfo.ActiveOrigBuff, this, AbilityInfo.ActiveBuffData);
         }
     }
     internal void Execute(Unit target) {
-        AttackData2.RunAnimations(target, endAnimSets);
-        
+        Debug.Log(recieveDmg);
         if (healAmount != 0) {
             Debug.Log("[heal buff] +hp" + healAmount + " t:"+target);
             target.Heal(healAmount, null);
         }
         if (recieveDmg!= 0) {
-            Debug.Log("[dmg buff] +dmg " + recieveDmg);
+            Debug.Log("[bleed] get dmg " + recieveDmg);
             target.GetDamaged(recieveDmg);
         }
         if (setStatus != CombatStatus.SameAsBefore)
@@ -67,14 +75,13 @@ public class BUFFAttackData : AbilityEffect {
 
     internal void Consume(BUFFAttackData origBuff, BuffUnitData data) {
         turns--;
-        
+        Debug.Log(data.source+ "->"+data.target+" Consumed buff tick ."+(turns+1)+"->"+turns);
         // activate buff
         if (turns <= 0) {
             ExecuteOnEnd(data.target, origBuff);
             Debug.Log("Ending buff " + GetType() + " " + setStatus + " s:" + data.source + " t:" + data.target);
             BuffManager.Remove(origBuff, this, data);
         } else {
-            Debug.Log("[heal buff] +hp" + healAmount + " t:"+data.target);
             Execute(data.target);
         }
     }
@@ -100,6 +107,10 @@ public class BUFFAttackData : AbilityEffect {
             Debug.Log("[dmg buff] +dmg mult" + dmgMultiplierUp + " t:" + target);
             target.dmgMult += dmgMultiplierUp;
         }
+        if (addCounters != 0) {
+            Debug.Log("[counter] +counter count" + addCounters + " t:" + target);
+            target.reflectDmgTimes += addCounters;
+        }
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;
     }
@@ -117,6 +128,10 @@ public class BUFFAttackData : AbilityEffect {
         if (dmgMultiplierUp != 0) {
             Debug.Log("[dmg buff] -dmg mult" + dmgMultiplierUp + " t:" + target);
             target.dmgMult -= dmgMultiplierUp;
+        }
+        if (addCounters != 0) {
+            Debug.Log("[counter] -counter count" + addCounters + " t:" + target);
+            target.reflectDmgTimes -= addCounters;
         }
         if (setStatus != CombatStatus.SameAsBefore)
             target.combatStatus = setStatus;

@@ -26,8 +26,8 @@ public class CombatUI {
         if (PlayerTurnData.LastAbility != null)
             AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.LastAbility);
 
-        if (PlayerTurnData.ActiveAbility != null)
-            AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.ActiveAbility);
+        if (PlayerTurnData.Instance.ActiveAbility != null)
+            AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.Instance.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
 
         ShowUI(true, curPlayerUnit, curPlayerUnit, true);
@@ -38,7 +38,7 @@ public class CombatUI {
         GridDisplay.Instance.ClearAll();
         ShowUI(true, curPlayerUnit, curUnit, true);
         if (hoveredUnit.IsPlayer) {
-            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         }
         GridDisplay.Instance.RemakeGrid();
     }
@@ -82,8 +82,8 @@ public class CombatUI {
         bool showButtonAbilities = pUnit != null && unit != null && visible;
         UIManager.ShowPlayerUI(showPlayerUI);
         UIManager.ShowAbilities(showButtonAbilities, pUnit, interactible);
-        if (PlayerTurnData.ActiveAbility!= null)
-            PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.ActiveAbility.id, showButtonAbilities);
+        if (PlayerTurnData.Instance.ActiveAbility!= null)
+            PlayerUIAbilityList.m.MarkButtonAsSelected(PlayerTurnData.Instance.ActiveAbility.id, showButtonAbilities);
         else
             PlayerUIAbilityList.m.MarkButtonAsSelected(0, false);
 
@@ -98,14 +98,14 @@ public class CombatUI {
 
     internal static void OnUnitFinishesAction(Unit unit) {
         if (!unit.NoActions && unit.CanDoAnyAction) {
-            AttackDisplay.ShowGrid(unit, hoveredSlot, PlayerTurnData.ActiveAbility);
+            AttackDisplay.ShowGrid(unit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
             GridDisplay.Instance.RemakeGrid();
         }
         ShowUI(true, curPlayerUnit, curUnit, true);// update with buttons are enabled
     }
 
     internal static void OnUnitRunsOutOfActions() {
-        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         ShowUI(false, curPlayerUnit, null, false);
         GridDisplay.Instance.RemakeGrid();
     }
@@ -117,13 +117,13 @@ public class CombatUI {
     }
 
     internal static void OnMouseScrolled() {
-        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
-        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
+        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
     }
 
     internal static void OnBeginAttack() {
-        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+        AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.RedSelectionArea, GridMask.One);
 
@@ -134,11 +134,11 @@ public class CombatUI {
     internal static void OnMouseMovedToDfSlot(Vector3 hoveredSlot, Vector3 lastHoveredSlot) {
         if (hoveredSlot != lastHoveredSlot) {
             GridDisplay.Instance.HideGrid(lastHoveredSlot, GridDisplayLayer.BlueSelectionArea, GridMask.One);
-            if (curPlayerUnit && PlayerTurnData.ActiveAbility != null)
-                AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, PlayerTurnData.ActiveAbility);
+            if (curPlayerUnit && PlayerTurnData.Instance.ActiveAbility != null)
+                AttackDisplay.HideGrid(curPlayerUnit, lastHoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         }
-        if (curPlayerUnit && PlayerTurnData.ActiveAbility != null && hoveredSlot != lastHoveredSlot) {
-            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.ActiveAbility);
+        if (curPlayerUnit && PlayerTurnData.Instance.ActiveAbility != null && hoveredSlot != lastHoveredSlot) {
+            AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         }
         if (hoveredSlot != lastHoveredSlot) {
             GridDisplay.Instance.SetUpGrid(hoveredSlot, GridDisplayLayer.BlueSelectionArea, GridMask.One);

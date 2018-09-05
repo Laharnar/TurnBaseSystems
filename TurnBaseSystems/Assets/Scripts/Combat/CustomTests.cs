@@ -66,7 +66,7 @@ public class CustomTests: MonoBehaviour {
                 Unit witch = witchObj.GetComponent<Unit>();
                 AttackData2 atk = witch.abilities.additionalAbilities2[1];
                 CombatStats comstat = witch.stats;
-                witch.OnTurnStart();
+                witch.OnUnitTurnStart();
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
 
                 Test("EmpowerShieldBuffWorks1a", comstat.GetSum(CombatStatType.Armor), 3);
@@ -76,7 +76,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks1c", comstat.GetSum(CombatStatType.Armor),0);
                 Test("EmpowerShieldBuffWorks1f", comstat.GetSum(CombatStatType.Hp), 4);
 
-                witch.OnTurnStart();
+                witch.OnUnitTurnStart();
                 //witch.AttackAction(witch.transform.position, witch.abilities.additionalAbilities2[1]);
                 comstat = witch.stats;
 
@@ -91,7 +91,7 @@ public class CustomTests: MonoBehaviour {
                 Test("EmpowerShieldBuffWorks2c", comstat.GetSum(CombatStatType.Armor), 0);
                 Test("EmpowerShieldBuffWorks2d", comstat.GetSum(CombatStatType.Hp), 2);
 
-                witch.OnTurnStart();
+                witch.OnUnitTurnStart();
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
 
                 Test("EmpowerShieldBuffWorks3c", comstat.GetSum(CombatStatType.Armor), 3);
@@ -105,11 +105,11 @@ public class CustomTests: MonoBehaviour {
                 AttackData2 atk = witch.abilities.additionalAbilities2[1];
                 CombatStats comstat = witch.stats;
                 int x = 3;
-                witch.OnTurnStart();
+                witch.OnUnitTurnStart();
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
                 BuffManager.Register(witch, witch, atk.buff);
-                BuffManager.ConsumeBuffs(Combat.Instance.flags[1]);
+                BuffManager.TickBuffs();
                 //-witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);
@@ -122,11 +122,11 @@ public class CustomTests: MonoBehaviour {
                 AttackData2 atk = witch.abilities.additionalAbilities2[1];
                 CombatStats comstat = witch.stats;
                 int x = 3;
-                witch.OnTurnStart();
+                witch.OnUnitTurnStart();
                 witch.AddShield(atk.buff, atk.buff.armorAmt);
                 Test("Add shield1a", comstat.GetSum(CombatStatType.Armor), 3);
                 BuffManager.Register(witch, witch, atk.buff);
-                BuffManager.ConsumeBuffs(Combat.Instance.flags[1]);
+                BuffManager.TickBuffs();
                 //witch.AddShield(atk.buff, -atk.buff.armorAmt);
                 Test("Add shield1b", comstat.GetSum(CombatStatType.Armor), 0);
                 //witch.AttackAction2(witch.transform.position, witch.abilities.additionalAbilities2[1]);

@@ -11,6 +11,8 @@ public sealed class AttackData2 : StdAttackData {
 
     // activators activate the effect from combat manager
     public CombatEventMask[] activators;
+    public bool defaultToSelf = false;
+    internal int id;
 
     public AttackRangeData range;
     public StandardAttackData standard;
@@ -21,7 +23,6 @@ public sealed class AttackData2 : StdAttackData {
     public PassiveData passive;
     public PierceAtkData pierce;
     public SpawnAttackData spawn;
-    internal int id;
 
     public AbilityEffect[] GetAbilityEffects() {
         return new AbilityEffect[] {
@@ -45,8 +46,9 @@ public sealed class AttackData2 : StdAttackData {
     public void ActivateAbility(AbilityInfo info) {
         foreach (var item in GetAbilityEffects()) {
             //if(CombatEventMask.CanActivate(activator, item.activator)) {
-            if (item.used)
+            if (item.used) {
                 item.AtkBehaviourExecute(info);
+            }
             //}
         }
     }
@@ -71,5 +73,11 @@ public sealed class AttackData2 : StdAttackData {
         // todo: for dash
         return maxLen;
     }
-    
+
+    internal Vector3 DefaultTarget(Vector3 selfPos, Vector3 snapPos) {
+        if (defaultToSelf) {
+            return selfPos;
+        }
+        return snapPos;
+    }
 }

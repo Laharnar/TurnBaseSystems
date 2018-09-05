@@ -19,8 +19,10 @@ public class PierceAtkData: DamageBasedAttackData {
     public bool restoreChargesUsedOnKills = false;
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onAttack)
+        if (info.activator.onAttack) {
             Execute(info);
+            info.executingUnit.AbilitySuccess();
+        }
     }
 
     public void Execute(AbilityInfo info) {

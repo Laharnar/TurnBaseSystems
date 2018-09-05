@@ -29,6 +29,11 @@ public class AnimationController : MonoBehaviour {
             anim.SetBool(v, value);
     }
 
+    public void SetFloat(string name, float value) {
+        if (anim)
+            anim.SetFloat(name, value);
+    }
+
     internal int TriggerToId(string animTrigger) {
         for (int i = 0; i < triggers.Length; i++) {
             if (triggers[i] == animTrigger) {

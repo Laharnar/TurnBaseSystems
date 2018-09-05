@@ -16,7 +16,44 @@ public class CombatTestingEnv:MonoBehaviour {
     }
 
     public IEnumerator RunTests(MonoBehaviour script) {
-        yield return script.StartCoroutine(Test1_Auras());
+        // yield return script.StartCoroutine(Test1_Auras());
+        //yield return script.StartCoroutine(Test2_Buffs());
+        yield return script.StartCoroutine(Test3_Human());
+    }
+
+    private IEnumerator Test3_Human() {
+        SpawnReadyUnit(0, "Royal enforcer", new Vector3(0, 0));
+        SpawnReadyUnit(1, "Zombie", new Vector3(1, 0));
+        yield return null;
+
+        Unit enforcer = SelectUnitByType(0, "Royal enforcer");
+        Unit zombie = SelectUnitByType(1, "Zombie");
+        if (zombie) {
+            AttackSlot(zombie, SelectAbility(zombie, 1), new Vector3(0, 0), new CombatEventMask() { onAttack = true });
+            AttackSlot(zombie, SelectAbility(zombie, 1), new Vector3(0, 0), new CombatEventMask() { onAttack = true });
+            TestEval.Test("enforcer hp", enforcer.hp, 1);
+        } else {
+            MissingUnitError(zombie , "Zombie");
+        }
+        yield return null;
+    }
+
+    private void MissingUnitError(Unit zombie, string v) {
+        Debug.Log("Missing unit "+v+ " "+zombie);
+    }
+
+    public IEnumerator Test2_Buffs() {
+        Unit dekurion = SpawnReadyUnit(0, "Royal enforcer", new Vector3(0, 0));
+        yield return null;
+        Unit enforcer = SelectUnitByType(0, "Royal enforcer");
+        AttackSlot(enforcer, SelectAbility(enforcer, "Protection"), new Vector3(0, 0), new CombatEventMask() { onAttack = true });
+        // lasts 2 turns
+        TestEval.Test("Protection amt 1", enforcer.temporaryArmor, 5);
+        ForceEndTurn(0);
+        TestEval.Test("Protection amt 2", enforcer.temporaryArmor, 5);
+        ForceEndTurn(1);
+        TestEval.Test("Protection amt 3", enforcer.temporaryArmor, 3);
+        yield return null;
     }
 
     public IEnumerator Test1_Auras() {
@@ -94,20 +131,47 @@ public class CombatTestingEnv:MonoBehaviour {
         return t.GetComponent<Unit>();
     }
 
-    public void ForceEndTurn() {
+    public void ForceEndTurn(int flagId) {
+        CombatEvents.OnTurnEnd(Combat.Instance.flags[flagId]);
+    }
 
+    public void SetCurrentCombatState(Unit execuutingUnit) {
+        AbilityInfo.ExecutingUnit = execuutingUnit;
     }
 
     public Unit SelectUnitByType(int flag, string code) {
+        foreach (var unit in Combat.Instance.flags[flag].info.units) {
+            if (unit.codename == code) {
+                return unit;
+            }
+        }
         return null;
     }
 
     public Unit SelectUnitByFlag(int flag, int i) {
-        return null;
+        return Combat.Instance.flags[flag].info.units[i];
     }
 
-    public void AttackSlot(Vector3 slot) {
+    public AttackData2 SelectAbility(Unit unit, string ability) {
+        foreach (var item in unit.abilities.GetNormalAbilities()) {
+            if (item.o_attackName == ability) {
+                return item;
+            }
+        }
+        return null;
+    }
+    public AttackData2 SelectAbility(Unit unit, int ability) {
+        return unit.abilities.GetNormalAbilities()[ability];
+    }
 
+    public bool AttackSlot(Unit unit, AttackData2 ablity, Vector3 slot, CombatEventMask mask) {
+        SetCurrentCombatState(unit);
+        unit.lastAttackParserPassed = false;
+        AbilityInfo inf = new AbilityInfo(unit, slot, ablity) {
+            activator = mask
+        };
+        unit.AttackAction(inf, true);
+        return unit.lastAttackParserPassed;
     }
 }
 

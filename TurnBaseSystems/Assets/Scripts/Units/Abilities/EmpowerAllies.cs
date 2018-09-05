@@ -28,6 +28,7 @@ public class EmpowerAlliesData : AbilityEffect {
             CombatDebug.Log("AURA effect");
             DeEffectArea(info.executingUnit.snapPos, info.executingUnit, true);
             EffectArea(info.executingUnit.snapPos, info.executingUnit);
+            info.executingUnit.AbilitySuccess();
         }
     }
 

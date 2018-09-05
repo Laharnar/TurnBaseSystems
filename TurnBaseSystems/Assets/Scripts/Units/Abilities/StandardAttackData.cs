@@ -46,8 +46,10 @@ public class StandardAttackData : DamageBasedAttackData {
     }
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onAttack)
+        if (info.activator.onAttack) {
             Execute(info);
+            info.executingUnit.AbilitySuccess();
+        }
     }
 
     internal void Execute(AbilityInfo info) {
@@ -75,10 +77,11 @@ public class StandardAttackData : DamageBasedAttackData {
                 u.Heal(heal, this);
             }
             // enemy killed
-            Debug.Log("Enemy hp left "+u.hp + " heal on kill "+healOnKills+ " healing " +heal+" dmg "+damage);
+            Debug.Log("Enemy hp left: "+u.hp + " heal on kill: "+healOnKills+ " healing: " +heal+" dmg: "+damage);
             if (u.dead && healOnKills > 0) {
                 info.executingUnit.Heal(healOnKills, this);
             }
+            info.executingUnit.AbilitySuccess();
         }
         if (data.standard.setStatus != CombatStatus.SameAsBefore)
             info.executingUnit.combatStatus = data.standard.setStatus;

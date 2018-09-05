@@ -22,10 +22,6 @@ public static class CombatEvents {
         onUnitDies
      * 
      * */
-     [System.Obsolete("too hard to edit by hand")]
-    public static void ActivateAbilitiesForCurCombatState() {
-        return;
-    }
     public static void DebugEvents(string msg) {
         Debug.Log("EVENT: "+msg);
     }
@@ -46,16 +42,11 @@ public static class CombatEvents {
         AbilityInfo.AttackedSlot = hoveredSlot;
         AbilityInfo.AttackStartedAt = unit.snapPos;
         AbilityInfo.ActiveAbility = activeAbility;
-        //Combat.RegisterAbilityUse(unit, hoveredSlot, activeAbility);
 
-
-        //AbilityInfo.CurActivator.Reset();
         AbilityInfo.CurActivator.onMove = !AbilityInfo.CurActivator.never;
-        //Combat.RegisterAbilityUse(unit, hoveredSlot, activeAbility);
 
-        //AbilityInfo.CurActivator.Reset();
         AbilityInfo.CurActivator.onDamaged = !AbilityInfo.CurActivator.never;
-        Combat.RegisterAbilityUse(unit, hoveredSlot, activeAbility);
+        Combat.RegisterAbilityUse(unit, hoveredSlot, activeAbility, AbilityInfo.CurActivator.Copy());
 
         // v2
         Debug.Log("Turn data isn't saved anymore.");
@@ -64,13 +55,6 @@ public static class CombatEvents {
 
 
         CombatEvents.OnUnitActivatesAbility(unit);
-    }
-
-    public static void ActivateAbilitiesByActivator() {
-        return;
-        for (int i = 0; i < Combat.Instance.units.Count; i++) {
-            Combat.Instance.units[i].RunAllAbilities2(AbilityInfo.CurActivator);
-        }
     }
 
     public static void OnTurnStart(FlagManager flag) {
@@ -86,12 +70,13 @@ public static class CombatEvents {
         }*/
         flag.NullifyUnits();
         foreach (var item in flag.info.units) {
-            item.OnTurnStart();
+            item.OnUnitTurnStart();
         }
+        Combat.Instance.Reset();
     }
 
     public static void OnTurnEnd(FlagManager flag) {
-        DebugEvents("OnTurnEnd");
+        DebugEvents("OnTurnEnd flag:"+flag.id);
         // end
         AbilityInfo.CurActivator.Reset();
         AbilityInfo.CurActivator.onAnyTurnEnd = !AbilityInfo.CurActivator.never;
@@ -110,28 +95,14 @@ public static class CombatEvents {
             item.OnUnitTurnEnd();
         }
 
-        BuffManager.ConsumeBuffs(flag);
+        BuffManager.TickBuffs();
 
-        AbilityInfo.Instance.Reset();
-       
-    }
-    
-    public static void OnUnitDamaged() {
-        
-
-        /*AbilityInfo.CurActivator.Reset();
-        AbilityInfo.CurActivator.onDamaged = !AbilityInfo.CurActivator.never;
-        ActivateAbilitiesForCurCombatState();
-        CombatEvents.ActivateAbilitiesIfStateMatches();
-        */
+        Combat.Instance.Reset();
     }
 
     public static void OnUnitActivatesAbility(Unit unit) {
         DebugEvents("OnUnitActivatesAbility");
         
-        foreach (var items in FactionCheckpoint.checkpointsInLevel) {
-            items.CheckpointCheck(unit);
-        }
         Combat.Instance.UnitNullCheck();
     }
 

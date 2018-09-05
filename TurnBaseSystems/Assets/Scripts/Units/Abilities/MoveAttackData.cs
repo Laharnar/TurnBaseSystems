@@ -26,8 +26,10 @@ public class MoveAttackData : AbilityEffect{
     }
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onMove)
+        if (info.activator.onMove) {
             Execute(info);
+            info.executingUnit.AbilitySuccess();
+        }
     }
 
     public void Execute(AbilityInfo info) {

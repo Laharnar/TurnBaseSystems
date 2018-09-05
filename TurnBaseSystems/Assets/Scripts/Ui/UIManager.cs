@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void ShowSlideScreen() {
-        Debug.Log("Showing slide screen");
+        //Debug.Log("Showing slide screen");
         if (slide)
             slide.text = slideScreenContent;
         if (slideAnim)

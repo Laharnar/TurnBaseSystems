@@ -58,7 +58,7 @@ public class UnitAbilities : MonoBehaviour {
         for (int i = 0; i < abilityOnSteppedOn.Length; i++) {
             if (abilityOnSteppedOn[i] < additionalAbilities2.Count) {
                 
-                Combat.RegisterAbilityUse(unit, steppedOnBy.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
+                Combat.RegisterAbilityUse(unit, steppedOnBy.snapPos, additionalAbilities2[abilityOnSteppedOn[i]], AbilityInfo.CurActivator.Copy());
 
                 //steppedOnBy.AttackAction2(unit.snapPos, additionalAbilities2[abilityOnSteppedOn[i]]);
             }

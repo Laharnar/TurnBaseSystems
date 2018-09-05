@@ -16,6 +16,8 @@ public class AnimDataHolder:MonoBehaviour {
                 source.anim.SetTrigger(animSets[activateSets[i]].animTrigger);
             } else if (animSets[activateSets[i]].animBool != "") {
                 source.anim.SetBool(animSets[activateSets[i]].animBool, animSets[activateSets[i]].animBoolValue);
+            } else if (animSets[activateSets[i]].animFloat != "") {
+                source.anim.SetFloat(animSets[activateSets[i]].animFloat, animSets[activateSets[i]].animFloatValue);
             }
         }
     }

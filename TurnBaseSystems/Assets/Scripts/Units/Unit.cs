@@ -75,6 +75,10 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public int movesUsed = 0;
     public float dmgMult = 1f;
 
+    AttackData2 lastUsedAbility;
+    public bool lastAttackParserPassed = false;
+    public int reflectDmgTimes = 0;
+
     private void Start() {
         Init();
     }
@@ -126,6 +130,11 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             init = true;
         }
     }
+
+    internal void AbilitySuccess() {
+        lastAttackParserPassed = true;
+    }
+
     public bool InteractionPass(Unit target, AttackData2 atk) {
         if (atk.requirements == AttackRequirments.RequiresUnit && target == null
             ) {
@@ -152,16 +161,17 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
     public void OnUnitTurnEnd() {
         AbilityInfo.ExecutingUnit = this;
-        AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
+        //AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
         AbilityInfo.AttackedSlot = snapPos;
         AbilityInfo.AttackStartedAt = snapPos;
-        Debug.Log("Applying passives.");
+        Debug.Log("Applying PASSIVES.");
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
             AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
             if (abilities.additionalAbilities2[i].active) {
-                abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
+                AttackAction(AbilityInfo.Instance, false);
+                //abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
                 //AttackData2.UseAttack(this, snapPos, abilities.additionalAbilities2[i]);
-                AttackAnimations(abilities.additionalAbilities2[i]);
+                //AttackAnimations(abilities.additionalAbilities2[i]);
             }
             
         }
@@ -175,8 +185,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
 
 
 
-
-    public void OnTurnStart() {
+    public void OnUnitTurnStart() {
         // area effect
         AbilityInfo.ExecutingUnit = this;
         AbilityInfo.Instance.activator = AbilityInfo.CurActivator.Copy();
@@ -186,25 +195,30 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
             AbilityInfo.ActiveAbility = abilities.additionalAbilities2[i];
             if (abilities.additionalAbilities2[i].active) {
-                abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
-                AttackAnimations(abilities.additionalAbilities2[i]);
+                AttackAction(AbilityInfo.Instance, false);
+                //abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
+                AnimationsIfParsedAttack(abilities.additionalAbilities2[i]);
+                
             }
         }
         //EmpowerAlliesData.DeffectEffect(snapPos, snapPos, this, AuraTrigger.OnTurnEnd);
 
         // reset stats
-
         abilitiesUsed = 0;
         movesUsed = 0;
         ResetActions();
         attacking = false;
+        lastUsedAbility = null;
         //ResetGreyHp();
     }
-    /*public void AddShield(int armorAmount) {
-        temporaryArmor = Mathf.Clamp(temporaryArmor + armorAmount, 0, 10);
-        hpUI.ShowHpWithGrey(hp, temporaryArmor);
 
-    }*/
+    public void AnimationsIfParsedAttack(AttackData2 attackData2) {
+        if (lastAttackParserPassed) {
+            AttackAnimations(attackData2, lastAttackParserPassed);
+            lastAttackParserPassed = false;
+        }
+    }
+    
 
     /// <summary>
     /// Pass negative value, to reduce
@@ -213,8 +227,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     /// <param name="armorAmount"></param>
     public void AddShield(AbilityEffect abilitySource, int armorAmount) {
         stats.Set(abilitySource, CombatStatType.Armor, temporaryArmor + armorAmount);
-        Debug.Log("setting armr " + temporaryArmor);
-
 
         //temporaryArmor = Mathf.Clamp(temporaryArmor + armorAmount, 0, 10);
         hpUI.ShowHpWithGrey(hp, temporaryArmor);
@@ -247,58 +259,60 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             || (Combat.gameRules == 0 && item.actionCost <= ActionsLeft);
     }
 
-    /// <summary>
-    /// Don't forget to set AbilityInfo.CurActivator.
-    /// </summary>
-    /// <param name="activator"></param>
-    public void RunAllAbilities2(CombatEventMask activator=null) {
-        AbilityInfo.ExecutingUnit = this;
-        /*for (int i = 0; i < abilities.additionalAbilities2.Count; i++) {
-            abilities.additionalAbilities2[i].ActivateAbility();
-        }*/
-    }
-    
-
-    internal int AttackAction(AbilityInfo info) {
+    internal int AttackAction(AbilityInfo info, bool costs = true) {
         AttackData2 atk = info.activeAbility;
         Vector3 attackedSlot = info.attackedSlot;
 
         attackedSlot = GridManager.SnapPoint(attackedSlot);
-        Unit u = GridAccess.GetUnitAtPos(attackedSlot);
 
         TurnInDir(snapPos, attackedSlot);
 
-        if (!InteractionPass(u, atk)) {
-            return 3;
+        int r = costs ? CostsAndChecks(info) : 0;
+        if (r != 0) {
+            return r;
         }
-
-        if (atk == abilities.move2 && moving || atk != abilities.move2 && attacking) {
-            Debug.Log("Running animations, waiting. action aborted.");
-            return -1;
-        }
-        Debug.Log("Executing attack " + atk.o_attackName);
-
-        abilitiesUsed++;
-        if (atk == abilities.move2)
-            movesUsed++;
-
-        CostActions(atk);
 
         atk.ActivateAbility(info);
         // AttackData2.UseAttack(this, attackedSlot, atk);
-
+        lastUsedAbility = info.activeAbility;
         // AttackAnimations(atk);
 
         // temp
         if (unitType == UnitType.Pickup) {
             Destroy(gameObject);
         }
-        return 2;
+        return 0;
     }
 
-    internal AttackData2 GetNextAbilityWithEnoughActions() {
+    private int CostsAndChecks(AbilityInfo info) {
+        Unit u = GridAccess.GetUnitAtPos(info.attackedSlot);
+
+        if (!InteractionPass(u, info.activeAbility)) {
+            return 3;
+        }
+
+        if (info.activeAbility == abilities.move2 && moving || info.activeAbility != abilities.move2 && attacking) {
+            Debug.Log("Running animations, waiting. action aborted.");
+            return -1;
+        }
+        Debug.Log("Executing attack " + info.activeAbility.o_attackName);
+
+        abilitiesUsed++;
+        if (info.activeAbility == abilities.move2)
+            movesUsed++;
+
+        CostActions(info.activeAbility);
+        return 0;
+    }
+
+
+    internal AttackData2 GetLastOrNextAbilityWithEnoughActions() {
+        // last used is reset on turn start
+        if (lastUsedAbility != null && PassGameRules(lastUsedAbility))
+            return lastUsedAbility;
         foreach (var item in abilities.GetNormalAbilities()) {
             if (PassGameRules(item)) {
+                Debug.Log(item.id);
                 return item;
             }
         }
@@ -336,8 +350,8 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         actionsLeft -= atk.actionCost;
     }
 
-    public void AttackAnimations(AttackData2 attack) {
-        if (attacking) return;
+    public void AttackAnimations(AttackData2 attack, bool attackResult) {
+        if (attacking || !attackResult) return;
         if (anim == null) { Debug.Log("Can't run animations, no animator", this); return; }
         foreach (var item in attack.GetAbilityEffects()) {
             if (item.used) {
@@ -360,10 +374,27 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         stats.Set(null, CombatStatType.Hp, Mathf.Clamp(hp + amt, 0, maxHp));
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
     }
+
+    // apply all the additional stuff.
+    public static int CalcDamage(Unit sourceUnit, Unit targetUnit, int dmg) {
+        dmg += sourceUnit.stats.GetSum(CombatStatType.StdDmg);
+        dmg = targetUnit.resistances.ApplyResistance(dmg, AbilityEffect.curDmg);
+        dmg = (int)((float)dmg * targetUnit.dmgMult);
+        return dmg;
+    }
     public void GetDamaged(int realDmg) {
         if (dead) return;
-        realDmg = resistances.ApplyResistance(realDmg, AbilityEffect.curDmg);
-        int dmgToHp = (int)(realDmg*dmgMult);
+        // handle counter attack.
+        if (reflectDmgTimes > 0) {
+            reflectDmgTimes--;
+            AttackAction(new AbilityInfo(this, abilities.additionalAbilities2[0].DefaultTarget(snapPos, AbilityInfo.ExecutingUnit.snapPos), abilities.additionalAbilities2[0], AbilityInfo.CurActivator), false);
+            return;
+        }
+        reflectDmgTimes = 0;
+
+        realDmg = CalcDamage(AbilityInfo.ExecutingUnit, this, realDmg);
+
+        int dmgToHp = realDmg;
 
         if (realDmg > 0) {
             dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);

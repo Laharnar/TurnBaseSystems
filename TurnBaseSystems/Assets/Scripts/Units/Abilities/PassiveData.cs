@@ -18,8 +18,10 @@ public class PassiveData : DamageBasedAttackData {
             ||
             info.executingUnit.flag.allianceId == 1 &&
             info.activator.onPlayerTurnEnd
-            || info.activator.onAnyTurnEnd)
+            || info.activator.onAnyTurnEnd) {
             Execute(info);
+            info.executingUnit.AbilitySuccess();
+        }
     }
 
     public void Execute(AbilityInfo info) {

@@ -9,8 +9,10 @@ public class SpawnAttackData : AbilityEffect {
     }
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
-        if (info.activator.onAttack)
+        if (info.activator.onAttack) {
             Execute(info);
+            info.executingUnit.AbilitySuccess();
+        }
     }
 
     public void Execute(AbilityInfo info) {

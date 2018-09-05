@@ -40,8 +40,7 @@ public static class GridAccess {
 
 
     internal static Unit GetUnitAtPos(Vector3 slot) {
-        //Combat.Instance.UnitNullCheck();
-        Debug.Log("Note: Removed unit null check. Care for errors");
+        Combat.Instance.UnitNullCheck();
         for (int i = 0; i < Combat.Instance.units.Count; i++) {
             if (Combat.Instance.units[i].snapPos == slot) {
                 return Combat.Instance.units[i];
