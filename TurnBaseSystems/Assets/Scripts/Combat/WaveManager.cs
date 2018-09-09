@@ -6,6 +6,7 @@ public class WaveManager :MonoBehaviour{
     public int activeWave = 0;
     public Wave[] waves;
 
+
     private void Awake() {
         m = this;
         for (int i = 0; i < enemySpawnAreas.Length; i++) {
@@ -42,5 +43,18 @@ public class WaveManager :MonoBehaviour{
             insts[i].GetComponent<Unit>().Init();
             insts[i].GetComponent<Unit>().detection.detectedSomeone = true;
         }
+    }
+
+
+}
+[System.Serializable]
+public class SkillLockdown {
+
+    // same length
+    public int[] unlockSkillId;
+    public int[] unlockAtLevel;
+
+    public bool IsSkillUnlocked(int skillId, int curWave) {
+        return skillId < unlockAtLevel.Length && curWave >= unlockAtLevel[skillId];
     }
 }

@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour {
     public Color enemySelectColor = Color.black;
     public Color aoeColor = Color.black;
 
+
+
     private void Awake() {
         Instance = this;
 

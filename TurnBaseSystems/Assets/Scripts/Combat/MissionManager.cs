@@ -13,6 +13,7 @@ public class MissionManager:MonoBehaviour {
     public Transform missionEndScreen_child;
     public Text missionEndScreenText;
 
+
     private void Start() {
         m = this;
 
