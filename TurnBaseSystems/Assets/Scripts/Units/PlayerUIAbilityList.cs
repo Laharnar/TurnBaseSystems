@@ -92,22 +92,26 @@ public class PlayerUIAbilityList : MonoBehaviour {
     /// <param name="btnObj">Set to null to not change position.</param>
     /// <param name="visible"></param>
     public void MarkButtonAsSelected(int btnId, bool visible) {
-        Transform btnObj = btnId < instances.Count ? instances[btnId] : null;
-        // create overlay
-        if (selectedButtonInstance == null) {
-            selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
-            selectedButtonInstance.transform.position = btnObj.position+new Vector3(0,0,0.01f);
-            selectedButtonInstance.SetSiblingIndex(0);
-        }
-        if (btnObj != null) {
-            if (slideBetweenChoices!= null) StopCoroutine(slideBetweenChoices);
-            slideBetweenChoices = StartCoroutine(LerpTo(selectedButtonInstance.transform, btnObj.position + new Vector3(0, 0, 0.01f), 0.25f));
-        }
-        selectedButtonInstance.gameObject.SetActive(visible);
+        if (btnId < instances.Count) {
 
-        if (btnObj != null && AbilityInfo.ActiveAbility!= null) {// ability is null when enemy is selected, and btn is null in enemy turn
-            UIManager.ShowPopup(btnObj.position, AbilityInfo.ActiveAbility.detailedDescription);
+            Transform btnObj = instances[btnId];
+            // create overlay
+            if (selectedButtonInstance == null) {
+                selectedButtonInstance = Instantiate(selectedButtonPref, canvas.transform);
+                selectedButtonInstance.transform.position = btnObj.position + new Vector3(0, 0, 0.01f);
+                selectedButtonInstance.SetSiblingIndex(0);
+            }
+
+            if (slideBetweenChoices != null) StopCoroutine(slideBetweenChoices);
+            slideBetweenChoices = StartCoroutine(LerpTo(selectedButtonInstance.transform, btnObj.position + new Vector3(0, 0, 0.01f), 0.25f));
+
+            if (btnObj != null && AbilityInfo.ActiveAbility != null) {// ability is null when enemy is selected, and btn is null in enemy turn
+                UIManager.ShowPopup(btnObj.position, AbilityInfo.ActiveAbility.detailedDescription);
+            }
         }
+        if (selectedButtonInstance)
+            selectedButtonInstance.gameObject.SetActive(visible);
+        
     }
 
 

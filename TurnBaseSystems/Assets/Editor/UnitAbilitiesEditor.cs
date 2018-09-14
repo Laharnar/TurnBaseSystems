@@ -4,77 +4,42 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-//[CustomEditor(typeof(UnitAbilities),true)]
+[CustomEditor(typeof(UnitAbilities),true)]
 public class UnitAbilitiesEditor : UnityEditor.Editor {
 
-    AttackData data;
-    public AttackBaseType attackFunction;
+    int selectedForEditing = -1;
 
     public override void OnInspectorGUI() {
         UnitAbilities source = target as UnitAbilities;
         EditorGUI.BeginChangeCheck();
-        /*if (Application.isPlaying) {
-            for (int i = 0; i < source.additionalAbilities.Count; i++) {
-                source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
-                EditorGUILayout.Space();
-            }
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
 
-            base.OnInspectorGUI();
-            return;
-        }
-
-        EditorGUI.BeginChangeCheck();
-        data = ShowAttackData(data);
-
-        if (GUILayout.Button("+")) {
-            source.additionalAbilities.Add(new AttackData() {
-                o_attackName = data.o_attackName,
-                actionCost = data.actionCost,
-                animData = new AttackAnimationInfo() {
-                    animLength = data.animData.animLength,
-                    animTrigger = data.animData.animTrigger,
-                    useInfo = data.animData.useInfo
-                },
-                attackMask = data.attackMask,
-                attackType = data.attackType,
-                attackType_EditorOnly = data.attackType_EditorOnly,
-                requiresUnit = data.requiresUnit,
-                attackFunction = attackFunction
-            });
-        }
-        EditorGUILayout.Separator();
-
-        EditorGUI.indentLevel++;
-        AttackData[] attacks = source.GetNormalAbilities() as AttackData[];
-        if (attacks != null) {
-            for (int i = 0; i < attacks.Length; i++) {
-                attacks[i] = ShowAttackData(attacks[i]);
-                EditorGUILayout.Space();
-            }
-            source.SaveNewAbilities(attacks);
-        }
-        for (int i = 0; i < source.additionalAbilities.Count; i++) {
-            source.additionalAbilities[i] = ShowAttackData(source.additionalAbilities[i]);
-            if (GUILayout.Button("Remove " + (i + 1) + " (" + source.additionalAbilities[i].o_attackName + ")")) {
-                source.additionalAbilities.RemoveAt(i);
-                i--;
-                continue;
-            }
-            EditorGUILayout.Space();
-        }
-        EditorGUI.indentLevel--;
-        EditorGUILayout.Separator();
-        EditorGUILayout.Separator();
-        */
+        // extract swap class[2/2]
         base.OnInspectorGUI();
-        
+        if (!Application.isPlaying) {
+            for (int i = 0; i < source.additionalAbilities2.Count; i++) {
+                // title
+                if (source.additionalAbilities2[i] == null) {
+                    GUILayout.Label("Null value");
+                } else {
+                    GUILayout.Label(source.additionalAbilities2[i].o_attackName);
+                }
+
+                if (GUILayout.Button("Select")) {
+                    selectedForEditing = i;
+                }
+                if (selectedForEditing != -1 && i != selectedForEditing && GUILayout.Button("Swap " + i + " here")) {
+                    AttackData2 x = source.additionalAbilities2[selectedForEditing];
+                    source.additionalAbilities2[selectedForEditing] = source.additionalAbilities2[i];
+                    source.additionalAbilities2[i] = x;
+                    selectedForEditing = -1;
+                }
+            }
+        }
         if (EditorGUI.EndChangeCheck()) {
             Undo.RecordObject(target, "Changed character");
-        }/*
+        }
         EditorFix.SetObjectDirty(target);
-        */
+        
 
     }
 

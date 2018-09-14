@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 public class WaveManager :MonoBehaviour{
     public static WaveManager m;
     public Transform[] enemySpawnAreas;
 
-    public int activeWave = 0;
-    public Wave[] waves;
+    internal int activeWave = -1;
+    public List<Wave> waves = new List<Wave>();
 
 
     private void Awake() {
@@ -15,19 +16,28 @@ public class WaveManager :MonoBehaviour{
         }
     }
 
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.Comma)) {
+            Combat.Instance.SkipWave();
+            if (activeWave + 1 >= waves.Count) {
+                return; // win
+            }
+            activeWave++;
+        }
+    }
     public bool AllWavesCleared() {
-        return activeWave >= waves.Length;
+        return activeWave >= waves.Count;
     }
 
     public void OnWaveCleared() {
-        if (activeWave >= waves.Length) {
+        if (activeWave+1 >= waves.Count) {
             return; // win
         }
+        activeWave++;
 
         for (int i = 0; i < waves[activeWave].spawnArea.Length && i < waves[activeWave].enemySet.Length; i++) {
             InitEnemies(waves[activeWave].spawnArea[i], waves[activeWave].enemySet[i].enemies, waves[activeWave].enemySet[i].allianceId);
         }
-        activeWave++;
     }
     public void OnCombatBegins() {
         OnWaveCleared();

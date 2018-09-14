@@ -295,7 +295,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Debug.Log("Running animations, waiting. action aborted.");
             return -1;
         }
-        Debug.Log("Executing attack " + info.activeAbility.o_attackName);
+        Debug.Log(info.executingUnit+" executing attack " + info.activeAbility.o_attackName);
 
         abilitiesUsed++;
         if (info.activeAbility == abilities.move2)
