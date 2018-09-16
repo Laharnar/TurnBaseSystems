@@ -5,16 +5,16 @@ public class DebugGrid{
         for (int i = 0; i < grids.Length; i++) {
             GridDisplay.Instance.SetUpGrid(grids[i], GridDisplayLayer.AIAction, GridMask.One);
         }
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
         for (int i = 0; i < grids.Length; i++) {
             //GridDisplay.TmpHideGrid(0, grids[i], GridMask.One);
             GridDisplay.Instance.HideGrid(grids[i], GridDisplayLayer.AIAction, GridMask.One);
         }
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
         for (int i = 0; i < grids.Length; i++) {
             GridDisplay.Instance.SetUpGrid(grids[i], GridDisplayLayer.AIAction, GridMask.One);
         }
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
         for (int i = 0; i < grids.Length; i++) {
             GridDisplay.Instance.HideGrid(grids[i], GridDisplayLayer.AIAction, GridMask.One);
         }

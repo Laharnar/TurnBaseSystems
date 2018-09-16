@@ -14,8 +14,8 @@ public class CustomTests: MonoBehaviour {
                 GridMask m = Combat.Instance.GetUnits(1)[0].abilities.move2.standard.attackRangeMask;
                 Vector3 r = new Vector3(-Combat.Instance.GetUnits(1)[0].abilities.move2.standard.attackRangeMask.w / 2, 0, 0);
 
-                Test("AiHelper.ClosestToTargetOverMask1", AiHelper.ClosestToTargetOverMask(new Vector3(), new Vector3(-100, 0, 0), m), r);
-                Test("AiHelper.ClosestToTarget", AiHelper.ClosestToTarget(new Vector3(), new Vector3(-100, 0, 0), m), r);
+                Test("AiHelper.ClosestToTargetOverMask1", AiHelper.ClosestSlotToTargetOverMask(new Vector3(), new Vector3(-100, 0, 0), m), r);
+                Test("AiHelper.ClosestToTarget", AiHelper.ClosestFreeToTarget(new Vector3(), new Vector3(-100, 0, 0), m), r);
                 Print("Get mask positions", m.GetFreePositions(new Vector3()));
                 Print("In mask", m.IsPosInMask(new Vector3(), new Vector3(0, 4, 0)));
 
@@ -247,8 +247,8 @@ public class CustomTests: MonoBehaviour {
             CombatEvents.OnTurnStart(Combat.Instance.flags[0]);
             PierceAtkData atkD = nuker.abilities.additionalAbilities2[1].pierce;
             AbilityInfo.ExecutingUnit = nuker;
-            AbilityInfo.AttackedSlot = new Vector3(0, 0, 0);
-            AbilityInfo.AttackStartedAt = nuker.snapPos;
+            AbilityInfo.Instance.attackedSlot = new Vector3(0, 0, 0);
+            AbilityInfo.Instance.attackStartedAt = nuker.snapPos;
             AbilityInfo.ActiveAbility = nuker.abilities.additionalAbilities2[1];
 
 

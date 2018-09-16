@@ -37,7 +37,7 @@ public class CombatUI {
     public static void OnSelectDifferentUnit() {
         GridDisplay.Instance.ClearAll();
         ShowUI(true, curPlayerUnit, curUnit, true);
-        if (hoveredUnit.IsPlayer) {
+        if (hoveredUnit && hoveredUnit.IsPlayer) {
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         }
         GridDisplay.Instance.RemakeGrid();
@@ -116,12 +116,6 @@ public class CombatUI {
         GridDisplay.Instance.RemakeGrid();
     }
 
-    internal static void OnMouseScrolled() {
-        AttackDisplay.HideRotatedGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
-        AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
-        GridDisplay.Instance.RemakeGrid();
-    }
-
     internal static void OnBeginAttack() {
         AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         GridDisplay.Instance.HideGrid(curPlayerUnit.snapPos, GridDisplayLayer.BlueSelectionArea, GridMask.One);
@@ -132,6 +126,8 @@ public class CombatUI {
     }
 
     internal static void OnMouseMovedToDfSlot(Vector3 hoveredSlot, Vector3 lastHoveredSlot) {
+        AttackData2 atd = PlayerTurnData.Instance.ActiveAbility;
+        
         if (hoveredSlot != lastHoveredSlot) {
             GridDisplay.Instance.HideGrid(lastHoveredSlot, GridDisplayLayer.BlueSelectionArea, GridMask.One);
             if (curPlayerUnit && PlayerTurnData.Instance.ActiveAbility != null)

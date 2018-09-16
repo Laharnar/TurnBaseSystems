@@ -115,3 +115,9 @@ spawn items
 weird move glitches.
 enemy unit move all at same time for some reason, plus banned insta skipped.
 
+.--------------------------
+15.9.2018
+there is a sligh problem with dealing with a lot of tanky units with meoderate dmg
+not tanky enough
+
+healing could add a buff that additionally heals by 1... so priest can use aoe more often not so boring

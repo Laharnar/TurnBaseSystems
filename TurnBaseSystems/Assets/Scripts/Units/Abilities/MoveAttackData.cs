@@ -15,15 +15,6 @@ public class MoveAttackData : AbilityEffect{
         range = newRange;
     }
 
-    internal MoveAttackData Copy() {
-        MoveAttackData move = new MoveAttackData();
-        move.endAnimSets = endAnimSets;
-        move.onStartApplyAOE = onStartApplyAOE;
-        move.onEndApplyAOE = onEndApplyAOE;
-        move.range = range;
-        move.originalRange = originalRange;
-        return move;
-    }
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
         if (info.activator.onMove) {

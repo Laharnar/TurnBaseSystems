@@ -7,7 +7,7 @@ public class AOEAttackData : DamageBasedAttackData {
     public GridMask aoeMask;
 
     public bool useChargesToChooseLimitSlots = false;
-    public AuraTarget targets = AuraTarget.All;
+    public TargetFilter targets = TargetFilter.All;
     public DamageInfo damageInfo = new DamageInfo(1, DamageType.Magic, EnergyType.None, DamageAttribute.HardObject);
 
     internal override void AtkBehaviourExecute(AbilityInfo info) {
@@ -42,7 +42,7 @@ public class AOEAttackData : DamageBasedAttackData {
                 info.activeAbility.buff.AtkBehaviourExecute(inf);
             }
         }
-        if (/*data.aoe.*/setStatus != CombatStatus.SameAsBefore)
+        if (setStatus != CombatStatus.SameAsBefore)
             info.executingUnit.combatStatus = setStatus;//data.aoe.setStatus;
     }
 

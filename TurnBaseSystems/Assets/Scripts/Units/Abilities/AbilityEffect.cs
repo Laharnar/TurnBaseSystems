@@ -23,15 +23,15 @@ public class AbilityEffect{
     public CombatStatus setStatus = CombatStatus.Normal;
     public CombatEventMask activator;
 
+
     internal virtual void AtkBehaviourExecute(AbilityInfo info) {
         
     }
 
-    internal virtual void Draw() {
-        
-    }
-
-    internal virtual void Hide() {
-
+    internal void Copy(AbilityEffect copyTo) {
+        copyTo.used = used;
+        copyTo.animSets = animSets;
+        copyTo.setStatus = setStatus;
+        copyTo.activator = activator;
     }
 }

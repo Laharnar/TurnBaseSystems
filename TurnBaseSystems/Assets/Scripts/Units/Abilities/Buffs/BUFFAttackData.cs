@@ -19,6 +19,7 @@ public class BUFFAttackData : AbilityEffect {
     
     internal BUFFAttackData Copy() {
         BUFFAttackData buff = new BUFFAttackData();
+        buff.activated = activated;
         buff.turns = turns;
         buff.buffType = buffType;
         buff.armorAmt = armorAmt;
@@ -28,6 +29,9 @@ public class BUFFAttackData : AbilityEffect {
         buff.endBuffStatus = endBuffStatus;
         buff.endAnimSets = endAnimSets;
         buff.addCounters = addCounters;
+        buff.temporaryAttackRange = temporaryAttackRange;
+        buff.temporaryMoveRange = temporaryMoveRange;
+        base.Copy(buff);
         return buff;
     }
 
@@ -60,7 +64,6 @@ public class BUFFAttackData : AbilityEffect {
         }
     }
     internal void Execute(Unit target) {
-        Debug.Log(recieveDmg);
         if (healAmount != 0) {
             Debug.Log("[heal buff] +hp" + healAmount + " t:"+target);
             target.Heal(healAmount, null);
@@ -69,8 +72,10 @@ public class BUFFAttackData : AbilityEffect {
             Debug.Log("[bleed] get dmg " + recieveDmg);
             target.GetDamaged(recieveDmg);
         }
-        if (setStatus != CombatStatus.SameAsBefore)
+        if (setStatus != CombatStatus.SameAsBefore) {
+            Debug.Log(target.combatStatus +"->"+ setStatus);
             target.combatStatus = setStatus;
+        }
     }
 
     internal void Consume(BUFFAttackData origBuff, BuffUnitData data) {
@@ -133,8 +138,8 @@ public class BUFFAttackData : AbilityEffect {
             Debug.Log("[counter] -counter count" + addCounters + " t:" + target);
             target.reflectDmgTimes -= addCounters;
         }
-        if (setStatus != CombatStatus.SameAsBefore)
-            target.combatStatus = setStatus;
+        if (endBuffStatus != CombatStatus.SameAsBefore)
+            target.combatStatus = endBuffStatus;
     }
     public void UnitDeath() {
 

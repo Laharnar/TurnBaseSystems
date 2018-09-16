@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class WaveManager :MonoBehaviour{
     public static WaveManager m;
@@ -7,6 +8,7 @@ public class WaveManager :MonoBehaviour{
     internal int activeWave = -1;
     public List<Wave> waves = new List<Wave>();
 
+    float lastWaveClearedTime = 0f;
 
     private void Awake() {
         m = this;
@@ -28,12 +30,17 @@ public class WaveManager :MonoBehaviour{
     public bool AllWavesCleared() {
         return activeWave >= waves.Count;
     }
+    public void PrintWave() {
+        Debug.Log("----- WAVE " + activeWave + " (last wave time: " + lastWaveClearedTime + " level time: " + Time.timeSinceLevelLoad + ") " + waves[activeWave].description + " STARTED -----");
+    }
 
     public void OnWaveCleared() {
-        if (activeWave+1 >= waves.Count) {
+        lastWaveClearedTime = Time.timeSinceLevelLoad-lastWaveClearedTime;
+        if (activeWave + 1 >= waves.Count) {
             return; // win
         }
         activeWave++;
+        PrintWave();
 
         for (int i = 0; i < waves[activeWave].spawnArea.Length && i < waves[activeWave].enemySet.Length; i++) {
             InitEnemies(waves[activeWave].spawnArea[i], waves[activeWave].enemySet[i].enemies, waves[activeWave].enemySet[i].allianceId);
@@ -54,8 +61,6 @@ public class WaveManager :MonoBehaviour{
             insts[i].GetComponent<Unit>().detection.detectedSomeone = true;
         }
     }
-
-
 }
 [System.Serializable]
 public class SkillLockdown {

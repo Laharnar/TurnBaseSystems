@@ -14,11 +14,10 @@ public class StandardAttackData : DamageBasedAttackData {
     public float percentDmg = 0f;
     [System.Obsolete]
     public GridMask attackRangeMask;
-    public GridDisplayMask info;
 
     public int healOnKills = 0;
     public static float dmgReduction = 0;
-    public AuraTarget targets = AuraTarget.All;
+    public TargetFilter targets = TargetFilter.All;
 
     internal GridMask originalRange { get; private set; }
 
@@ -31,20 +30,6 @@ public class StandardAttackData : DamageBasedAttackData {
     public GridMask GetMask(int direction) {
         return GridMask.RotateMask(attackRangeMask, direction);
     }
-    static void DrawGrid(GridMask mask, GridDisplayMask info) {
-        GridDisplay.Instance.SetUpGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, Combat.Instance.mouseDirection));
-    }
-    static void HideGrid(GridMask mask, GridDisplayMask info) {
-        GridDisplay.Instance.HideGrid(info.GetPos(), info.layer, GridMask.RotateMask(mask, Combat.Instance.mouseDirection));
-    }
-    internal override void Draw() {
-        GridDisplay.Instance.SetUpGrid(info.GetPos(), info.layer, GetMask(Combat.Instance.mouseDirection));
-    }
-
-    internal override void Hide() {
-        GridDisplay.Instance.HideGrid(info.GetPos(), info.layer, GetMask(Combat.Instance.mouseDirection));
-    }
-
     internal override void AtkBehaviourExecute(AbilityInfo info) {
         if (info.activator.onAttack) {
             Execute(info);
@@ -60,7 +45,7 @@ public class StandardAttackData : DamageBasedAttackData {
         if (u && EmpowerAlliesData.ValidTarget(info.executingUnit, targets, u.flag.allianceId)) {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f)
-                    u.GetDamaged(Mathf.FloorToInt(((float)u.hp + (float)u.temporaryArmor) * data.standard.percentDmg * (1f - dmgReduction)));
+                    u.GetDamaged(Mathf.FloorToInt(((float)u.hp /*+ (float)u.temporaryArmor*/) * data.standard.percentDmg * (1f - dmgReduction)));
             } else if (data.standard.damage > 0) {
                 u.GetDamaged((int)((float)data.standard.damage * (1f - dmgReduction)));
                 // add debuffs.
@@ -83,7 +68,7 @@ public class StandardAttackData : DamageBasedAttackData {
             }
             info.executingUnit.AbilitySuccess();
         }
-        if (data.standard.setStatus != CombatStatus.SameAsBefore)
-            info.executingUnit.combatStatus = data.standard.setStatus;
+        if (setStatus != CombatStatus.SameAsBefore)
+            info.executingUnit.combatStatus = setStatus;
     }
 }

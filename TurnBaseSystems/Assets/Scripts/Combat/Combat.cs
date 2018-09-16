@@ -23,6 +23,7 @@ public class Combat : MonoBehaviour {
     public List<Unit> units = new List<Unit>();
     internal int lastMouseDirection;
 
+
     public List<FlagManager> flags;
 
     public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
@@ -111,10 +112,34 @@ public class Combat : MonoBehaviour {
         units.Remove(u);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="allianceId"></param>
+    /// <param name="onlyVisible">f: you can use it as reference. T: it's a copy</param>
+    /// <returns></returns>
     public List<Unit> GetUnits(int allianceId) {
         return flags[allianceId].info.units;
     }
-    
+
+
+    internal List<Unit> GetVisibleUnits(int allianceId, params Unit[] ignored) {
+        List<Unit> f = new List<Unit>();
+        for (int i = 0; i < flags[allianceId].info.units.Count; i++) {
+            bool onIgnoreList = false;
+            for (int j = 0; j < ignored.Length; j++) {
+                if (ignored[j] == flags[allianceId].info.units[i]) {
+                    onIgnoreList = true;
+                    break;
+                }
+            }
+            if (!onIgnoreList && flags[allianceId].info.units[i].combatStatus != CombatStatus.Invisible) {
+                f.Add(flags[allianceId].info.units[i]);
+            }
+        }
+        return f;
+    }
+
     IEnumerator CombatUpdate() {
         // wait until start
         yield return null;
@@ -129,6 +154,7 @@ public class Combat : MonoBehaviour {
         CombatDisplayManager.Instance.Register(UIManager.m, "ShowSlideScreen", 4.5f, "Combat/ShowBeginCombatScreen");
         yield return new WaitForSeconds(3.5f);
 
+        // snap all player units that walked in.
         Vector3[] positions = new Vector3[flags[0].info.units.Count];
         for (int i = 0; i < flags[0].info.units.Count; i++) {
             flags[0].info.units[i].transform.position = flags[0].info.units[i].snapPos;
@@ -177,7 +203,7 @@ public class Combat : MonoBehaviour {
                 yield return StartCoroutine(flags[j].controller.FlagUpdate(flags[j]));
                 yield return new WaitForSeconds(1);
                 CombatEvents.OnTurnEnd(flags[j]);
-                
+
                 Debug.Log("Flag done - " + (j + 1));
                 flags[0].NullifyUnits();
                 flags[1].NullifyUnits();

@@ -10,8 +10,10 @@ public class ButtonInteraction : MonoBehaviour {
     public Weapon weaponSource;
 
     public bool destroyAfter = true;
+    public static bool btnClicked = false;
 
     public void Activate() {
+        //btnClicked = true;
         interaction.Interact();
 
         //PlayerUIAbilityList.m.showAbilityDescription = false;

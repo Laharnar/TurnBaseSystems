@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public enum AuraTarget {
+public enum TargetFilter {
     Allies,
     Enemies,
     Civilians,
@@ -19,7 +19,7 @@ public class EmpowerAlliesData : AbilityEffect {
     public int stdDmgUp;
     public int aoeDmgUp;
     public int shieldUp;
-    public AuraTarget target;
+    public TargetFilter target;
     public AuraTrigger trigger;
     public int maxAuraStacks = 1;
 
@@ -32,15 +32,15 @@ public class EmpowerAlliesData : AbilityEffect {
         }
     }
 
-    public static bool ValidTarget(Unit source, AuraTarget target, int otherFlag) {
+    public static bool ValidTarget(Unit source, TargetFilter target, int otherFlag) {
         switch (target) {
-            case AuraTarget.Allies:
+            case TargetFilter.Allies:
                 return otherFlag == source.flag.allianceId;
-            case AuraTarget.Enemies:
+            case TargetFilter.Enemies:
                 return otherFlag != source.flag.allianceId;
-            case AuraTarget.Civilians:
+            case TargetFilter.Civilians:
                 return false;
-            case AuraTarget.All:
+            case TargetFilter.All:
                 return true;
             default:
                 return false;
@@ -112,6 +112,7 @@ public class EmpowerAlliesData : AbilityEffect {
         buff.stdDmgUp = stdDmgUp;
         buff.used = used;
         buff.auraRange = auraRange;
+        base.Copy(buff);
         return buff;
     }
 

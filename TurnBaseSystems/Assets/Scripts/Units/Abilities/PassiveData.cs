@@ -20,7 +20,7 @@ public class PassiveData : DamageBasedAttackData {
             info.activator.onPlayerTurnEnd
             || info.activator.onAnyTurnEnd) {
             Execute(info);
-            info.executingUnit.AbilitySuccess();
+            //info.executingUnit.AbilitySuccess();
         }
     }
 
@@ -35,6 +35,7 @@ public class PassiveData : DamageBasedAttackData {
             for (int i = 0; i < units.Length; i++) {
                 if (units[i].flag.allianceId!= info.executingUnit.flag.allianceId) {
                     units[i].GetDamaged(backstabDmg);
+                    info.executingUnit.AbilitySuccess();
                     if (c == 0)
                         break;
                 }

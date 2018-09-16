@@ -44,24 +44,12 @@ public class PlayerFlag : FlagController {
                 yield return null;
                 Combat.Instance.SkipWave();
             }
+
             
             lastHoveredSlot = hoveredSlot;
             hoveredSlot = GridManager.SnapPoint(SelectionManager.GetMouseAsPoint(), true);
             if (hoveredSlot != lastHoveredSlot)
                 CombatUI.OnMouseMovedToDfSlot(hoveredSlot, lastHoveredSlot);
-
-            #region Mousewheel rotate - obsolete
-            /*if (MouseWheelRotate) {
-                float f = Input.GetAxis("Mouse ScrollWheel");
-                f = f < 0 ? -1 : f > 0 ? 1 : 0;
-                Combat.Instance.lastMouseDirection = mouseDirection;
-                mouseDirection = (4 + (mouseDirection + (int)f)) % 4;
-
-                if (selectedPlayerUnit) {
-                    CombatUI.OnMouseScrolled();
-                }
-            }*/
-            #endregion
 
             WaitUnitSelection();
             
@@ -71,7 +59,7 @@ public class PlayerFlag : FlagController {
 
             CombatUI.OnHover();
 
-            // --- ATTACKING
+            // --- ATTACKING & moving
             if (selectedAttackSlot != null && selectedPlayerUnit != null && hoveredSlot != null
                 && Input.GetMouseButtonDown(1)) {
                 yield return Combat.Instance.StartCoroutine(HandleAttack());
@@ -164,18 +152,19 @@ public class PlayerFlag : FlagController {
     
     private void WaitUnitSelection() {
         hoveredUnit = GridAccess.GetUnitAtPos(hoveredSlot);// SelectionManager.GetUnitUnderMouse
+
         if (Input.GetMouseButtonDown(0) && hoveredUnit && (selectedPlayerUnit == null || hoveredUnit != selectedPlayerUnit)) {
             Debug.Log("selecting");
             DeselectUnit();
             selectedUnit = hoveredUnit;
 
-            if (hoveredUnit.IsPlayer) {
+            if (hoveredUnit && hoveredUnit.IsPlayer) {
                 selectedPlayerUnit = hoveredUnit;
 
                 SwapToValidAbility();
-            }
-            CombatUI.OnSelectDifferentUnit();
 
+                CombatUI.OnSelectDifferentUnit();
+            }
         }
     }
 

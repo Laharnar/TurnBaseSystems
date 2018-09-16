@@ -39,8 +39,8 @@ public static class CombatEvents {
         AbilityInfo.CurActivator.onAttack = !AbilityInfo.CurActivator.never;
         AbilityInfo.Instance.executingUnit = unit;
 
-        AbilityInfo.AttackedSlot = hoveredSlot;
-        AbilityInfo.AttackStartedAt = unit.snapPos;
+        AbilityInfo.Instance.attackedSlot = hoveredSlot;
+        AbilityInfo.Instance.attackStartedAt = unit.snapPos;
         AbilityInfo.ActiveAbility = activeAbility;
 
         AbilityInfo.CurActivator.onMove = !AbilityInfo.CurActivator.never;

@@ -1,16 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
-[System.Serializable]
-public class GridDisplayMask {
-    public GridDisplayLayer layer;
-    [Header("0:curSlot, 1:attackedSlot")]
-    public int useSlot = 0;
-
-    internal Vector3 GetPos() {
-        return useSlot == 0 ? AbilityInfo.AttackStartedAt : AbilityInfo.AttackedSlot;
-    }
-}
 public class AttackDisplay {
     //public static implicit operator Vector3(AttackDisplay atsd) {
     //    return new Vector3();
@@ -45,7 +34,11 @@ public class AttackDisplay {
                 GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
             }
         } else if (data.aoe.used) {
-            GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            if (data.standard.used && data.defaultToSelf) {
+                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            } else {
+                GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            }
         }
         if (data.buff.used) {
         }
@@ -56,10 +49,6 @@ public class AttackDisplay {
         if (data.pierce.used && attacked != null) {
             data.pierce.Draw(attacked);
         }
-    }
-
-    internal static void HideGrid(Unit curPlayerUnit, Vector3 hoveredSlot, object lastAbility) {
-        throw new NotImplementedException();
     }
 
     public static void HideGrid(Unit source, Vector3 attackedSlot, AttackData2 data) {
@@ -81,7 +70,11 @@ public class AttackDisplay {
                 GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
             }
         } else if (data.aoe.used) {
-            GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            if (data.standard.used && data.defaultToSelf) {
+                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            } else {
+                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+            }
         }
         if (data.buff.used) {
         }

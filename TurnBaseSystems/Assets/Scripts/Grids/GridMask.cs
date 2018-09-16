@@ -40,6 +40,12 @@ public class GridMask :UnityEngine.ScriptableObject {
         }
     }
 
+    /// <summary>
+    /// Does mask have middle slot marked
+    /// </summary>
+    /// <param name="u"></param>
+    /// <param name="attackedSlot"></param>
+    /// <returns></returns>
     internal bool IsSelfMask(Unit u, Vector3 attackedSlot) {
         if (u.snapPos == attackedSlot && w > 0 && l > 0 && mask[(int)(w/2f)].col[(int)(l/2f)] == true) {
             return true;

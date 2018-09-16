@@ -110,7 +110,17 @@ public static class SelectionManager {
                 }
             }
         }
-        Debug.Log("Raycacst :"+hits.Length + " Units: "+units.Count);
+        string s = "(";
+        for (int i = 0; i < hits.Length; i++) {
+            s += hits[i].transform.name+", ";
+        }
+        s += ")";
+        string s2 = "(";
+        for (int i = 0; i < units.Count; i++) {
+            s2 += units[i].transform.name + ", ";
+        }
+        s2 += ")";
+        Debug.Log("Raycacst :"+hits.Length + " Units: "+units.Count + "\n"+s+"\n"+s2);
         return units.ToArray();
     }
 }

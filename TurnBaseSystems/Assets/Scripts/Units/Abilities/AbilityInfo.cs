@@ -59,11 +59,7 @@ public class AbilityInfo {
     private AbilityInfo info;
 
     public static Unit ExecutingUnit { get { return Instance.executingUnit; } set { Instance.executingUnit = value; } }
-    public static Vector3 AttackStartedAt { get { return Instance.attackStartedAt; } set { Instance.attackStartedAt = value; } }
-    public static Vector3 AttackedSlot { get { return Instance.attackedSlot; } set { Instance.attackedSlot = value; } }
-
-    public static Vector3 directionOfAttack { get { return AttackedSlot - AttackStartedAt; } }
-
+  
     internal void Reset() {
         executingUnit = null;
         activeAbility = null;
