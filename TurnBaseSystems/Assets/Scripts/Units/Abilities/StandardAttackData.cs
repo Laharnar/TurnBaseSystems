@@ -21,6 +21,8 @@ public class StandardAttackData : DamageBasedAttackData {
 
     internal GridMask originalRange { get; private set; }
 
+    public Transform vfxPref;
+
     public void SetRange(GridMask newRange) {
         if (originalRange == null)
             originalRange = attackRangeMask;

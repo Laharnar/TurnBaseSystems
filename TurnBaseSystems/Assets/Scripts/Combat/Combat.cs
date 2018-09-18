@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Combat : MonoBehaviour {
+public partial class Combat : MonoBehaviour {
 
     public static Combat Instance { get { return instance; } }
     static Combat instance;
@@ -32,6 +31,7 @@ public class Combat : MonoBehaviour {
     public bool setUpTempGrid;
 
     public SkillLockdown lockdown;
+    
 
     private void Awake() {
         instance = this;
@@ -243,6 +243,10 @@ public class Combat : MonoBehaviour {
         Debug.Log("Exited main loop");
     }
 
+    internal void RunVfx(Vector3 attackStartedAt, object vfx) {
+        throw new NotImplementedException();
+    }
+
     internal void SkipWave() {
         for (int i = 0; i < GetUnits(1).Count; i++) {
             Destroy(GetUnits(1)[i].gameObject);
@@ -315,7 +319,9 @@ public class Combat : MonoBehaviour {
             }
 
             // wait animations
-            info.executingUnit.AnimationsIfParsedAttack(info.activeAbility);
+            info.executingUnit.Animations_VFX_IfParsedAttack(info.activeAbility);
+            
+
             float len = AttackData2.AnimLength(info.executingUnit, info.activeAbility);
             if (len > 0)
                 yield return new WaitForSeconds(len);
@@ -338,5 +344,29 @@ public class Combat : MonoBehaviour {
             return false;
         }
         return true;
+    }
+}
+
+/// <summary>
+/// VFX Combat control.
+/// </summary>
+public partial class Combat : MonoBehaviour {
+    public int vfxCount = 0;
+
+    public void RunVfx(Vector3 pos, Transform pref) {
+        if (pref == null) {
+            return;
+        }
+        vfxCount++;
+        VfxController vfxc = Instantiate(pref, pos, new Quaternion()).GetComponent<VfxController>();
+        vfxc.Init(EndVfx);
+    }
+
+    public bool EndedAllVfx() {
+        return vfxCount == 0;
+    }
+
+    public void EndVfx() {
+        vfxCount--;
     }
 }

@@ -24,6 +24,8 @@ public sealed class AttackData2 : StdAttackData {
     public PierceAtkData pierce;
     public SpawnAttackData spawn;
 
+    public Transform Vfx { get { return standard.vfxPref; } }
+
     public AbilityEffect[] GetAbilityEffects() {
         return new AbilityEffect[] {
             range,

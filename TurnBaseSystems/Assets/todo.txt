@@ -6,6 +6,7 @@ grid items are on top of everything. below units. 10
 checkpoints 15
 units 20
 items 25
+vfx 30
 
 UI 100
 

@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
+
+
 /// <summary>
 /// 
 /// </summary>
@@ -200,7 +202,7 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             if (abilities.additionalAbilities2[i].active) {
                 AttackAction(AbilityInfo.Instance, false);
                 //abilities.additionalAbilities2[i].ActivateAbility(AbilityInfo.Instance);
-                AnimationsIfParsedAttack(abilities.additionalAbilities2[i]);
+                Animations_VFX_IfParsedAttack(abilities.additionalAbilities2[i]);
                 
             }
         }
@@ -215,9 +217,10 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         //ResetGreyHp();
     }
 
-    public void AnimationsIfParsedAttack(AttackData2 attackData2) {
+    public void Animations_VFX_IfParsedAttack(AttackData2 attackData2) {
         if (lastAttackParserPassed) {
             AttackAnimations(attackData2, lastAttackParserPassed);
+            Combat.Instance.RunVfx(AbilityInfo.Instance.attackStartedAt, attackData2.Vfx);
             lastAttackParserPassed = false;
         }
     }
