@@ -114,6 +114,7 @@ public class HpUIController: MonoBehaviour {
             Vector2 pos = (Vector2)source.transform.position
                 + new Vector2(i * (offsetPerItem + widthPerHp), 0) + start;
             hpList[i] = Instantiate(pref, pos, new Quaternion(), canvasRoot);
+            hpList[i].GetComponent<Image>().color = GameManager.Instance.colorSettings.GetColor(source);
         }
 
         // create grey hp instances

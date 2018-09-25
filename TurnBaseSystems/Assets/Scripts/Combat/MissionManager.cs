@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ public class MissionManager:MonoBehaviour {
     public Transform missionEndScreen_child;
     public Text missionEndScreenText;
 
+    internal List<int> deadTeam = new List<int>();
 
     private void Start() {
         m = this;
@@ -70,7 +72,7 @@ public class MissionManager:MonoBehaviour {
         levelCompleted = true;
     }
 
-    internal void Init(Transform[] teamInsts) {
+    internal void Init(Transform[] teamInsts, bool firstInit = true) {
         GameObject go = GameObject.Find("DONTRENAME_Starting point");
         if (go == null) {
             Debug.Log("ERROR:MISSING object " + "DONTRENAME_Starting point" + " aborting ally load.");
@@ -84,12 +86,13 @@ public class MissionManager:MonoBehaviour {
         if (missionEndScreen_child)
             missionEndScreen_child.gameObject.SetActive(false);
 
-        Combat.Instance.Init(teamInsts);
+        if (firstInit) {
+            Combat.Instance.Init(teamInsts);
 
-        if (WaveManager.m)
-            WaveManager.m.OnCombatBegins();
-        else Debug.Log("No wave manger in scene");
-
+            if (WaveManager.m)
+                WaveManager.m.OnCombatBegins();
+            else Debug.Log("No wave manger in scene");
+        }
 
         // focus on enemies, shortly
         Vector3 center = ((Transform[])Combat.Instance.flags[1].info).Length > 0 ?
@@ -132,5 +135,13 @@ public class MissionManager:MonoBehaviour {
     // referenced on buttons
     public void Btn_LoadMainMenu() {
         LoadingManager.ToMainMenu();
+    }
+
+    public void ReviveTeamPlayerTeam() {
+        Init(CharacterLibrary.CreateInstances(deadTeam.ToArray()));
+    }
+
+    internal void RegisterDeath(Unit unit) {
+        deadTeam.Add(CharacterLibrary.GetId(unit.codename));
     }
 }

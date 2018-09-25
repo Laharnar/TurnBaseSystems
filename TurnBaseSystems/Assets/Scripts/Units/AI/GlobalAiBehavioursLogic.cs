@@ -18,8 +18,8 @@ public class GlobalAiBehavioursLogic : AiLogic {
         // targeting 
         Unit targetEnemy = null;
         Unit targetAlly = null;
-        targetEnemy = AiHelper.ClosestUnit(unit.snapPos, Combat.Instance.GetVisibleUnits(0).ToArray());
-        targetAlly = AiHelper.ClosestUnit(unit.snapPos, Combat.Instance.GetVisibleUnits(1, unit).ToArray());
+        targetEnemy = AiHelper.ClosestUnit(unit.snapPos, Combat.Instance.flagsManager.GetVisibleUnits(0).ToArray());
+        targetAlly = AiHelper.ClosestUnit(unit.snapPos, Combat.Instance.flagsManager.GetVisibleUnits(1, unit).ToArray());
 
         Vector3 targetMovePos = Vector3.zero;
         Vector3 attackPos = Vector3.zero;
@@ -28,6 +28,11 @@ public class GlobalAiBehavioursLogic : AiLogic {
         AttackData2 ability = null;
         ability = unit.abilities.additionalAbilities2[0];
         Debug.Log("[Enemy AI] "+unit+" "+ mode + ", prefered enemy "+targetEnemy + " prefered ally "+targetAlly);
+
+        if (targetEnemy == null) {
+            yield break;
+        }
+
         // melee
         if (mode == 0) {
             // approach at closest and attack
@@ -59,7 +64,7 @@ public class GlobalAiBehavioursLogic : AiLogic {
         // healer
         if (mode == 4) {
             // heal closest damaged unit if any, else attack.
-            Unit unhealedAlly = AiHelper.ClosestUnit(unit.snapPos, AiHelper.OnlyUnhealed(Combat.Instance.GetVisibleUnits(1, unit).ToArray()));
+            Unit unhealedAlly = AiHelper.ClosestUnit(unit.snapPos, AiHelper.OnlyUnhealed(Combat.Instance.flagsManager.GetVisibleUnits(1, unit).ToArray()));
             if (unhealedAlly) {
                 targetAlly = unhealedAlly;
                 targetMovePos = AiHelper.ClosestSlotToTargetOverMask(unit.snapPos, targetAlly.snapPos, unit.abilities.move2.move.range);

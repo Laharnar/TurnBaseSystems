@@ -23,7 +23,8 @@ public sealed class AttackData2 : StdAttackData {
     public PassiveData passive;
     public PierceAtkData pierce;
     public SpawnAttackData spawn;
-
+    // public SensorsData sensors;// what happen when enemy steps in range or on unit -> die, activate ability. type of sensor, end turn or instant reaction
+    
     public Transform Vfx { get { return standard.vfxPref; } }
 
     public AbilityEffect[] GetAbilityEffects() {

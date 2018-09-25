@@ -2,7 +2,7 @@
     Armor,
     Hp,
     StdRange,
-    StdDmg,
+    StdBaseDmgUp,
     AoeDmg,
     Charges,
 }

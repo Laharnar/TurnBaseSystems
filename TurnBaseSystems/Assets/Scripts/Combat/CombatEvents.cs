@@ -57,7 +57,7 @@ public static class CombatEvents {
         CombatEvents.OnUnitActivatesAbility(unit);
     }
 
-    public static void OnTurnStart(FlagManager flag) {
+    public static void OnTurnStart(Flag flag) {
         DebugEvents("OnTurnStart");
         AbilityInfo.CurActivator.Reset();
         AbilityInfo.CurActivator.onAnyTurnStart = !AbilityInfo.CurActivator.never;
@@ -75,7 +75,7 @@ public static class CombatEvents {
         Combat.Instance.Reset();
     }
 
-    public static void OnTurnEnd(FlagManager flag) {
+    public static void OnTurnEnd(Flag flag) {
         DebugEvents("OnTurnEnd flag:"+flag.id);
         // end
         AbilityInfo.CurActivator.Reset();

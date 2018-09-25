@@ -10,6 +10,12 @@ public class WaveManager :MonoBehaviour{
 
     float lastWaveClearedTime = 0f;
 
+    public string curWaveDescription {
+        get {
+            return waves[activeWave].name;
+        }
+    }
+
     private void Awake() {
         m = this;
         for (int i = 0; i < enemySpawnAreas.Length; i++) {
@@ -21,7 +27,7 @@ public class WaveManager :MonoBehaviour{
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Comma)) {
             Combat.Instance.SkipWave();
-            if (activeWave + 1 >= waves.Count) {
+            if (activeWave >= waves.Count) {
                 return; // win
             }
             activeWave++;
@@ -31,12 +37,13 @@ public class WaveManager :MonoBehaviour{
         return activeWave >= waves.Count;
     }
     public void PrintWave() {
-        Debug.Log("----- WAVE " + activeWave + " (last wave time: " + lastWaveClearedTime + " level time: " + Time.timeSinceLevelLoad + ") " + waves[activeWave].description + " STARTED -----");
+        Debug.Log("----- WAVE " + (activeWave+1) + " (last wave time: " + lastWaveClearedTime + " level time: " + Time.timeSinceLevelLoad + ") " + waves[activeWave].description + " STARTED -----");
     }
 
     public void OnWaveCleared() {
         lastWaveClearedTime = Time.timeSinceLevelLoad-lastWaveClearedTime;
         if (activeWave + 1 >= waves.Count) {
+            activeWave++;
             return; // win
         }
         activeWave++;
@@ -64,12 +71,11 @@ public class WaveManager :MonoBehaviour{
 }
 [System.Serializable]
 public class SkillLockdown {
-
-    // same length
-    public int[] unlockSkillId;
+    public bool notUsed = false;
     public int[] unlockAtLevel;
 
     public bool IsSkillUnlocked(int skillId, int curWave) {
-        return skillId < unlockAtLevel.Length && curWave >= unlockAtLevel[skillId];
+        return notUsed ||
+            (skillId < unlockAtLevel.Length && curWave >= unlockAtLevel[skillId]);
     }
 }

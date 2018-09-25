@@ -11,6 +11,8 @@ public class BUFFAttackData : AbilityEffect {
     public float dmgMultiplierUp;
     public int healAmount;
     public int addCounters = 0;
+    public bool spawnOnDeath = false;
+    public int buffedTransformsOnDeath;
     public GridMask temporaryMoveRange;
     public GridMask temporaryAttackRange;
     public BuffType buffType = BuffType.None;
@@ -29,6 +31,8 @@ public class BUFFAttackData : AbilityEffect {
         buff.endBuffStatus = endBuffStatus;
         buff.endAnimSets = endAnimSets;
         buff.addCounters = addCounters;
+        buff.spawnOnDeath = spawnOnDeath;
+        buff.buffedTransformsOnDeath = buffedTransformsOnDeath;
         buff.temporaryAttackRange = temporaryAttackRange;
         buff.temporaryMoveRange = temporaryMoveRange;
         base.Copy(buff);
@@ -110,7 +114,7 @@ public class BUFFAttackData : AbilityEffect {
         }
         if (dmgMultiplierUp != 0) {
             Debug.Log("[dmg buff] +dmg mult" + dmgMultiplierUp + " t:" + target);
-            target.dmgMult += dmgMultiplierUp;
+            target.doDmgMult += dmgMultiplierUp;
         }
         if (addCounters != 0) {
             Debug.Log("[counter] +counter count" + addCounters + " t:" + target);
@@ -132,7 +136,7 @@ public class BUFFAttackData : AbilityEffect {
         }
         if (dmgMultiplierUp != 0) {
             Debug.Log("[dmg buff] -dmg mult" + dmgMultiplierUp + " t:" + target);
-            target.dmgMult -= dmgMultiplierUp;
+            target.doDmgMult -= dmgMultiplierUp;
         }
         if (addCounters != 0) {
             Debug.Log("[counter] -counter count" + addCounters + " t:" + target);
@@ -142,7 +146,6 @@ public class BUFFAttackData : AbilityEffect {
             target.combatStatus = endBuffStatus;
     }
     public void UnitDeath() {
-
+        
     }
 }
-

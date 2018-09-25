@@ -69,4 +69,13 @@ public class CharacterLibrary:MonoBehaviour {
         }
         return instances;
     }
+
+    internal static int GetId(string codename) {
+        for (int i = 0; i < m.characterCode.Length; i++) {
+            if (m.characterCode[i] == codename) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

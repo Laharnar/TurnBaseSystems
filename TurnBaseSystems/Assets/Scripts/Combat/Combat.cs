@@ -4,37 +4,30 @@ using System.Collections.Generic;
 using UnityEngine;
 public partial class Combat : MonoBehaviour {
 
-    public static Combat Instance { get { return instance; } }
-    static Combat instance;
-
-    int activeFlagTurn = 0;
+    public static Combat Instance { get { return GameManager.Instance.GetManager<Combat>(); } }
+    //static Combat instance;
 
     Coroutine gameplayUp;
     public bool initAwake = true;
     bool init;
 
-    /// <summary>
-    /// Don't edit outside this script.
-    /// </summary>
-    [System.Obsolete("don't use, complex")]
-    public int mouseDirection = 0;
+    public FlagManager flagsManager { get { return GameManager.Instance.GetManager<FlagManager>(); } }
+    public List<Unit> units { get { return flagsManager.Units; } }
+    public List<Flag> flags { get { return flagsManager.flags; } set { flagsManager.flags = value; } }
 
-    public List<Unit> units = new List<Unit>();
-    internal int lastMouseDirection;
-
-
-    public List<FlagManager> flags;
-
-    public Queue<AbilityInfo> abilitiesQue = new Queue<AbilityInfo>();
-    public Queue<CombatEventMask> activatorsQue = new Queue<CombatEventMask>();
+    public CombatAbilityHandler1 abilityHandler;
     public const int gameRules = 3; // 0: abilities on energy. 1: max 2. 2: abilities on energy and max 2. 3: energy, max 2, max 1 move. 4: max 1 attack, max 1 move
-    public bool setUpTempGrid;
 
     public SkillLockdown lockdown;
-    
+
+    public int activeFlag = 0;
+    private string enemyTurnAlternateText = "";
 
     private void Awake() {
-        instance = this;
+        //instance = this;
+        FlagManager.InitInstance();
+
+        GameManager.Instance.RegisterManager(this, 2);
         if (initAwake) {
             Init(new Transform[0]);
             // StartCombatLoop ();
@@ -42,28 +35,6 @@ public partial class Combat : MonoBehaviour {
     }
     private void Start() {
         //TempGroundGrid(transform.position);
-    }
-
-    public static void TempGroundGrid(Vector3 center) {
-        GridMask mask = GridMask.One;
-        float alpha = 1f;
-        float size = 200f;
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                Vector3 blockPos = center + new Vector3(-size/2+j, -size/2+i);
-
-                float dist = (i+j)/2;
-                alpha = 1;// 1-Vector3.Distance(center, blockPos)/(Mathf.Sqrt(2*size*size)/2);//(dist / (size/2+size/2)*2);//Mathf.Clamp(Mathf.Pow(1-manhatt/(size+size)*0.5f, 2)-0.5f, 0f, 1f);
-                //alpha *= alpha;
-                //alpha = (alpha + alphaCenter)%1f;
-                if (alpha > 1f) {
-                    alpha = alpha-1f;
-                }
-                GridDisplay.Instance.SetUpGrid(blockPos, GridDisplayLayer.GlobalGrid, mask, alpha);
-            }
-        }
-        GridDisplay.Instance.RemakeGrid();
     }
 
     public void Init(Transform[] teamInsts) {
@@ -85,22 +56,23 @@ public partial class Combat : MonoBehaviour {
         gameplayUp = StartCoroutine(CombatUpdate());
 
         Debug.Log("Initing gameplay manager");
-        flags = new List<FlagManager>();
-        flags.Add(new FlagManager(new PlayerFlag(), 0));
-        flags.Add(new FlagManager(new EnemyFlag(), 1));
+        flags = new List<Flag>();
+        flags.Add(new Flag(new PlayerFlag(), 0));
+        flags.Add(new Flag(new EnemyFlag(), 1));
 
         // obsolete?
         AbilityInfo.CurActivator = new CombatEventMask();
 
-        StartCoroutine(AbilityQueHandler());
+        abilityHandler = new CombatAbilityHandler1();
+        StartCoroutine(abilityHandler.AbilityQueHandler());
     }
 
     public void RegisterUnit(Unit u) {
         /*if (flags.Count < u.flag.allianceId) {
             Init();
         }*/
-        GetUnits(u.flag.allianceId).Add(u);
-        units.Add(u);
+        flagsManager.AddUnit(u, u.flag.allianceId);
+        //units.Add(u);
     }
 
     internal void Reset() {
@@ -120,24 +92,6 @@ public partial class Combat : MonoBehaviour {
     /// <returns></returns>
     public List<Unit> GetUnits(int allianceId) {
         return flags[allianceId].info.units;
-    }
-
-
-    internal List<Unit> GetVisibleUnits(int allianceId, params Unit[] ignored) {
-        List<Unit> f = new List<Unit>();
-        for (int i = 0; i < flags[allianceId].info.units.Count; i++) {
-            bool onIgnoreList = false;
-            for (int j = 0; j < ignored.Length; j++) {
-                if (ignored[j] == flags[allianceId].info.units[i]) {
-                    onIgnoreList = true;
-                    break;
-                }
-            }
-            if (!onIgnoreList && flags[allianceId].info.units[i].combatStatus != CombatStatus.Invisible) {
-                f.Add(flags[allianceId].info.units[i]);
-            }
-        }
-        return f;
     }
 
     IEnumerator CombatUpdate() {
@@ -182,9 +136,17 @@ public partial class Combat : MonoBehaviour {
         bool started = false;
         while (true) {
             for (int j = 0; j < flags.Count; j++) {
+                activeFlag = j;
                 if (started) {
                     if (j == 1) {
-                        UIManager.ShowSlideMsg("-- Enemy turn --", 2.5f, "Combat/end player turn");
+                        if (GetUnits(1).Count == 0)
+                            enemyTurnAlternateText = "-- Wave "+(WaveManager.m.curWaveDescription)+" ("+ (WaveManager.m.activeWave+1) + "/"+(WaveManager.m.waves.Count)+") --";
+                        if (enemyTurnAlternateText != "") {
+                            UIManager.ShowSlideMsg(enemyTurnAlternateText, 4.5f, "Combat/end player turn");
+                            enemyTurnAlternateText = "";
+                        } else {
+                            UIManager.ShowSlideMsg("-- Enemy turn --", 2.5f, "Combat/end player turn");
+                        }
                         yield return new WaitForSeconds(2.5f);
                     }
                     if (j == 0) {
@@ -194,7 +156,6 @@ public partial class Combat : MonoBehaviour {
                 }
                 started = true;
 
-                activeFlagTurn = j;
 
                 CombatEvents.OnTurnStart(flags[j]);
                 flags[0].NullifyUnits();
@@ -218,6 +179,7 @@ public partial class Combat : MonoBehaviour {
                 if (GetUnits(1).Count == 0 || MissionManager.levelCompleted) {
                     if (j == 1) {
                         WaveManager.m.OnWaveCleared();
+                        //enemyTurnAlternateText = "-- Wave "+(WaveManager.m.curWaveDescription)+"/"+(WaveManager.m.waves.Count)+" --";
                     }
                     if (WaveManager.m.AllWavesCleared() && GetUnits(1).Count == 0) {
                         yield return StartCoroutine(WinGame());
@@ -274,18 +236,15 @@ public partial class Combat : MonoBehaviour {
     }
 
     internal void UnitNullCheck() {
-        for (int i = 0; i < units.Count; i++) {
-            if (units[i] == null) {
-                units.RemoveAt(i);
-                i--;
-            }
-        }
+        flagsManager.UnitNullCheck();
     }
 
 
     /// <summary>
     /// Global ability registration.
     /// Use always when unit attacks or does something.
+    /// 
+    /// Describes how combat manager, handles ability activations.
     /// </summary>
     /// <param name="unit"></param>
     /// <param name="hoveredSlot"></param>
@@ -293,54 +252,12 @@ public partial class Combat : MonoBehaviour {
     public static void RegisterAbilityUse(Unit unit, Vector3 hoveredSlot, AttackData2 activeAbility, CombatEventMask activator) {
         AbilityInfo info = new AbilityInfo(unit, hoveredSlot, activeAbility, activator);
         // sort ability into correct stacks
-        Combat.Instance.abilitiesQue.Enqueue(info);
-    }
-
-    /// <summary>
-    /// Global ability handler... Executes single ability, animations and all.
-    /// </summary>
-    /// <returns></returns>
-    public IEnumerator AbilityQueHandler() {
-        
-        while (true) {
-            if (abilitiesQue.Count == 0) {
-                yield return null;
-                continue;
-            }
-            
-            AbilityInfo info = abilitiesQue.Dequeue();
-            // activates attack. these attacks can add further attacks to be executed.
-            AbilityInfo.Instance = new AbilityInfo(info);
-            info.executingUnit.AttackAction(info);
-            // handles, data changes
-            // move reaction is executed when attack is move.
-            if (info.activeAbility == info.executingUnit.abilities.move2) {// move
-                CombatEvents.ReapplyAuras(info.executingUnit.snapPos, info.attackedSlot, info.executingUnit);
-            }
-
-            // wait animations
-            info.executingUnit.Animations_VFX_IfParsedAttack(info.activeAbility);
-            
-
-            float len = AttackData2.AnimLength(info.executingUnit, info.activeAbility);
-            if (len > 0)
-                yield return new WaitForSeconds(len);
-
-
-            // movement
-
-            // effects
-
-            // sound
-
-            // reset
-            //AbilityInfo.Instance.Reset(); don't reset combat after 1 atk.
-        }
+        Combat.Instance.abilityHandler.AddAbility(info);
     }
 
 
     public static bool ShouldAbilityBeLocked(int abilityId) {
-        if (instance.lockdown.IsSkillUnlocked(abilityId, WaveManager.m.activeWave)) {
+        if (Instance.lockdown.IsSkillUnlocked(abilityId, WaveManager.m.activeWave)) {
             return false;
         }
         return true;

@@ -10,6 +10,8 @@ public class AOEAttackData : DamageBasedAttackData {
     public TargetFilter targets = TargetFilter.All;
     public DamageInfo damageInfo = new DamageInfo(1, DamageType.Magic, EnergyType.None, DamageAttribute.HardObject);
 
+    public bool activateInfestationEffect = false;
+
     internal override void AtkBehaviourExecute(AbilityInfo info) {
         if (info != null && info.activator!= null && info.activator.onAttack)
             Execute(info);
@@ -40,6 +42,10 @@ public class AOEAttackData : DamageBasedAttackData {
 
             if (info.activeAbility.buff.used) {
                 info.activeAbility.buff.AtkBehaviourExecute(inf);
+            }
+
+            if (activateInfestationEffect) {
+                vec[i].infestationResult.activated = true;
             }
         }
         if (setStatus != CombatStatus.SameAsBefore)

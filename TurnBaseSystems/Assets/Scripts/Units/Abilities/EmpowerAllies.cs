@@ -11,7 +11,19 @@ public enum AuraTrigger {
     OnUnitEntersExits,
     OnTurnEnd,
     OnAttacked,
+    OnSteppedOn
 }
+public enum SensorTrigger {
+    OnUnitEnters,
+    OnUnitExits,
+    OnUnitEnterExists,
+    OnAnyTurnEnd,
+    OnAllyTurnEnd,
+    OnEnemyTurnEnd,
+    OnAttacked,
+    OnIsSteppedOn
+}
+
 [System.Serializable]
 public class EmpowerAlliesData : AbilityEffect {
     public GridMask auraRange;
@@ -79,7 +91,7 @@ public class EmpowerAlliesData : AbilityEffect {
     public void Effect(Unit source, Unit other) {
         if (ValidTarget(source, target, other.flag.allianceId)
             && (GetAuraStacks(other, CombatStatType.Armor) < maxAuraStacks)) {
-            if (stdDmgUp != 0) other.stats.Increase(this, CombatStatType.StdDmg, stdDmgUp);
+            if (stdDmgUp != 0) other.stats.Increase(this, CombatStatType.StdBaseDmgUp, stdDmgUp);
             if (aoeDmgUp != 0) other.stats.Increase(this, CombatStatType.AoeDmg, aoeDmgUp);
             if (shieldUp != 0) other.AddShield(this, shieldUp);
         }
@@ -87,7 +99,7 @@ public class EmpowerAlliesData : AbilityEffect {
 
     public void LoseEffect(Unit u, Unit source) {
         if (ValidTarget(source, target, u.flag.allianceId)) {
-            if (stdDmgUp != 0) u.stats.Reduce(this, CombatStatType.StdDmg, stdDmgUp);
+            if (stdDmgUp != 0) u.stats.Reduce(this, CombatStatType.StdBaseDmgUp, stdDmgUp);
             if (aoeDmgUp != 0) u.stats.Reduce(this, CombatStatType.AoeDmg, aoeDmgUp);
             if (shieldUp != 0) u.AddShield(this, -shieldUp);
         }

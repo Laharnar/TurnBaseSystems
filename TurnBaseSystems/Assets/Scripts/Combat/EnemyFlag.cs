@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyFlag : FlagController {
+public class EnemyFlag : FlagBehaviour {
 
-    public override IEnumerator FlagUpdate(FlagManager flag) {
+    public override IEnumerator FlagUpdate(Flag flag) {
         List<Unit> units = flag.info.units;
         // detect player units in range, and alert nearby allies
         //HandleDetectionAndAlert(flag, units);
@@ -23,7 +23,7 @@ public class EnemyFlag : FlagController {
         yield return null;
     }
 
-    private static void HandleDetectionAndAlert(FlagManager flag, List<Unit> units) {
+    private static void HandleDetectionAndAlert(Flag flag, List<Unit> units) {
         foreach (var unit in units) {
             for (int i = 0; i < units.Count; i++) {
                 if (unit.detection.IsDetecting(unit, units[i])) {

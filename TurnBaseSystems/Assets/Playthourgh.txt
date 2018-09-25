@@ -115,9 +115,34 @@ spawn items
 weird move glitches.
 enemy unit move all at same time for some reason, plus banned insta skipped.
 
-.--------------------------
+--------------------------
 15.9.2018
 there is a sligh problem with dealing with a lot of tanky units with meoderate dmg
 not tanky enough
 
 healing could add a buff that additionally heals by 1... so priest can use aoe more often not so boring
+--------------------------
+21.9.2018 playthrough 5
+Notes:
+FINAL BOSS! WEAK. Smth with 50 hp. ok.
+Mages with actual magic attacks. ok, healers have them now.
+Show x/max waves, or start wave I. okej.
+Slow or stun zone.
+Revive all! ok
+Ability save load. For descriptions.
+
+Play length: 23 minutes(1400)
+Difficulty: medium, jumps between easy, and hard. 
+it seems to spike hard and fast, but still managable if you know what 
+you are doing.
+
+
+
+High or low notes?
+Final boss.
+Some levels, feel extremly difficult. Could be hard without the nuke.
+Missing medium level and high hp tanky enemies.
+Infestation flower = eat the enemy in range, and spew out a glass cannon zombie.
+Max 1 Zombie controller. At the second, lose control over the first one.
+sometimes it feels overwhelming
+you could add resistances

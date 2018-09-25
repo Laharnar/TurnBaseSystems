@@ -23,10 +23,10 @@ public class CombatUI {
 
     internal static void OnActiveAbilityChange() {
         GridDisplay.Instance.ClearAll();
-        if (PlayerTurnData.LastAbility != null)
+        if (curPlayerUnit && PlayerTurnData.LastAbility != null)
             AttackDisplay.HideGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.LastAbility);
 
-        if (PlayerTurnData.Instance.ActiveAbility != null)
+        if (curPlayerUnit && PlayerTurnData.Instance.ActiveAbility != null)
             AttackDisplay.ShowGrid(curPlayerUnit, curPlayerUnit.snapPos, PlayerTurnData.Instance.ActiveAbility);
         GridDisplay.Instance.RemakeGrid();
 
@@ -36,7 +36,7 @@ public class CombatUI {
 
     public static void OnSelectDifferentUnit() {
         GridDisplay.Instance.ClearAll();
-        ShowUI(true, curPlayerUnit, curUnit, true);
+        ShowUI(curPlayerUnit!=null, curPlayerUnit, curUnit, true);
         if (hoveredUnit && hoveredUnit.IsPlayer) {
             AttackDisplay.ShowGrid(curPlayerUnit, hoveredSlot, PlayerTurnData.Instance.ActiveAbility);
         }

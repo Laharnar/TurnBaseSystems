@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class PlayerFlag : FlagController {
+public class PlayerFlag : FlagBehaviour {
 
     public Vector3 lastHoveredSlot { get { return PlayerTurnData.Instance.lastHoveredSlot; } set { PlayerTurnData.Instance.lastHoveredSlot = value; } }
     public Unit selectedPlayerUnit { get { return PlayerTurnData.Instance.selectedPlayerUnit; } set { PlayerTurnData.Instance.selectedPlayerUnit = value; } }
@@ -19,7 +19,7 @@ public class PlayerFlag : FlagController {
     //bool MouseWheelRotate { get { return Input.GetAxis("Mouse ScrollWheel") != 0; } }
     //public int mouseDirection { get { return Combat.Instance.mouseDirection; } set { Combat.Instance.mouseDirection = value; } }
 
-    public override IEnumerator FlagUpdate(FlagManager flag) {
+    public override IEnumerator FlagUpdate(Flag flag) {
         List<Unit> units = flag.info.units;
         while (true) {
             if (Input.GetKeyDown(KeyCode.Return)) break;
@@ -158,10 +158,12 @@ public class PlayerFlag : FlagController {
             DeselectUnit();
             selectedUnit = hoveredUnit;
 
-            if (hoveredUnit && hoveredUnit.IsPlayer) {
-                selectedPlayerUnit = hoveredUnit;
+            if (hoveredUnit) {
+                if (hoveredUnit.IsPlayer) {
+                    selectedPlayerUnit = hoveredUnit;
 
-                SwapToValidAbility();
+                    SwapToValidAbility();
+                }
 
                 CombatUI.OnSelectDifferentUnit();
             }
@@ -178,12 +180,10 @@ public class PlayerFlag : FlagController {
     }
 
     private void DeselectUnit() {
-        if (selectedUnit) {
-            CombatUI.OnUnitDeseleted();
-            selectedUnit = null;
-            selectedPlayerUnit = null;
-            PlayerTurnData.Instance.ActiveAbility = null;
-        }
+        CombatUI.OnUnitDeseleted();
+        selectedUnit = null;
+        selectedPlayerUnit = null;
+        PlayerTurnData.Instance.ActiveAbility = null;
     }
 
     private bool NoActionsLeft(List<Unit> units) {

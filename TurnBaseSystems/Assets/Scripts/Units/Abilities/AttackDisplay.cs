@@ -28,16 +28,16 @@ public class AttackDisplay {
         if (data.move.used) {
             GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
         } else if (data.aoe.used) {
             if (data.standard.used && data.defaultToSelf) {
-                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.SetUpGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             } else {
-                GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.SetUpGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
         }
         if (data.buff.used) {
@@ -56,24 +56,24 @@ public class AttackDisplay {
             return;
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(Combat.Instance.mouseDirection));
+            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(0));
         }
         if (data.standard.used) {
-            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(Combat.Instance.mouseDirection));
+            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(0));
         }
         if (data.move.used) {
             GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
         } else if (data.aoe.used) {
             if (data.standard.used && data.defaultToSelf) {
-                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             } else {
-                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.mouseDirection));
+                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
         }
         if (data.buff.used) {
@@ -91,21 +91,21 @@ public class AttackDisplay {
             return;
         Vector3 curSlot = GridManager.SnapPoint(source.transform.position);
         if (data.range.used) {
-            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(Combat.Instance.lastMouseDirection));
+            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.range.GetMask(0));
         }
         if (data.standard.used) {
-            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(Combat.Instance.lastMouseDirection));
+            GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.RedAttackArea, data.standard.GetMask(0));
         }
         if (data.move.used) {
             GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.GreenMovement, data.move.range);
             if (data.move.onStartApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.lastMouseDirection));
+                GridDisplay.Instance.HideGrid(curSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
             if (data.move.onEndApplyAOE && data.aoe.used) {
-                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.lastMouseDirection));
+                GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
             }
         } else if (data.aoe.used) {
-            GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(Combat.Instance.lastMouseDirection));
+            GridDisplay.Instance.HideGrid(attackedSlot, GridDisplayLayer.OrangeAOEAttack, data.aoe.GetMask(0));
         }
         if (data.buff.used) {
         }

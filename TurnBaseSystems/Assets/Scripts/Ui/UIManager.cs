@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour {
 
     // slide in text at end of turns.
     public Text slide;
+    public Image slideColored;
     public Animator slideAnim;
     internal string slideScreenContent;
 
@@ -30,6 +31,9 @@ public class UIManager : MonoBehaviour {
         //Debug.Log("Showing slide screen");
         if (slide)
             slide.text = slideScreenContent;
+        if (slideColored) {
+            slideColored.color = GameManager.Instance.colorSettings.GetColor(GameManager.Instance.GetManager<Combat>().activeFlag);
+        }
         if (slideAnim)
             slideAnim.Play("Slide in");
     }

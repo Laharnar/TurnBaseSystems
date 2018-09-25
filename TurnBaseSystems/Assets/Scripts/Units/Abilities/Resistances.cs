@@ -10,7 +10,7 @@ public class Resistances {
     public float resistanceToSolidification = 0;
     public float resistanceToShockwaves = 0;
 
-    public int ApplyResistance(int dmg, DamageInfo dmgInfo) {
+    public float ApplyResistance(float dmg, DamageInfo dmgInfo) {
         float[] resistancesEnergy = new float[] {
             0,
             resistanceToOuter,
@@ -27,10 +27,10 @@ public class Resistances {
             resistanceToMagical,
         };
 
-        int f = (int)(dmg * (1f-resistancesAtrib[(int)dmgInfo.atributte]));
-        dmg = (int)(((float)dmg) * (1f - resistancesAtrib[(int)dmgInfo.atributte]));
-        dmg = (int)(((float)dmg) * (1f - resistancesDmgType[(int)dmgInfo.dmgType]));
-        dmg = (int)(((float)dmg) * (1f - resistancesEnergy[(int)dmgInfo.energy]));
+        float f = (dmg * (1f-resistancesAtrib[(int)dmgInfo.atributte]));
+        dmg = ((dmg) * (1f - resistancesAtrib[(int)dmgInfo.atributte]));
+        dmg = ((dmg) * (1f - resistancesDmgType[(int)dmgInfo.dmgType]));
+        dmg = ((dmg) * (1f - resistancesEnergy[(int)dmgInfo.energy]));
         return dmg;
     }
 }

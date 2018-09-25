@@ -1,36 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-
-public class FlagInfo {
-    public List<Unit> units = new List<Unit>();
-
-    public static explicit operator Transform[](FlagInfo info) {
-        Transform[] t = new Transform[info.units.Count];
-        for (int i = 0; i < t.Length; i++) {
-            t[i] = info.units[i].transform;
-        }
-        return t;
-    }
-}
 public class FlagManager {
-    public FlagInfo info = new FlagInfo();
-    public FlagController controller;
-    public int id;
+    public List<Flag> flags;
+    bool updatedSearch = false;
+    List<Unit> units;
 
-    public FlagManager(FlagController enemyFlag, int id) {
-        info = new FlagInfo();
-        this.controller = enemyFlag;
-        this.id = id;
+    public List<Unit> Units {
+        get {
+            if (updatedSearch && units!=null)
+                return units;
+
+            updatedSearch = true;
+            List<Unit> u = new List<Unit>();
+            for (int i = 0; i < flags.Count; i++) {
+                flags[i].NullifyUnits();
+                if (flags[i] != null && flags[i].info != null)
+                    u.AddRange(flags[i].info.units);
+            }
+            units = u;
+            return u;
+        }
     }
 
-    public void NullifyUnits() {
-        List<Unit> units = info.units;
-        for (int i = 0; i < units.Count; i++) {
-            if (units[i] == null) {
-                units.RemoveAt(i);
-                i--;
+    internal void UnitNullCheck() {
+        for (int j = 0; j < flags.Count; j++) {
+            for (int i = 0; i < flags[j].info.units.Count; i++) {
+                if (flags[j].info.units[i] == null || flags[j].info.units[i].transform == null) {
+                    flags[j].info.units.RemoveAt(i);
+                    i--;
+                    updatedSearch = false;
+                }
             }
         }
     }
+
+    internal void AddUnit(Unit u, int allianceId) {
+        flags[u.flag.allianceId].info.units.Add(u);
+        updatedSearch = false;
+    }
+
+    internal static void InitInstance() {
+        GameManager.Instance.RegisterManager(new FlagManager(), 0);
+    }
+
+    internal List<Unit> GetVisibleUnits(int allianceId, params Unit[] ignored) {
+        return UnitHelper.GetVisibleUnits(flags[allianceId].info.units, ignored);
+    }
+    
 }

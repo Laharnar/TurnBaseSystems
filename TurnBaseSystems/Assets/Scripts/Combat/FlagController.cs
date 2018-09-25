@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-public abstract class FlagController {
+public abstract class FlagBehaviour {
 
-    public abstract IEnumerator FlagUpdate(FlagManager flag);
+    public abstract IEnumerator FlagUpdate(Flag flag);
 }

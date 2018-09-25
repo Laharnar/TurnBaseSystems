@@ -76,11 +76,14 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     public Transform characterSprite;
     public int abilitiesUsed = 0;
     public int movesUsed = 0;
-    public float dmgMult = 1f;
+    public float getDmgMult = 1f;
+    public float doDmgMult = 1f;
 
     AttackData2 lastUsedAbility;
     public bool lastAttackParserPassed = false;
     public int reflectDmgTimes = 0;
+
+    public Infestation infestationResult;
 
     private void Start() {
         Init();
@@ -152,6 +155,14 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         return true;
     }
 
+    public static Unit IsUnderSomeone(Unit unit, Unit[] units) {
+        for (int i = 0; i < units.Length; i++) {
+            if (unit.snapPos == units[i].snapPos) {
+                return units[i];
+            }
+        }
+        return null;
+    }
 
     public IEnumerator WaitActionsToComplete() {
         while (moving) {
@@ -279,15 +290,17 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             return r;
         }
 
+        Debug.Log(info.executingUnit + " executing attack " + info.activeAbility.o_attackName + " requrements: "+info.activeAbility.requirements);
+
         atk.ActivateAbility(info);
         // AttackData2.UseAttack(this, attackedSlot, atk);
         lastUsedAbility = info.activeAbility;
         // AttackAnimations(atk);
 
         // temp
-        if (unitType == UnitType.Pickup) {
+        /*if (unitType == UnitType.Pickup) {
             Destroy(gameObject);
-        }
+        }*/
         return 0;
     }
 
@@ -302,7 +315,6 @@ public partial class Unit : MonoBehaviour, ISlotItem{
             Debug.Log("Running animations, waiting. action aborted.");
             return -1;
         }
-        Debug.Log(info.executingUnit+" executing attack " + info.activeAbility.o_attackName);
 
         abilitiesUsed++;
         if (info.activeAbility == abilities.move2)
@@ -385,13 +397,24 @@ public partial class Unit : MonoBehaviour, ISlotItem{
     }
 
     // apply all the additional stuff.
-    public static int CalcDamage(Unit sourceUnit, Unit targetUnit, int dmg) {
-        dmg += sourceUnit.stats.GetSum(CombatStatType.StdDmg);
+    public static int CalcDamage(Unit sourceUnit, Unit targetUnit, float dmg) {
+        CombatDebug.Log("[Unit/CalcDmg] input:"+dmg + " buffBaseDmgUp:" 
+            + sourceUnit.stats.GetSum(CombatStatType.StdBaseDmgUp)+" w resist: "
+            + targetUnit.resistances.ApplyResistance(dmg, AbilityEffect.curDmg)
+            + "final:"+" dmg: "+dmg+"*"+targetUnit.getDmgMult+"*"+sourceUnit.doDmgMult+"="+
+            + (int)Math.Round((float)dmg * targetUnit.getDmgMult * sourceUnit.doDmgMult, MidpointRounding.AwayFromZero)
+            , targetUnit);
+        dmg += sourceUnit.stats.GetSum(CombatStatType.StdBaseDmgUp);
         dmg = targetUnit.resistances.ApplyResistance(dmg, AbilityEffect.curDmg);
-        dmg = Mathf.CeilToInt((float)dmg * targetUnit.dmgMult);
-        return dmg;
+        dmg = (int)Math.Round((float)dmg * targetUnit.getDmgMult * sourceUnit.doDmgMult, MidpointRounding.AwayFromZero);
+        return (int)dmg;
     }
+
     public void GetDamaged(int realDmg) {
+        GetDamaged((float)realDmg);
+    }
+
+    public void GetDamaged(float realDmg) {
         if (dead) return;
         // handle counter attack.
         if (reflectDmgTimes > 0) {
@@ -402,33 +425,56 @@ public partial class Unit : MonoBehaviour, ISlotItem{
         reflectDmgTimes = 0;
 
         realDmg = CalcDamage(AbilityInfo.ExecutingUnit, this, realDmg);
+        int dmg = (int)realDmg;
+        int dmgToHp = (int)realDmg;
 
-        int dmgToHp = realDmg;
-
-        if (realDmg > 0) {
-            dmgToHp = Mathf.Clamp(realDmg - temporaryArmor, 0, realDmg);
+        CombatDebug.Log(0, "[Unit/GetDamaged] hp" + hp + "-"+dmgToHp + "|"+dmg+"-"+temporaryArmor);
+        if (dmg > 0) {
+            dmgToHp = Mathf.Clamp(dmg - temporaryArmor, 0, dmg);
             //int armorLeft = Mathf.Clamp(temporaryArmor - realDmg, 0, temporaryArmor);
-            stats.Reduce(CombatStatType.Armor, realDmg);
+            stats.Reduce(CombatStatType.Armor, dmg);
             //temporaryArmor = armorLeft;
         }
-
         stats.Set(null, CombatStatType.Hp, Mathf.Clamp(hp - dmgToHp, 0, maxHp));
         //hp = Mathf.Clamp(hp - dmgToHp, 0, maxHp);
 
         if (hpUI) hpUI.ShowHpWithGrey(hp, temporaryArmor);
         if (hp <= 0) {
-            dead = true;
-            StartCoroutine(Death());
+            Die();
         }
+    }
+
+    public void Die() {
+        if (dead) return;
+        dead = true;
+        StartCoroutine(Death());
     }
 
     private IEnumerator Death() {
         yield return null;
+        infestationResult.InfestationEffect();
         Combat.Instance.DeRegisterUnit(this);
-        Destroy(gameObject); 
+        MissionManager.m.RegisterDeath(this);
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmos() {
         
+    }
+
+}
+
+[Serializable]
+public class Infestation {
+    public bool spawnOnDeath;
+    public int transformsOnDeath;
+    public bool activated;
+
+    public void InfestationEffect() {
+        if (activated && spawnOnDeath) {
+            Transform unit = CharacterLibrary.CreateInstances(new int[1] { transformsOnDeath })[0];
+            unit.position = AbilityInfo.ExecutingUnit.snapPos;
+            unit.GetComponent<Unit>().flag.allianceId = 0;
+        }
     }
 }
