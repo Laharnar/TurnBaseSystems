@@ -12,6 +12,7 @@ public class StandardAttackData : DamageBasedAttackData {
     /// Dmg to cur hp. 100% will 1 shot. 99% = 1 hp
     /// </summary>
     public float percentDmg = 0f;
+    public bool includeArmor = true;
     public GridMask attackRangeMask;
 
     public int healOnKills = 0;
@@ -49,7 +50,7 @@ public class StandardAttackData : DamageBasedAttackData {
             if (data.standard.usePercentDmg) {
                 if (data.standard.percentDmg > 0f) {
                     int hp = u.hp;
-                    float result = (float)hp /*+ (float)u.temporaryArmor*/ * data.standard.percentDmg * (1f - dmgReduction);
+                    float result = ((float)hp + (includeArmor ? (float)u.temporaryArmor : 0f)) * data.standard.percentDmg * (1f - dmgReduction);
                     CombatDebug.Log("[Std/%Dmg/CalcStep1]"+ hp + "*" +data.standard.percentDmg + "*" + (1f - dmgReduction) +"=rounded="+ result);
                     u.GetDamaged(result);
                 }

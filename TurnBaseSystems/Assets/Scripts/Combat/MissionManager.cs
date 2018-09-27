@@ -142,6 +142,8 @@ public class MissionManager:MonoBehaviour {
     }
 
     internal void RegisterDeath(Unit unit) {
-        deadTeam.Add(CharacterLibrary.GetId(unit.codename));
+        // save only allies.
+        if (unit.flag.allianceId == 0)
+            deadTeam.Add(CharacterLibrary.GetId(unit.codename));
     }
 }

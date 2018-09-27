@@ -140,7 +140,7 @@ public partial class Combat : MonoBehaviour {
                 if (started) {
                     if (j == 1) {
                         if (GetUnits(1).Count == 0)
-                            enemyTurnAlternateText = "-- Wave "+(WaveManager.m.curWaveDescription)+" ("+ (WaveManager.m.activeWave+1) + "/"+(WaveManager.m.waves.Count)+") --";
+                            enemyTurnAlternateText = "-- Wave "+(WaveManager.m.NextWaveDescription)+" ("+ (WaveManager.m.activeWave+1) + "/"+(WaveManager.m.waves.Count)+") --";
                         if (enemyTurnAlternateText != "") {
                             UIManager.ShowSlideMsg(enemyTurnAlternateText, 4.5f, "Combat/end player turn");
                             enemyTurnAlternateText = "";

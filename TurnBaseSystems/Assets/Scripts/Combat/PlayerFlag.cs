@@ -24,6 +24,16 @@ public class PlayerFlag : FlagBehaviour {
         while (true) {
             if (Input.GetKeyDown(KeyCode.Return)) break;
 
+            bool endTurn = true;
+            for (int i = 0; i < units.Count; i++) {
+                if (units[i].CanDoAnyAction) {
+                    endTurn = false;
+                    break;
+                }
+            }
+            if (endTurn)
+                break;
+
             if (MissionManager.levelCompleted) {
                 break;
             }

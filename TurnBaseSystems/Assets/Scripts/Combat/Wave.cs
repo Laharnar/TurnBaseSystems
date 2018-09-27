@@ -5,6 +5,7 @@ using UnityEngine;
 public class Wave:ScriptableObject {
     public string description;
     public string additionalTrigger;
+    public bool enabled = true;
 
     public int[] spawnArea;
     public PrefabSet[] enemySet;

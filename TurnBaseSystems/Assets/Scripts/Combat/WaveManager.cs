@@ -16,6 +16,12 @@ public class WaveManager :MonoBehaviour{
         }
     }
 
+    public string NextWaveDescription {
+        get {
+            return waves[activeWave+1].name;
+        }
+    }
+
     private void Awake() {
         m = this;
         for (int i = 0; i < enemySpawnAreas.Length; i++) {
@@ -42,6 +48,9 @@ public class WaveManager :MonoBehaviour{
 
     public void OnWaveCleared() {
         lastWaveClearedTime = Time.timeSinceLevelLoad-lastWaveClearedTime;
+        while (activeWave+1 < waves.Count && waves[activeWave+1].enabled == false) {
+            activeWave++;
+        }
         if (activeWave + 1 >= waves.Count) {
             activeWave++;
             return; // win
